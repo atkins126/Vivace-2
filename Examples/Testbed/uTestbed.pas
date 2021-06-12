@@ -211,10 +211,10 @@ end;
 
 procedure RunTests;
 begin
-  //Test_Allegro;
-  //Test_Nuklear;
-  //Test_CSFMLAudio;
-  //Test_PhysicsFS;
+  Test_Allegro;
+  Test_Nuklear;
+  Test_CSFMLAudio;
+  Test_PhysicsFS;
   Test_Audio_Music;
 end;
 

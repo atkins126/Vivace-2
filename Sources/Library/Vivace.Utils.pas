@@ -45,29 +45,30 @@ interface
 uses
   System.SysUtils;
 
-function GetParamValue(const aParamName: string; aSwitchChars: TSysCharSet; aSeperator: Char; var aValue: string): Boolean;
-function GetParam(const aParamName: string; var aValue: string): Boolean; overload;
-function GetParam(const aParamName: string): Boolean; overload;
+function  GetParamValue(const aParamName: string; aSwitchChars: TSysCharSet; aSeperator: Char; var aValue: string): Boolean;
+function  GetParam(const aParamName: string; var aValue: string): Boolean; overload;
+function  GetParam(const aParamName: string): Boolean; overload;
 
-function GetAppName : string;
-function GetAppVersionStr: string;
-function GetAppVersionFullStr: string;
-function GetVersionInfo(aIdent: string): string;
-function GetFileDescription: string;
-function GetLegalCopyright: string;
-function GetLegalTrademarks: string;
+function  GetAppName : string;
+function  GetAppVersionStr: string;
+function  GetAppVersionFullStr: string;
+function  GetVersionInfo(aIdent: string): string;
+function  GetFileDescription: string;
+function  GetLegalCopyright: string;
+function  GetLegalTrademarks: string;
 
-function GetFileSize(const aFilename: string): Int64;
+function  GetFileSize(const aFilename: string): Int64;
 
 procedure ExportResDLL(const aResName: string; const aDllName: string; const aDestPath: string);
-
+function  LoadResDLL(const aResName: string): Pointer;
 
 implementation
 
 uses
   System.IOUtils,
   System.Classes,
-  WinApi.Windows;
+  WinApi.Windows,
+  Vivace.MemoryModule;
 
 (* GetParameterValue
 
@@ -360,6 +361,20 @@ begin
       end;
     end;
 
+  end;
+end;
+
+function LoadResDLL(const aResName: string): Pointer;
+var
+  LBuff: TResourceStream;
+begin
+  Result := nil;
+  if aResName.IsEmpty then Exit;
+  LBuff := TResourceStream.Create(HInstance, aResName, RT_RCDATA);
+  try
+    Result := TMemoryModule.LoadLibrary(LBuff.Memory);
+  finally
+    FreeAndNil(LBuff);
   end;
 end;
 

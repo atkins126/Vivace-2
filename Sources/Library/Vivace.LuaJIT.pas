@@ -156,8 +156,7 @@ implementation
 
 uses
   System.SysUtils,
-  System.Classes,
-  WinAPI.Windows,
+  Vivace.Utils,
   Vivace.MemoryModule;
 
 var
@@ -259,56 +258,48 @@ begin
 end;
 
 procedure LoadDLL;
-var
-  LBuff: TResourceStream;
 begin
-  LBuff := TResourceStream.Create(HInstance, 'LUAJIT', RT_RCDATA);
-  try
-    DLL := TMemoryModule.LoadLibrary(LBuff.Memory);
-    if DLL <> nil then
-    begin
-      @lua_gc := TMemoryModule.GetProcAddress(DLL, 'lua_gc');
-      @lua_gettop := TMemoryModule.GetProcAddress(DLL, 'lua_gettop');
-      @lua_settop := TMemoryModule.GetProcAddress(DLL, 'lua_settop');
-      @lua_pushvalue := TMemoryModule.GetProcAddress(DLL, 'lua_pushvalue');
-      @lua_call := TMemoryModule.GetProcAddress(DLL, 'lua_call');
-      @lua_pcall := TMemoryModule.GetProcAddress(DLL, 'lua_pcall');
-      @lua_tonumber := TMemoryModule.GetProcAddress(DLL, 'lua_tonumber');
-      @lua_tointeger := TMemoryModule.GetProcAddress(DLL, 'lua_tointeger');
-      @lua_toboolean := TMemoryModule.GetProcAddress(DLL, 'lua_toboolean');
-      @lua_tolstring := TMemoryModule.GetProcAddress(DLL, 'lua_tolstring');
-      @lua_touserdata := TMemoryModule.GetProcAddress(DLL, 'lua_touserdata');
-      @lua_topointer := TMemoryModule.GetProcAddress(DLL, 'lua_topointer');
-      @lua_close := TMemoryModule.GetProcAddress(DLL, 'lua_close');
-      @lua_type := TMemoryModule.GetProcAddress(DLL, 'lua_type');
-      @lua_iscfunction := TMemoryModule.GetProcAddress(DLL, 'lua_iscfunction');
-      @lua_pushnil := TMemoryModule.GetProcAddress(DLL, 'lua_pushnil');
-      @lua_pushnumber := TMemoryModule.GetProcAddress(DLL, 'lua_pushnumber');
-      @lua_pushinteger := TMemoryModule.GetProcAddress(DLL, 'lua_pushinteger');
-      @lua_pushlstring := TMemoryModule.GetProcAddress(DLL, 'lua_pushlstring');
-      @lua_pushstring := TMemoryModule.GetProcAddress(DLL, 'lua_pushstring');
-      @lua_pushcclosure := TMemoryModule.GetProcAddress(DLL, 'lua_pushcclosure');
-      @lua_pushboolean := TMemoryModule.GetProcAddress(DLL, 'lua_pushboolean');
-      @lua_pushlightuserdata := TMemoryModule.GetProcAddress(DLL, 'lua_pushlightuserdata');
-      @lua_createtable := TMemoryModule.GetProcAddress(DLL, 'lua_createtable');
-      @lua_setfield := TMemoryModule.GetProcAddress(DLL, 'lua_setfield');
-      @lua_getfield := TMemoryModule.GetProcAddress(DLL, 'lua_getfield');
-      @lua_dump := TMemoryModule.GetProcAddress(DLL, 'lua_dump');
-      @lua_rawset := TMemoryModule.GetProcAddress(DLL, 'lua_rawset');
-      @lua_load := TMemoryModule.GetProcAddress(DLL, 'lua_load');
-      @lua_rawgeti := TMemoryModule.GetProcAddress(DLL, 'lua_rawgeti');
-      @lua_rawseti := TMemoryModule.GetProcAddress(DLL, 'lua_rawseti');
-      @luaL_error := TMemoryModule.GetProcAddress(DLL, 'luaL_error');
-      @luaL_newstate := TMemoryModule.GetProcAddress(DLL, 'luaL_newstate');
-      @luaL_openlibs := TMemoryModule.GetProcAddress(DLL, 'luaL_openlibs');
-      @luaL_loadfile := TMemoryModule.GetProcAddress(DLL, 'luaL_loadfile');
-      @luaL_loadstring := TMemoryModule.GetProcAddress(DLL, 'luaL_loadstring');
-      @luaL_loadbuffer := TMemoryModule.GetProcAddress(DLL, 'luaL_loadbuffer');
-    end;
-  finally
-    FreeAndNil(LBuff);
+  DLL := LoadResDLL('LUAJIT');
+  if DLL <> nil then
+  begin
+    @lua_gc := TMemoryModule.GetProcAddress(DLL, 'lua_gc');
+    @lua_gettop := TMemoryModule.GetProcAddress(DLL, 'lua_gettop');
+    @lua_settop := TMemoryModule.GetProcAddress(DLL, 'lua_settop');
+    @lua_pushvalue := TMemoryModule.GetProcAddress(DLL, 'lua_pushvalue');
+    @lua_call := TMemoryModule.GetProcAddress(DLL, 'lua_call');
+    @lua_pcall := TMemoryModule.GetProcAddress(DLL, 'lua_pcall');
+    @lua_tonumber := TMemoryModule.GetProcAddress(DLL, 'lua_tonumber');
+    @lua_tointeger := TMemoryModule.GetProcAddress(DLL, 'lua_tointeger');
+    @lua_toboolean := TMemoryModule.GetProcAddress(DLL, 'lua_toboolean');
+    @lua_tolstring := TMemoryModule.GetProcAddress(DLL, 'lua_tolstring');
+    @lua_touserdata := TMemoryModule.GetProcAddress(DLL, 'lua_touserdata');
+    @lua_topointer := TMemoryModule.GetProcAddress(DLL, 'lua_topointer');
+    @lua_close := TMemoryModule.GetProcAddress(DLL, 'lua_close');
+    @lua_type := TMemoryModule.GetProcAddress(DLL, 'lua_type');
+    @lua_iscfunction := TMemoryModule.GetProcAddress(DLL, 'lua_iscfunction');
+    @lua_pushnil := TMemoryModule.GetProcAddress(DLL, 'lua_pushnil');
+    @lua_pushnumber := TMemoryModule.GetProcAddress(DLL, 'lua_pushnumber');
+    @lua_pushinteger := TMemoryModule.GetProcAddress(DLL, 'lua_pushinteger');
+    @lua_pushlstring := TMemoryModule.GetProcAddress(DLL, 'lua_pushlstring');
+    @lua_pushstring := TMemoryModule.GetProcAddress(DLL, 'lua_pushstring');
+    @lua_pushcclosure := TMemoryModule.GetProcAddress(DLL, 'lua_pushcclosure');
+    @lua_pushboolean := TMemoryModule.GetProcAddress(DLL, 'lua_pushboolean');
+    @lua_pushlightuserdata := TMemoryModule.GetProcAddress(DLL, 'lua_pushlightuserdata');
+    @lua_createtable := TMemoryModule.GetProcAddress(DLL, 'lua_createtable');
+    @lua_setfield := TMemoryModule.GetProcAddress(DLL, 'lua_setfield');
+    @lua_getfield := TMemoryModule.GetProcAddress(DLL, 'lua_getfield');
+    @lua_dump := TMemoryModule.GetProcAddress(DLL, 'lua_dump');
+    @lua_rawset := TMemoryModule.GetProcAddress(DLL, 'lua_rawset');
+    @lua_load := TMemoryModule.GetProcAddress(DLL, 'lua_load');
+    @lua_rawgeti := TMemoryModule.GetProcAddress(DLL, 'lua_rawgeti');
+    @lua_rawseti := TMemoryModule.GetProcAddress(DLL, 'lua_rawseti');
+    @luaL_error := TMemoryModule.GetProcAddress(DLL, 'luaL_error');
+    @luaL_newstate := TMemoryModule.GetProcAddress(DLL, 'luaL_newstate');
+    @luaL_openlibs := TMemoryModule.GetProcAddress(DLL, 'luaL_openlibs');
+    @luaL_loadfile := TMemoryModule.GetProcAddress(DLL, 'luaL_loadfile');
+    @luaL_loadstring := TMemoryModule.GetProcAddress(DLL, 'luaL_loadstring');
+    @luaL_loadbuffer := TMemoryModule.GetProcAddress(DLL, 'luaL_loadbuffer');
   end;
-
 end;
 
 procedure UnloadDLL;
