@@ -42,7 +42,10 @@ It's robust, designed for easy, fast & fun use an suitable for making all types 
 ## How to use in Delphi
 - Unzip the archive to a desired location.
 - Add `installdir\source\library` and `installdir\source\utils`to Delphi's library path so the toolkit source files can be found for any project or for a specific project add to projects search path.
-- See examples in the `installdir\examples` for more information about usage. You can load all examples using the project group file located in the `installdir\source` folder.
+- See examples in the `installdir\examples` for more information about usage. You can load all examples using the `Vivace Game Toolkit` project group file located in the `installdir\source` folder.
+- Build `ViArc` utility for making .ARC files (standard zip archives). Running the `makearc.bat` in `installdir\bin` will build `Data.arc` that is used by the examples.
+- Build `ViDump` utiltiy if you need convert a small binary file to Pascal source format that can be included `{$I MyBinaryFile.inc}` in your project.
+- Build `ViExample`that showcase will showcase many of the features and capabilities of the toolkit.
 
 ## Known Issues
 - This project is in active development so changes will be frequent 
@@ -59,7 +62,8 @@ uses
   Vivace.Input,
   Vivace.Font,
   Vivace.Game,
-  Vivace.Engine;
+  Vivace.Engine,
+  Vivace.Common;
   
 const
   cArchiveFilename   = 'Data.arc';

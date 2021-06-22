@@ -62,7 +62,7 @@ procedure UnloadCLibs;
 
 implementation
 
-{$R Vivace.CLibs.res}
+{$R Vivace.External.CLibs.res}
 
 uses
   System.SysUtils,
