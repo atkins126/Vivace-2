@@ -9,7 +9,10 @@
         <Projects Include="Utils\ViDump\ViDump.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Examples\Testbed\Testbed.dproj">
+        <Projects Include="..\Examples\ViExamples.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\..\Sources\Testbed\Testbed.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -38,23 +41,32 @@
     <Target Name="ViDump:Make">
         <MSBuild Projects="Utils\ViDump\ViDump.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ViExamples">
+        <MSBuild Projects="..\Examples\ViExamples.dproj"/>
+    </Target>
+    <Target Name="ViExamples:Clean">
+        <MSBuild Projects="..\Examples\ViExamples.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ViExamples:Make">
+        <MSBuild Projects="..\Examples\ViExamples.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Testbed">
-        <MSBuild Projects="..\Examples\Testbed\Testbed.dproj"/>
+        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj"/>
     </Target>
     <Target Name="Testbed:Clean">
-        <MSBuild Projects="..\Examples\Testbed\Testbed.dproj" Targets="Clean"/>
+        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj" Targets="Clean"/>
     </Target>
     <Target Name="Testbed:Make">
-        <MSBuild Projects="..\Examples\Testbed\Testbed.dproj" Targets="Make"/>
+        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="ViArc;ViDump;Testbed"/>
+        <CallTarget Targets="ViArc;ViDump;ViExamples;Testbed"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ViArc:Clean;ViDump:Clean;Testbed:Clean"/>
+        <CallTarget Targets="ViArc:Clean;ViDump:Clean;ViExamples:Clean;Testbed:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ViArc:Make;ViDump:Make;Testbed:Make"/>
+        <CallTarget Targets="ViArc:Make;ViDump:Make;ViExamples:Make;Testbed:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

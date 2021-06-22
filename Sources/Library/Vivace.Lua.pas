@@ -4,38 +4,52 @@
   \ \ / / \ \ / / _` |/ __/ _ \
    \ V /| |\ V / (_| | (_|  __/
     \_/ |_| \_/ \__,_|\___\___|
-                   game toolkit
+                   Game Toolkit
 
- Copyright © 2020-21 tinyBigGAMES™ LLC
- All rights reserved.
+  Copyright © 2020-21 tinyBigGAMES™ LLC
+  All rights reserved.
 
- website: https://tinybiggames.com
- email  : support@tinybiggames.com
+  Website: https://tinybiggames.com
+  Email  : support@tinybiggames.com
 
- LICENSE: zlib/libpng
-
- Vivace Game Toolkit is licensed under an unmodified zlib/libpng license,
- which is an OSI-certified, BSD-like license that allows static linking
- with closed source software:
-
- This software is provided "as-is", without any express or implied warranty.
- In no event will the authors be held liable for any damages arising from
- the use of this software.
-
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it
- freely, subject to the following restrictions:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software in
      a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
 
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
+  2. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
 
-  3. This notice may not be removed or altered from any source distribution.
+  3. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
 
+  4. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
+
+  5. All video, audio, graphics and other content accessed through the
+     software in this distro is the property of the applicable content owner
+     and may be protected by applicable copyright law. This License gives
+     Customer no rights to such content, and Company disclaims any liability
+     for misuse of content.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
 unit Vivace.Lua;
@@ -185,47 +199,56 @@ type
     FGCStep: Integer;
     procedure Open;
     procedure Close;
-    procedure CheckLuaError(const r: Integer);
-    function PushGlobalTableForSet(aName: array of string; var aIndex: Integer): Boolean;
-    function PushGlobalTableForGet(aName: array of string; var aIndex: Integer): Boolean;
+    procedure CheckLuaError(const aError: Integer);
+    function  PushGlobalTableForSet(aName: array of string; var aIndex: Integer): Boolean;
+    function  PushGlobalTableForGet(aName: array of string; var aIndex: Integer): Boolean;
     procedure PushTValue(aValue: TValue);
-    function CallFunction(const aParams: array of TValue): TValue;
+    function  CallFunction(const aParams: array of TValue): TValue;
     procedure SaveByteCode(aStream: TStream);
     procedure LoadByteCode(aStream: TStream; aName: string; aAutoRun: Boolean = True);
     procedure CompileToStream(aFilename: string; aStream: TStream; aCleanOutput: Boolean);
     procedure Bundle(aInFilename: string; aOutFilename: string);
     procedure PushLuaValue(aValue: TLuaValue);
-    function GetLuaValue(aIndex: Integer): TLuaValue;
-    function DoCall(const aParams: array of TLuaValue): TLuaValue; overload;
-    function DoCall(aParamCount: Integer): TLuaValue; overload;
+    function  GetLuaValue(aIndex: Integer): TLuaValue;
+    function  DoCall(const aParams: array of TLuaValue): TLuaValue; overload;
+    function  DoCall(aParamCount: Integer): TLuaValue; overload;
     procedure CleanStack;
-    property State: Pointer read FState;
-    property Context: TLuaContext read FContext;
+    property  State: Pointer read FState;
+    property  Context: TLuaContext read FContext;
   public
     constructor Create; virtual;
     destructor Destroy; override;
+
     procedure Reset;
+
     procedure LoadStream(aStream: TStream; aSize: NativeUInt = 0; aAutoRun: Boolean = True);
     procedure LoadFile(const aFilename: string; aAutoRun: Boolean = True);
     procedure LoadString(const aData: string; aAutoRun: Boolean = True);
     procedure LoadBuffer(aData: Pointer; aSize: NativeUInt; aAutoRun: Boolean = True);
-    function Call(const aName: string; const aParams: array of TLuaValue): TLuaValue; overload;
-    function PrepCall(const aName: string): Boolean;
-    function Call(aParamCount: Integer): TLuaValue; overload;
-    function RoutineExist(const aName: string): Boolean;
+
+    function  Call(const aName: string; const aParams: array of TLuaValue): TLuaValue; overload;
+    function  PrepCall(const aName: string): Boolean;
+    function  Call(aParamCount: Integer): TLuaValue; overload;
+
     procedure Run;
-    function VariableExist(const aName: string): Boolean;
+
+    function  RoutineExist(const aName: string): Boolean;
+
+    function  VariableExist(const aName: string): Boolean;
     procedure SetVariable(const aName: string; aValue: TLuaValue);
-    function GetVariable(const aName: string; aType: TLuaValueType): TLuaValue;
+    function  GetVariable(const aName: string; aType: TLuaValueType): TLuaValue;
+
     procedure RegisterRoutine(const aName: string; aData: Pointer; aCode: Pointer); overload;
     procedure RegisterRoutine(const aName: string; aRoutine: TLuaFunction); overload;
+
     procedure RegisterRoutines(aClass: TClass); overload;
     procedure RegisterRoutines(aObject: TObject); overload;
     procedure RegisterRoutines(const aTables: string; aClass: TClass; const aTableName: string = ''); overload;
     procedure RegisterRoutines(const aTables: string; aObject: TObject; const aTableName: string = ''); overload;
+
     procedure SetGCStepSize(aStep: Integer);
-    function GetGCStepSize: Integer;
-    function GetGCMemoryUsed: Integer;
+    function  GetGCStepSize: Integer;
+    function  GetGCMemoryUsed: Integer;
     procedure CollectGarbage;
   end;
 
@@ -236,7 +259,8 @@ uses
   System.IOUtils,
   System.TypInfo,
   WinApi.Windows,
-  Vivace.LuaJIT;
+  Vivace.External.LuaJIT,
+  Vivace.Engine;
 
 const
   cLuaExt = 'lua';
@@ -497,38 +521,37 @@ $7B, $2E, $2E, $2E, $7D, $29
 
 function LuaWrapperClosure(aState: Pointer): Integer; cdecl;
 var
-  method: TMethod;
-  closure: TLuaFunction absolute method;
-  lua: TLua;
+  LMethod: TMethod;
+  LClosure: TLuaFunction absolute LMethod;
+  LLua: TLua;
 begin
   // get lua object
-  lua := lua_touserdata(aState, lua_upvalueindex(1));
+  LLua := lua_touserdata(aState, lua_upvalueindex(1));
 
   // get lua class routine
-  method.Code := lua_touserdata(aState, lua_upvalueindex(2));
-  method.Data := lua_touserdata(aState, lua_upvalueindex(3));
+  LMethod.Code := lua_touserdata(aState, lua_upvalueindex(2));
+  LMethod.Data := lua_touserdata(aState, lua_upvalueindex(3));
 
   // init the context
-  lua.Context.Setup;
+  LLua.Context.Setup;
 
   // call class routines
-  closure(lua.Context);
+  LClosure(LLua.Context);
 
   // return result count
-  Result := lua.Context.PushCount;
+  Result := LLua.Context.PushCount;
 
   // clean up stack
-  lua.Context.Cleanup;
+  LLua.Context.Cleanup;
 end;
 
-function LuaWrapperWriter(aState: Pointer; aBuffer: Pointer; aSize: NativeUInt;
-  aData: Pointer): Integer; cdecl;
+function LuaWrapperWriter(aState: Pointer; aBuffer: Pointer; aSize: NativeUInt; aData: Pointer): Integer; cdecl;
 var
-  stream: TStream;
+  LStream: TStream;
 begin
-  stream := TStream(aData);
+  LStream := TStream(aData);
   try
-    stream.WriteBuffer(aBuffer^, aSize);
+    LStream.WriteBuffer(aBuffer^, aSize);
     Result := 0;
   except
     on E: EStreamError do
@@ -586,11 +609,11 @@ end;
 class operator TLuaValue.Implicit(aValue: TLuaValue): PChar;
 const
 {$J+}
-  Value: string = '';
+  LValue: string = '';
 {$J-}
 begin
-  Value := aValue.AsString;
-  Result := PChar(Value);
+  LValue := aValue.AsString;
+  Result := PChar(LValue);
 end;
 
 class operator TLuaValue.Implicit(aValue: TLuaValue): Pointer;
@@ -607,14 +630,14 @@ end;
 { --- Routines -------------------------------------------------------------- }
 function ParseTableNames(aNames: string): TStringArray;
 var
-  Items: TArray<string>;
-  i: Integer;
+  LItems: TArray<string>;
+  LI: Integer;
 begin
-  Items := aNames.Split(['.']);
-  SetLength(Result, Length(Items));
-  for i := 0 to High(Items) do
+  LItems := aNames.Split(['.']);
+  SetLength(Result, Length(LItems));
+  for LI := 0 to High(LItems) do
   begin
-    Result[i] := Items[i];
+    Result[LI] := LItems[LI];
   end;
 end;
 
@@ -647,11 +670,10 @@ begin
   end;
 end;
 
-function TLuaContext.PushTableForSet(aName: array of string; aIndex: Integer;
-  var aStackIndex: Integer; var aFieldNameIndex: Integer): Boolean;
+function TLuaContext.PushTableForSet(aName: array of string; aIndex: Integer; var aStackIndex: Integer; var aFieldNameIndex: Integer): Boolean;
 var
-  Marshall: TMarshaller;
-  i: Integer;
+  LMarshall: TMarshaller;
+  LI: Integer;
 begin
   Result := False;
 
@@ -671,10 +693,10 @@ begin
     Exit;
 
   // process sub tables
-  for i := 0 to aStackIndex - 1 do
+  for LI := 0 to aStackIndex - 1 do
   begin
     // check if table at field aIndex[i] exits
-    lua_getfield(FLua.State, i + aIndex, Marshall.AsAnsi(aName[i]).ToPointer);
+    lua_getfield(FLua.State, LI + aIndex, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
     // table field does not exists, create a new one
     if lua_type(FLua.State, -1) <> LUA_TTABLE then
@@ -686,21 +708,20 @@ begin
       lua_newtable(FLua.State);
 
       // set new table a field
-      lua_setfield(FLua.State, i + aIndex, Marshall.AsAnsi(aName[i]).ToPointer);
+      lua_setfield(FLua.State, LI + aIndex, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
       // push field table back on stack
-      lua_getfield(FLua.State, i + aIndex, Marshall.AsAnsi(aName[i]).ToPointer);
+      lua_getfield(FLua.State, LI + aIndex, LMarshall.AsAnsi(aName[LI]).ToPointer);
     end;
   end;
 
   Result := True;
 end;
 
-function TLuaContext.PushTableForGet(aName: array of string; aIndex: Integer;
-  var aStackIndex: Integer; var aFieldNameIndex: Integer): Boolean;
+function TLuaContext.PushTableForGet(aName: array of string; aIndex: Integer; var aStackIndex: Integer; var aFieldNameIndex: Integer): Boolean;
 var
-  Marshall: TMarshaller;
-  i: Integer;
+  LMarshall: TMarshaller;
+  LI: Integer;
 begin
   Result := False;
 
@@ -720,10 +741,10 @@ begin
     Exit;
 
   // process sub tables
-  for i := 0 to aStackIndex - 2 do
+  for LI := 0 to aStackIndex - 2 do
   begin
     // check if table at field aIndex[i] exits
-    lua_getfield(FLua.State, i + aIndex, Marshall.AsAnsi(aName[i]).ToPointer);
+    lua_getfield(FLua.State, LI + aIndex, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
     // table field does not exists, create a new one
     if lua_type(FLua.State, -1) <> LUA_TTABLE then
@@ -778,7 +799,7 @@ end;
 function TLuaContext.GetValue(aType: TLuaValueType; aIndex: Integer): TLuaValue;
 const
 {$J+}
-  Str: string = '';
+  LStr: string = '';
 {$J-}
 begin
   case aType of
@@ -792,8 +813,8 @@ begin
       end;
     vtString:
       begin
-        Str := lua_tostring(FLua.State, aIndex);
-        Result := PChar(Str);
+        LStr := lua_tostring(FLua.State, aIndex);
+        Result := PChar(LStr);
       end;
     vtPointer:
       begin
@@ -852,19 +873,18 @@ begin
   IncStackPushCount;
 end;
 
-procedure TLuaContext.SetTableFieldValue(const aName: string; aValue: TLuaValue;
-  aIndex: Integer);
+procedure TLuaContext.SetTableFieldValue(const aName: string; aValue: TLuaValue; aIndex: Integer);
 var
-  Marshall: TMarshaller;
-  StackIndex: Integer;
-  FieldNameIndex: Integer;
-  Items: TStringArray;
-  ok: Boolean;
+  LMarshall: TMarshaller;
+  LStackIndex: Integer;
+  LFieldNameIndex: Integer;
+  LItems: TStringArray;
+  LOk: Boolean;
 begin
-  Items := ParseTableNames(aName);
-  if not PushTableForSet(Items, aIndex, StackIndex, FieldNameIndex) then
+  LItems := ParseTableNames(aName);
+  if not PushTableForSet(LItems, aIndex, LStackIndex, LFieldNameIndex) then
     Exit;
-  ok := True;
+  LOk := True;
 
   case aValue.AsType of
     vtInteger:
@@ -879,7 +899,7 @@ begin
       begin
         var
           Value: string := aValue.AsString;
-        lua_pushstring(FLua.State, Marshall.AsAnsi(Value).ToPointer);
+        lua_pushstring(FLua.State, LMarshall.AsAnsi(Value).ToPointer);
       end;
     vtPointer:
       begin
@@ -893,36 +913,35 @@ begin
       end;
   else
     begin
-      ok := False;
+      LOk := False;
     end;
   end;
 
-  if ok then
+  if LOk then
   begin
-    lua_setfield(FLua.State, StackIndex + (aIndex - 1),
-      Marshall.AsAnsi(Items[FieldNameIndex]).ToPointer);
+    lua_setfield(FLua.State, LStackIndex + (aIndex - 1),
+      LMarshall.AsAnsi(LItems[LFieldNameIndex]).ToPointer);
   end;
 
-  PopStack(StackIndex);
+  PopStack(LStackIndex);
 end;
 
-function TLuaContext.GetTableFieldValue(const aName: string; aType: TLuaValueType;
-  aIndex: Integer): TLuaValue;
+function TLuaContext.GetTableFieldValue(const aName: string; aType: TLuaValueType; aIndex: Integer): TLuaValue;
 const
 {$J+}
-  Str: string = '';
+  LStr: string = '';
 {$J-}
 var
-  Marshall: TMarshaller;
-  StackIndex: Integer;
-  FieldNameIndex: Integer;
-  Items: TStringArray;
+  LMarshall: TMarshaller;
+  LStackIndex: Integer;
+  LFieldNameIndex: Integer;
+  LItems: TStringArray;
 begin
-  Items := ParseTableNames(aName);
-  if not PushTableForGet(Items, aIndex, StackIndex, FieldNameIndex) then
+  LItems := ParseTableNames(aName);
+  if not PushTableForGet(LItems, aIndex, LStackIndex, LFieldNameIndex) then
     Exit;
-  lua_getfield(FLua.State, StackIndex + (aIndex - 1),
-    Marshall.AsAnsi(Items[FieldNameIndex]).ToPointer);
+  lua_getfield(FLua.State, LStackIndex + (aIndex - 1),
+    LMarshall.AsAnsi(LItems[LFieldNameIndex]).ToPointer);
 
   case aType of
     vtInteger:
@@ -935,8 +954,8 @@ begin
       end;
     vtString:
       begin
-        Str := lua_tostring(FLua.State, -1);
-        Result := PChar(Str);
+        LStr := lua_tostring(FLua.State, -1);
+        Result := PChar(LStr);
       end;
     vtPointer:
       begin
@@ -950,20 +969,20 @@ begin
       end;
   end;
 
-  PopStack(StackIndex);
+  PopStack(LStackIndex);
 end;
 
 procedure TLuaContext.SetTableIndexValue(const aName: string; aValue: TLuaValue; aIndex: Integer; aKey: Integer);
 var
-  Marshall: TMarshaller;
-  StackIndex: Integer;
-  FieldNameIndex: Integer;
-  Items: TStringArray;
-  ok: Boolean;
+  LMarshall: TMarshaller;
+  LStackIndex: Integer;
+  LFieldNameIndex: Integer;
+  LItems: TStringArray;
+  LOk: Boolean;
 
   procedure LPushValue;
   begin
-    ok := True;
+    LOk := True;
 
     case aValue.AsType of
       vtInteger:
@@ -978,7 +997,7 @@ var
         begin
           var
             Value: string := aValue.AsString;
-          lua_pushstring(FLua.State, Marshall.AsAnsi(Value).ToPointer);
+          lua_pushstring(FLua.State, LMarshall.AsAnsi(Value).ToPointer);
         end;
       vtPointer:
         begin
@@ -992,7 +1011,7 @@ var
         end;
     else
       begin
-        ok := False;
+        LOk := False;
       end;
     end;
 
@@ -1000,50 +1019,50 @@ var
 
 begin
 
-  Items := ParseTableNames(aName);
-  if Length(Items) > 0 then
+  LItems := ParseTableNames(aName);
+  if Length(LItems) > 0 then
     begin
-      if not PushTableForGet(Items, aIndex, StackIndex, FieldNameIndex) then
+      if not PushTableForGet(LItems, aIndex, LStackIndex, LFieldNameIndex) then
         Exit;
       LPushValue;
-      if ok then
-        lua_rawseti (FLua.State, StackIndex + (aIndex - 1), aKey);
+      if LOk then
+        lua_rawseti (FLua.State, LStackIndex + (aIndex - 1), aKey);
     end
   else
     begin
       LPushValue;
-      if ok then
+      if LOk then
       begin
         lua_rawseti (FLua.State, aIndex, aKey);
       end;
-      StackIndex := 0;
+      LStackIndex := 0;
     end;
 
-    PopStack(StackIndex);
+    PopStack(LStackIndex);
 end;
 
 function TLuaContext.GetTableIndexValue(const aName: string; aType: TLuaValueType; aIndex: Integer; aKey: Integer): TLuaValue;
 const
 {$J+}
-  Str: string = '';
+  LStr: string = '';
 {$J-}
 var
   //Marshall: TMarshaller;
-  StackIndex: Integer;
-  FieldNameIndex: Integer;
-  Items: TStringArray;
+  LStackIndex: Integer;
+  LFieldNameIndex: Integer;
+  LItems: TStringArray;
 begin
-  Items := ParseTableNames(aName);
-  if Length(Items) > 0 then
+  LItems := ParseTableNames(aName);
+  if Length(LItems) > 0 then
     begin
-      if not PushTableForGet(Items, aIndex, StackIndex, FieldNameIndex) then
+      if not PushTableForGet(LItems, aIndex, LStackIndex, LFieldNameIndex) then
         Exit;
-      lua_rawgeti (FLua.State, StackIndex + (aIndex - 1), aKey);
+      lua_rawgeti (FLua.State, LStackIndex + (aIndex - 1), aKey);
     end
   else
     begin
       lua_rawgeti (FLua.State, aIndex, aKey);
-      StackIndex := 0;
+      LStackIndex := 0;
     end;
 
   case aType of
@@ -1057,8 +1076,8 @@ begin
       end;
     vtString:
       begin
-        Str := lua_tostring(FLua.State, -1);
-        Result := PChar(Str);
+        LStr := lua_tostring(FLua.State, -1);
+        Result := PChar(LStr);
       end;
     vtPointer:
       begin
@@ -1072,7 +1091,7 @@ begin
       end;
   end;
 
-  PopStack(StackIndex);
+  PopStack(LStackIndex);
 end;
 
 
@@ -1099,11 +1118,11 @@ begin
   FState := nil;
 end;
 
-procedure TLua.CheckLuaError(const r: Integer);
+procedure TLua.CheckLuaError(const aError: Integer);
 var
-  err: string;
+  LErr: string;
 begin
-  case r of
+  case aError of
     // success
     0:
       begin
@@ -1112,45 +1131,44 @@ begin
     // a runtime error.
     LUA_ERRRUN:
       begin
-        err := lua_tostring(FState, -1);
+        LErr := lua_tostring(FState, -1);
         lua_pop(FState, 1);
-        raise ELuaRuntimeException.CreateFmt('Runtime error [%s]', [err]);
+        raise ELuaRuntimeException.CreateFmt('Runtime error [%s]', [LErr]);
       end;
     // memory allocation error. For such errors, Lua does not call the error handler function.
     LUA_ERRMEM:
       begin
-        err := lua_tostring(FState, -1);
+        LErr := lua_tostring(FState, -1);
         lua_pop(FState, 1);
-        raise ELuaException.CreateFmt('Memory allocation error [%s]', [err]);
+        raise ELuaException.CreateFmt('Memory allocation error [%s]', [LErr]);
       end;
     // error while running the error handler function.
     LUA_ERRERR:
       begin
-        err := lua_tostring(FState, -1);
+        LErr := lua_tostring(FState, -1);
         lua_pop(FState, 1);
         raise ELuaException.CreateFmt
-          ('Error while running the error handler function [%s]', [err]);
+          ('Error while running the error handler function [%s]', [LErr]);
       end;
     LUA_ERRSYNTAX:
       begin
-        err := lua_tostring(FState, -1);
+        LErr := lua_tostring(FState, -1);
         lua_pop(FState, 1);
-        raise ELuaSyntaxError.CreateFmt('Syntax Error [%s]', [err]);
+        raise ELuaSyntaxError.CreateFmt('Syntax Error [%s]', [LErr]);
       end
   else
     begin
-      err := lua_tostring(FState, -1);
+      LErr := lua_tostring(FState, -1);
       lua_pop(FState, 1);
-      raise ELuaException.CreateFmt('Unknown Error [%s]', [err]);
+      raise ELuaException.CreateFmt('Unknown Error [%s]', [LErr]);
     end;
   end;
 end;
 
-function TLua.PushGlobalTableForSet(aName: array of string;
-  var aIndex: Integer): Boolean;
+function TLua.PushGlobalTableForSet(aName: array of string; var aIndex: Integer): Boolean;
 var
-  Marshall: TMarshaller;
-  i: Integer;
+  LMarshall: TMarshaller;
+  LI: Integer;
 begin
   Result := False;
 
@@ -1160,7 +1178,7 @@ begin
   aIndex := Length(aName) - 1;
 
   // check if global table exists
-  lua_getglobal(FState, Marshall.AsAnsi(aName[0]).ToPointer);
+  lua_getglobal(FState, LMarshall.AsAnsi(aName[0]).ToPointer);
 
   // table does not exist, create new one
   if lua_type(FState, lua_gettop(FState)) <> LUA_TTABLE then
@@ -1172,18 +1190,18 @@ begin
     lua_newtable(FState);
 
     // make it global
-    lua_setglobal(FState, Marshall.AsAnsi(aName[0]).ToPointer);
+    lua_setglobal(FState, LMarshall.AsAnsi(aName[0]).ToPointer);
 
     // push global table back on stack
-    lua_getglobal(FState, Marshall.AsAnsi(aName[0]).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(aName[0]).ToPointer);
   end;
 
   // process tables in global table at index 1+
   // global table on stack, process remaining tables
-  for i := 1 to aIndex - 1 do
+  for LI := 1 to aIndex - 1 do
   begin
     // check if table at field aIndex[i] exits
-    lua_getfield(FState, i, Marshall.AsAnsi(aName[i]).ToPointer);
+    lua_getfield(FState, LI, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
     // table field does not exists, create a new one
     if lua_type(FState, -1) <> LUA_TTABLE then
@@ -1195,21 +1213,20 @@ begin
       lua_newtable(FState);
 
       // set new table a field
-      lua_setfield(FState, i, Marshall.AsAnsi(aName[i]).ToPointer);
+      lua_setfield(FState, LI, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
       // push field table back on stack
-      lua_getfield(FState, i, Marshall.AsAnsi(aName[i]).ToPointer);
+      lua_getfield(FState, LI, LMarshall.AsAnsi(aName[LI]).ToPointer);
     end;
   end;
 
   Result := True;
 end;
 
-function TLua.PushGlobalTableForGet(aName: array of string;
-  var aIndex: Integer): Boolean;
+function TLua.PushGlobalTableForGet(aName: array of string; var aIndex: Integer): Boolean;
 var
-  Marshall: TMarshaller;
-  i: Integer;
+  LMarshall: TMarshaller;
+  LI: Integer;
 begin
   // assume false
   Result := False;
@@ -1222,17 +1239,17 @@ begin
   aIndex := Length(aName) - 1;
 
   // lookup global table
-  lua_getglobal(FState, Marshall.AsAnsi(aName[0]).ToPointer);
+  lua_getglobal(FState, LMarshall.AsAnsi(aName[0]).ToPointer);
 
   // check of global table exits
   if lua_type(FState, lua_gettop(FState)) = LUA_TTABLE then
   begin
     // process tables in global table at index 1+
     // global table on stack, process remaining tables
-    for i := 1 to aIndex - 1 do
+    for LI := 1 to aIndex - 1 do
     begin
       // get table at field aIndex[i]
-      lua_getfield(FState, i, Marshall.AsAnsi(aName[i]).ToPointer);
+      lua_getfield(FState, LI, LMarshall.AsAnsi(aName[LI]).ToPointer);
 
       // table field does not exists, exit
       if lua_type(FState, -1) <> LUA_TTABLE then
@@ -1249,7 +1266,7 @@ end;
 
 procedure TLua.PushTValue(aValue: TValue);
 var
-  utf8s: RawByteString;
+  LUtf8s: RawByteString;
 begin
   case aValue.Kind of
     tkUnknown, tkChar, tkSet, tkMethod, tkVariant, tkArray, tkProcedure,
@@ -1275,8 +1292,8 @@ begin
       lua_pushnumber(FState, aValue.AsExtended);
     tkString, tkWChar, tkLString, tkWString, tkUString:
       begin
-        utf8s := UTF8Encode(aValue.AsString);
-        lua_pushstring(FState, PAnsiChar(utf8s));
+        LUtf8s := UTF8Encode(aValue.AsString);
+        lua_pushstring(FState, PAnsiChar(LUtf8s));
       end;
     tkClass:
       { lua_pushlightuserdata(FState, Pointer(Value.AsObject)) };
@@ -1289,13 +1306,13 @@ end;
 
 function TLua.CallFunction(const aParams: array of TValue): TValue;
 var
-  p: TValue;
-  r: Integer;
+  LP: TValue;
+  LR: Integer;
 begin
-  for p in aParams do
-    PushTValue(p);
-  r := lua_pcall(FState, Length(aParams), 1, 0);
-  CheckLuaError(r);
+  for LP in aParams do
+    PushTValue(LP);
+  LR := lua_pcall(FState, Length(aParams), 1, 0);
+  CheckLuaError(LR);
   lua_pop(FState, 1);
   case lua_type(FState, -1) of
     LUA_TNIL:
@@ -1348,124 +1365,121 @@ procedure TLua.Reset;
 begin
   Close;
   Open;
-  //gEngine.OnLuaReset;
+  gEngine.OnLuaReset;
 end;
 
 procedure TLua.LoadFile(const aFilename: string; aAutoRun: Boolean);
 var
-  Marshall: TMarshaller;
-  err: string;
-  Res: Integer;
-  fname: string;
-  filename: string;
+  LMarshall: TMarshaller;
+  LErr: string;
+  LRes: Integer;
+  LFilename: string;
 begin
-  filename := aFilename;
-  if filename.IsEmpty then
+  if aFilename.IsEmpty then
     Exit;
 
-  fname := TPath.ChangeExtension(filename, cLuaExt);
+  LFilename := TPath.ChangeExtension(aFilename, cLuaExt);
 
-  if not TFile.Exists(fname) then
+  if not TFile.Exists(LFilename) then
   begin
-    fname := TPath.ChangeExtension(filename, cLuacExt);
-    if not TFile.Exists(fname) then
+    LFilename := TPath.ChangeExtension(LFilename, cLuacExt);
+    if not TFile.Exists(LFilename) then Exit;
   end;
 
   if aAutoRun then
-    Res := luaL_dofile(FState, Marshall.AsAnsi(fname).ToPointer)
+    LRes := luaL_dofile(FState, LMarshall.AsAnsi(LFilename).ToPointer)
   else
-    Res := luaL_loadfile(FState, Marshall.AsAnsi(fname).ToPointer);
+    LRes := luaL_loadfile(FState, LMarshall.AsAnsi(LFilename).ToPointer);
 
-  if Res <> 0 then
+  if LRes <> 0 then
   begin
-    err := lua_tostring(FState, -1);
+    LErr := lua_tostring(FState, -1);
     lua_pop(FState, 1);
-    raise ELuaException.Create(err);
+    raise ELuaException.Create(LErr);
   end;
 end;
 
 procedure TLua.LoadString(const aData: string; aAutoRun: Boolean);
 var
-  Marshall: TMarshaller;
-  err: string;
-  Res: Integer;
-  Data: string;
+  LMarshall: TMarshaller;
+  LErr: string;
+  LRes: Integer;
+  LData: string;
 begin
-  Data := aData;
-  if Data.IsEmpty then
+  LData := aData;
+  if LData.IsEmpty then
     Exit;
 
   if aAutoRun then
-    Res := luaL_dostring(FState, Marshall.AsAnsi(Data).ToPointer)
+    LRes := luaL_dostring(FState, LMarshall.AsAnsi(LData).ToPointer)
   else
-    Res := luaL_loadstring(FState, Marshall.AsAnsi(Data).ToPointer);
+    LRes := luaL_loadstring(FState, LMarshall.AsAnsi(LData).ToPointer);
 
-  if Res <> 0 then
+  if LRes <> 0 then
   begin
-    err := lua_tostring(FState, -1);
+    LErr := lua_tostring(FState, -1);
     lua_pop(FState, 1);
-    raise ELuaException.Create(err);
+    raise ELuaException.Create(LErr);
   end;
 end;
 
-procedure TLua.LoadStream(aStream: TStream; aSize: NativeUInt;
-  aAutoRun: Boolean);
+procedure TLua.LoadStream(aStream: TStream; aSize: NativeUInt; aAutoRun: Boolean);
 var
-  ms: TMemoryStream;
-  size: NativeUInt;
+  LMemStream: TMemoryStream;
+  LSize: NativeUInt;
 begin
-  ms := TMemoryStream.Create;
+  LMemStream := TMemoryStream.Create;
   try
     if aSize = 0 then
-      size := aStream.size
+      LSize := aStream.Size
     else
-      size := aSize;
-    ms.Position := 0;
-    ms.CopyFrom(aStream, size);
-    LoadBuffer(ms.Memory, ms.size, aAutoRun);
+      LSize := aSize;
+    LMemStream.Position := 0;
+    LMemStream.CopyFrom(aStream, LSize);
+    LoadBuffer(LMemStream.Memory, LMemStream.size, aAutoRun);
   finally
-    FreeAndNil(ms);
+    FreeAndNil(LMemStream);
   end;
 end;
 
 procedure TLua.LoadBuffer(aData: Pointer; aSize: NativeUInt; aAutoRun: Boolean);
 var
-  ms: TMemoryStream;
-  Res: Integer;
-  Err: string;
+  LMemStream: TMemoryStream;
+  LRes: Integer;
+  LErr: string;
 begin
-  ms := TMemoryStream.Create;
+  LMemStream := TMemoryStream.Create;
   try
-    ms.Write(aData^, aSize);
-    ms.Position := 0;
+    LMemStream.Write(aData^, aSize);
+    LMemStream.Position := 0;
     if aAutoRun then
-      Res := luaL_dobuffer(FState, ms.Memory, ms.size, 'LoadBuffer')
+      LRes := luaL_dobuffer(FState, LMemStream.Memory, LMemStream.size, 'LoadBuffer')
     else
-      Res := luaL_loadbuffer(FState, ms.Memory, ms.size, 'LoadBuffer');
+      LRes := luaL_loadbuffer(FState, LMemStream.Memory, LMemStream.size, 'LoadBuffer');
   finally
-    FreeAndNil(ms);
+    FreeAndNil(LMemStream);
   end;
 
-  if Res <> 0 then
+  if LRes <> 0 then
   begin
-    err := lua_tostring(FState, -1);
+    LErr := lua_tostring(FState, -1);
     lua_pop(FState, 1);
-    raise ELuaException.Create(err);
+    raise ELuaException.Create(LErr);
   end;
 
 end;
 
 procedure TLua.SaveByteCode(aStream: TStream);
 var
-  ret: Integer;
+  LRet: Integer;
 begin
   if lua_type(FState, lua_gettop(FState)) <> LUA_TFUNCTION then
     Exit;
 
   try
-    ret := lua_dump(FState, LuaWrapperWriter, aStream);
-    if ret <> 0 then
-      raise ELuaException.CreateFmt('lua_dump returned code %d', [ret]);
+    LRet := lua_dump(FState, LuaWrapperWriter, aStream);
+    if LRet <> 0 then
+      raise ELuaException.CreateFmt('lua_dump returned code %d', [LRet]);
   finally
     lua_pop(FState, 1);
   end;
@@ -1473,38 +1487,38 @@ end;
 
 procedure TLua.LoadByteCode(aStream: TStream; aName: string; aAutoRun: Boolean);
 var
-  Res: Integer;
-  err: string;
-  ms: TMemoryStream;
-  Marshall: TMarshaller;
+  LRes: Integer;
+  LErr: string;
+  LMemStream: TMemoryStream;
+  LMarshall: TMarshaller;
 begin
   if aStream = nil then
     Exit;
   if aStream.size <= 0 then
     Exit;
 
-  ms := TMemoryStream.Create;
+  LMemStream := TMemoryStream.Create;
 
   try
-    ms.CopyFrom(aStream, aStream.size);
+    LMemStream.CopyFrom(aStream, aStream.size);
 
     if aAutoRun then
     begin
-      Res := luaL_dobuffer(FState, ms.Memory, ms.size,
-        Marshall.AsAnsi(aName).ToPointer)
+      LRes := luaL_dobuffer(FState, LMemStream.Memory, LMemStream.size,
+        LMarshall.AsAnsi(aName).ToPointer)
     end
     else
-      Res := luaL_loadbuffer(FState, ms.Memory, ms.size,
-        Marshall.AsAnsi(aName).ToPointer);
+      LRes := luaL_loadbuffer(FState, LMemStream.Memory, LMemStream.size,
+        LMarshall.AsAnsi(aName).ToPointer);
   finally
-    ms.Free;
+    LMemStream.Free;
   end;
 
-  if Res <> 0 then
+  if LRes <> 0 then
   begin
-    err := lua_tostring(FState, -1);
+    LErr := lua_tostring(FState, -1);
     lua_pop(FState, 1);
-    raise ELuaException.Create(err);
+    raise ELuaException.Create(LErr);
   end;
 
 end;
@@ -1549,7 +1563,7 @@ end;
 function TLua.GetLuaValue(aIndex: Integer): TLuaValue;
 const
 {$J+}
-  Str: string = '';
+  LStr: string = '';
 {$J-}
 begin
   case lua_type(FState, aIndex) of
@@ -1570,8 +1584,8 @@ begin
 
     LUA_TSTRING:
       begin
-        Str := lua_tostring(FState, aIndex);
-        Result := PChar(Str);
+        LStr := lua_tostring(FState, aIndex);
+        Result := PChar(LStr);
       end;
   else
     begin
@@ -1582,26 +1596,26 @@ end;
 
 function TLua.DoCall(const aParams: array of TLuaValue): TLuaValue;
 var
-  Value: TLuaValue;
-  Res: Integer;
+  LValue: TLuaValue;
+  LRes: Integer;
 begin
-  for Value in aParams do
+  for LValue in aParams do
   begin
-    PushLuaValue(Value);
+    PushLuaValue(LValue);
   end;
 
-  Res := lua_pcall(FState, Length(aParams), 1, 0);
-  CheckLuaError(Res);
+  LRes := lua_pcall(FState, Length(aParams), 1, 0);
+  CheckLuaError(LRes);
   Result := GetLuaValue(-1);
   //CleanStack;
 end;
 
 function TLua.DoCall(aParamCount: Integer): TLuaValue;
 var
-  Res: Integer;
+  LRes: Integer;
 begin
-  Res := lua_pcall(FState, aParamCount, 1, 0);
-  CheckLuaError(Res);
+  LRes := lua_pcall(FState, aParamCount, 1, 0);
+  CheckLuaError(LRes);
   Result := GetLuaValue(-1);
   CleanStack;
 end;
@@ -1613,9 +1627,9 @@ end;
 
 function TLua.Call(const aName: string; const aParams: array of TLuaValue): TLuaValue;
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
 begin
 
   //if aName.IsEmpty then
@@ -1624,22 +1638,21 @@ begin
 
   CleanStack;
 
-  Items := ParseTableNames(aName);
+  LItems := ParseTableNames(aName);
 
-  if Length(Items) > 1 then
+  if Length(LItems) > 1 then
   begin
-    if not PushGlobalTableForGet(Items, Index) then
+    if not PushGlobalTableForGet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
 
-    lua_getfield(FState,  Index,
-      Marshall.AsAnsi(Items[Index]).ToPointer);
+    lua_getfield(FState,  LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer);
   end
   else
   begin
-    lua_getglobal(FState, Marshall.AsAnsi(Items[0]).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(LItems[0]).ToPointer);
   end;
 
   if not lua_isnil(FState, lua_gettop(FState)) then
@@ -1654,9 +1667,9 @@ end;
 
 function TLua.PrepCall(const aName: string): Boolean;
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
 begin
 
   Result := False;
@@ -1667,22 +1680,21 @@ begin
 
   CleanStack;
 
-  Items := ParseTableNames(aName);
+  LItems := ParseTableNames(aName);
 
-  if Length(Items) > 1 then
+  if Length(LItems) > 1 then
   begin
-    if not PushGlobalTableForGet(Items, Index) then
+    if not PushGlobalTableForGet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
 
-    lua_getfield(FState,  Index,
-      Marshall.AsAnsi(Items[Index]).ToPointer);
+    lua_getfield(FState,  LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer);
   end
   else
   begin
-    lua_getglobal(FState, Marshall.AsAnsi(Items[0]).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(LItems[0]).ToPointer);
   end;
   Result := True;
 end;
@@ -1700,34 +1712,34 @@ end;
 
 function TLua.RoutineExist(const aName: string): Boolean;
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
-  Count: Integer;
-  Name: string;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
+  LCount: Integer;
+  LName: string;
 begin
   Result := False;
 
-  Name := aName;
-  if Name.IsEmpty then
+  LName := aName;
+  if LName.IsEmpty then
     Exit;
 
-  Items := ParseTableNames(Name);
+  LItems := ParseTableNames(LName);
 
-  Count := Length(Items);
+  LCount := Length(LItems);
 
-  if Count > 1 then
+  if LCount > 1 then
   begin
-    if not PushGlobalTableForGet(Items, Index) then
+    if not PushGlobalTableForGet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
-    lua_getfield(FState, Index, Marshall.AsAnsi(Items[Index]).ToPointer);
+    lua_getfield(FState, LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer);
   end
   else
   begin
-    lua_getglobal(FState, Marshall.AsAnsi(Name).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(LName).ToPointer);
   end;
 
   if not lua_isnil(FState, lua_gettop(FState)) then
@@ -1743,52 +1755,52 @@ end;
 
 procedure TLua.Run;
 var
-  err: string;
-  Res: Integer;
+  LErr: string;
+  LRes: Integer;
 begin
-  Res := LUA_OK;
+  LRes := LUA_OK;
 
   if lua_type(FState, lua_gettop(FState)) = LUA_TFUNCTION then
   begin
-    Res := lua_pcall(FState, 0, LUA_MULTRET, 0);
+    LRes := lua_pcall(FState, 0, LUA_MULTRET, 0);
   end;
 
-  if Res <> 0 then
+  if LRes <> 0 then
   begin
-    err := lua_tostring(FState, -1);
+    LErr := lua_tostring(FState, -1);
     lua_pop(FState, 1);
-    raise ELuaException.Create(err);
+    raise ELuaException.Create(LErr);
   end;
 end;
 
 function TLua.VariableExist(const aName: string): Boolean;
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
-  Count: Integer;
-  Name: string;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
+  LCount: Integer;
+  LName: string;
 begin
   Result := False;
-  Name := aName;
-  if Name.IsEmpty then
+  LName := aName;
+  if LName.IsEmpty then
     Exit;
 
-  Items := ParseTableNames(Name);
-  Count := Length(Items);
+  LItems := ParseTableNames(LName);
+  LCount := Length(LItems);
 
-  if Count > 1 then
+  if LCount > 1 then
   begin
-    if not PushGlobalTableForGet(Items, Index) then
+    if not PushGlobalTableForGet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
-    lua_getfield(FState, Index, Marshall.AsAnsi(Items[Index]).ToPointer);
+    lua_getfield(FState, LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer);
   end
-  else if Count = 1 then
+  else if LCount = 1 then
   begin
-    lua_getglobal(FState, Marshall.AsAnsi(Name).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(LName).ToPointer);
   end
   else
   begin
@@ -1806,35 +1818,35 @@ end;
 function TLua.GetVariable(const aName: string; aType: TLuaValueType): TLuaValue;
 const
 {$J+}
-  Str: string = '';
+  LStr: string = '';
 {$J-}
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
-  Count: Integer;
-  Name: string;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
+  LCount: Integer;
+  LName: string;
 begin
   Result := nil;
-  Name := aName;
-  if Name.IsEmpty then
+  LName := aName;
+  if LName.IsEmpty then
     Exit;
 
-  Items := ParseTableNames(Name);
-  Count := Length(Items);
+  LItems := ParseTableNames(LName);
+  LCount := Length(LItems);
 
-  if Count > 1 then
+  if LCount > 1 then
   begin
-    if not PushGlobalTableForGet(Items, Index) then
+    if not PushGlobalTableForGet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
-    lua_getfield(FState, Index, Marshall.AsAnsi(Items[Index]).ToPointer);
+    lua_getfield(FState, LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer);
   end
-  else if Count = 1 then
+  else if LCount = 1 then
   begin
-    lua_getglobal(FState, Marshall.AsAnsi(Name).ToPointer);
+    lua_getglobal(FState, LMarshall.AsAnsi(LName).ToPointer);
   end
   else
   begin
@@ -1852,8 +1864,8 @@ begin
       end;
     vtString:
       begin
-        Str := lua_tostring(FState, -1);
-        Result := PChar(Str);
+        LStr := lua_tostring(FState, -1);
+        Result := PChar(LStr);
       end;
     vtPointer:
       begin
@@ -1872,34 +1884,34 @@ end;
 
 procedure TLua.SetVariable(const aName: string; aValue: TLuaValue);
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Items: TStringArray;
-  ok: Boolean;
-  Count: Integer;
-  Name: string;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LItems: TStringArray;
+  LOk: Boolean;
+  LCount: Integer;
+  LName: string;
 begin
-  Name := aName;
-  if Name.IsEmpty then
+  LName := aName;
+  if LName.IsEmpty then
     Exit;
 
-  Items := ParseTableNames(aName);
-  Count := Length(Items);
+  LItems := ParseTableNames(aName);
+  LCount := Length(LItems);
 
-  if Count > 1 then
+  if LCount > 1 then
   begin
-    if not PushGlobalTableForSet(Items, Index) then
+    if not PushGlobalTableForSet(LItems, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
   end
-  else if Count < 1 then
+  else if LCount < 1 then
   begin
     Exit;
   end;
 
-  ok := True;
+  LOk := True;
 
   case aValue.AsType of
     vtInteger:
@@ -1913,8 +1925,8 @@ begin
     vtString:
       begin
         var
-          s: string := aValue;
-        lua_pushstring(FState, Marshall.AsAnsi(s).ToPointer);
+          LS: string := aValue;
+        lua_pushstring(FState, LMarshall.AsAnsi(LS).ToPointer);
       end;
     vtPointer:
       begin
@@ -1923,24 +1935,24 @@ begin
     vtBoolean:
       begin
         var
-          Bool: LongBool := aValue.AsBoolean;
-        lua_pushboolean(FState, Bool);
+          LBool: LongBool := aValue.AsBoolean;
+        lua_pushboolean(FState, LBool);
       end;
   else
     begin
-      ok := False;
+      LOk := False;
     end;
   end;
 
-  if ok then
+  if LOk then
   begin
-    if Count > 1 then
+    if LCount > 1 then
     begin
-      lua_setfield(FState, Index, Marshall.AsAnsi(Items[Index]).ToPointer)
+      lua_setfield(FState, LIndex, LMarshall.AsAnsi(LItems[LIndex]).ToPointer)
     end
     else
     begin
-      lua_setglobal(FState, Marshall.AsAnsi(Name).ToPointer);
+      lua_setglobal(FState, LMarshall.AsAnsi(LName).ToPointer);
     end;
   end;
 
@@ -1949,100 +1961,100 @@ end;
 
 procedure TLua.RegisterRoutine(const aName: string; aRoutine: TLuaFunction);
 var
-  method: TMethod;
-  Marshall: TMarshaller;
-  Index: Integer;
-  Names: array of string;
-  i: Integer;
-  Items: TStringArray;
-  Count: Integer;
+  LMethod: TMethod;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LNames: array of string;
+  LI: Integer;
+  LItems: TStringArray;
+  LCount: Integer;
 begin
   //if aName.IsEmpty then
   if aName = '' then
     Exit;
 
-  // parse table names in table.table.xxx format
-  Items := ParseTableNames(aName);
+  // parse table LNames in table.table.xxx format
+  LItems := ParseTableNames(aName);
 
-  Count := Length(Items);
+  LCount := Length(LItems);
 
-  SetLength(Names, Length(Items));
+  SetLength(LNames, Length(LItems));
 
-  for i := 0 to High(Items) do
+  for LI := 0 to High(LItems) do
   begin
-    Names[i] := Items[i];
+    LNames[LI] := LItems[LI];
   end;
 
-  // init sub table names
-  if Count > 1 then
+  // init sub table LNames
+  if LCount > 1 then
   begin
 
     // push global table to stack
-    if not PushGlobalTableForSet(Names, Index) then
+    if not PushGlobalTableForSet(LNames, LIndex) then
     begin
       CleanStack;
       Exit;
     end;
 
     // push closure
-    method.Code := TMethod(aRoutine).Code;
-    method.Data := TMethod(aRoutine).Data;
+    LMethod.Code := TMethod(aRoutine).Code;
+    LMethod.Data := TMethod(aRoutine).Data;
     lua_pushlightuserdata(FState, Self);
-    lua_pushlightuserdata(FState, method.Code);
-    lua_pushlightuserdata(FState, method.Data);
+    lua_pushlightuserdata(FState, LMethod.Code);
+    lua_pushlightuserdata(FState, LMethod.Data);
     lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
     // add field to table
-    lua_setfield(FState, -2, Marshall.AsAnsi(Names[Index]).ToPointer);
+    lua_setfield(FState, -2, LMarshall.AsAnsi(LNames[LIndex]).ToPointer);
 
     CleanStack;
   end
-  else if (Count = 1) then
+  else if (LCount = 1) then
   begin
     // push closure
-    method.Code := TMethod(aRoutine).Code;
-    method.Data := TMethod(aRoutine).Data;
+    LMethod.Code := TMethod(aRoutine).Code;
+    LMethod.Data := TMethod(aRoutine).Data;
     lua_pushlightuserdata(FState, Self);
-    lua_pushlightuserdata(FState, method.Code);
-    lua_pushlightuserdata(FState, method.Data);
+    lua_pushlightuserdata(FState, LMethod.Code);
+    lua_pushlightuserdata(FState, LMethod.Data);
     lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
     // set as global
-    lua_setglobal(FState, Marshall.AsAnsi(Names[0]).ToPointer);
+    lua_setglobal(FState, LMarshall.AsAnsi(LNames[0]).ToPointer);
   end;
 end;
 
 procedure TLua.RegisterRoutine(const aName: string; aData: Pointer; aCode: Pointer);
 var
-  Marshall: TMarshaller;
-  Index: Integer;
-  Names: array of string;
-  i: Integer;
-  Items: TStringArray;
-  Count: Integer;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LNames: array of string;
+  LI: Integer;
+  LItems: TStringArray;
+  LCount: Integer;
 begin
   //if aName.IsEmpty then
   if aName = '' then
     Exit;
 
-  // parse table names in table.table.xxx format
-  Items := ParseTableNames(aName);
+  // parse table LNames in table.table.xxx format
+  LItems := ParseTableNames(aName);
 
-  Count := Length(Items);
+  LCount := Length(LItems);
 
-  SetLength(Names, Length(Items));
+  SetLength(LNames, Length(LItems));
 
-  for i := 0 to High(Items) do
+  for LI := 0 to High(LItems) do
   begin
-    Names[i] := Items[i];
+    LNames[LI] := LItems[LI];
   end;
 
-  // init sub table names
-  if Count > 1 then
+  // init sub table LNames
+  if LCount > 1 then
   begin
 
     // push global table to stack
-    if not PushGlobalTableForSet(Names, Index) then
+    if not PushGlobalTableForSet(LNames, LIndex) then
     begin
       CleanStack;
       Exit;
@@ -2055,11 +2067,11 @@ begin
     lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
     // add field to table
-    lua_setfield(FState, -2, Marshall.AsAnsi(Names[Index]).ToPointer);
+    lua_setfield(FState, -2, LMarshall.AsAnsi(LNames[LIndex]).ToPointer);
 
     CleanStack;
   end
-  else if (Count = 1) then
+  else if (LCount = 1) then
   begin
     // push closure
     lua_pushlightuserdata(FState, Self);
@@ -2068,62 +2080,62 @@ begin
     lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
     // set as global
-    lua_setglobal(FState, Marshall.AsAnsi(Names[0]).ToPointer);
+    lua_setglobal(FState, LMarshall.AsAnsi(LNames[0]).ToPointer);
   end;
 end;
 
 procedure TLua.RegisterRoutines(aClass: TClass);
 var
-  FRttiContext: TRttiContext;
-  rttiType: TRttiType;
-  rttiMethod: TRttiMethod;
-  methodAutoSetup: TRttiMethod;
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiMethod: TRttiMethod;
+  LMethodAutoSetup: TRttiMethod;
 
-  rttiParameters: TArray<System.Rtti.TRttiParameter>;
-  method: TMethod;
-  Marshall: TMarshaller;
+  LRttiParameters: TArray<System.Rtti.TRttiParameter>;
+  LMethod: TMethod;
+  LMarshall: TMarshaller;
 begin
-  rttiType := FRttiContext.GetType(aClass);
-  methodAutoSetup := nil;
-  for rttiMethod in rttiType.GetMethods do
+  LRttiType := LRttiContext.GetType(aClass);
+  LMethodAutoSetup := nil;
+  for LRttiMethod in LRttiType.GetMethods do
   begin
-    if (rttiMethod.MethodKind <> mkClassProcedure) then
+    if (LRttiMethod.MethodKind <> mkClassProcedure) then
       continue;
-    if (rttiMethod.Visibility <> mvPublic) then
+    if (LRttiMethod.Visibility <> mvPublic) then
       continue;
 
-    rttiParameters := rttiMethod.GetParameters;
+    LRttiParameters := LRttiMethod.GetParameters;
 
     // check for public AutoSetup class function
-    if SameText(rttiMethod.Name, cLuaAutoSetup) then
+    if SameText(LRttiMethod.Name, cLuaAutoSetup) then
     begin
-      if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType)
-        ) and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-        (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILua) then
+      if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType)
+        ) and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+        (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILua) then
       begin
         // call auto setup for this class
-        // rttiMethod.Invoke(aClass, [Self]);
-        methodAutoSetup := rttiMethod;
+        // LRttiMethod.Invoke(aClass, [Self]);
+        LMethodAutoSetup := LRttiMethod;
       end;
       continue;
     end;
 
     { Check if one parameter of type ILuaContext is present }
-    if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType))
-      and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-      (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILuaContext) then
+    if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType))
+      and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+      (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILuaContext) then
     begin
       // push closure
-      method.Code := rttiMethod.CodeAddress;
-      method.Data := aClass;
+      LMethod.Code := LRttiMethod.CodeAddress;
+      LMethod.Data := aClass;
       lua_pushlightuserdata(FState, Self);
-      lua_pushlightuserdata(FState, method.Code);
-      lua_pushlightuserdata(FState, method.Data);
+      lua_pushlightuserdata(FState, LMethod.Code);
+      lua_pushlightuserdata(FState, LMethod.Data);
       lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
       // add field to table
-      // lua_setfield(FState, -2,  Marshall.AsAnsi(rttiMethod.Name).ToPointer);
-      lua_setglobal(FState, Marshall.AsAnsi(rttiMethod.Name).ToPointer);
+      // lua_setfield(FState, -2,  LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
+      lua_setglobal(FState, LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
 
     end;
   end;
@@ -2133,10 +2145,10 @@ begin
   CleanStack;
 
   // invoke autosetup?
-  if Assigned(methodAutoSetup) then
+  if Assigned(LMethodAutoSetup) then
   begin
-    // call auto setup method
-    methodAutoSetup.Invoke(aClass, [Self]);
+    // call auto setup LMethod
+    LMethodAutoSetup.Invoke(aClass, [Self]);
 
     // clean up stack
     // Lua_Pop(FState, Lua_GetTop(FState));
@@ -2147,55 +2159,55 @@ end;
 
 procedure TLua.RegisterRoutines(aObject: TObject);
 var
-  FRttiContext: TRttiContext;
-  rttiType: TRttiType;
-  rttiMethod: TRttiMethod;
-  methodAutoSetup: TRttiMethod;
-  rttiParameters: TArray<System.Rtti.TRttiParameter>;
-  method: TMethod;
-  Marshall: TMarshaller;
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiMethod: TRttiMethod;
+  LMethodAutoSetup: TRttiMethod;
+  LRttiParameters: TArray<System.Rtti.TRttiParameter>;
+  LMethod: TMethod;
+  LMarshall: TMarshaller;
 begin
-  rttiType := FRttiContext.GetType(aObject.ClassType);
-  methodAutoSetup := nil;
-  for rttiMethod in rttiType.GetMethods do
+  LRttiType := LRttiContext.GetType(aObject.ClassType);
+  LMethodAutoSetup := nil;
+  for LRttiMethod in LRttiType.GetMethods do
   begin
-    if (rttiMethod.MethodKind <> mkProcedure) then
+    if (LRttiMethod.MethodKind <> mkProcedure) then
       continue;
-    if (rttiMethod.Visibility <> mvPublic) then
+    if (LRttiMethod.Visibility <> mvPublic) then
       continue;
 
-    rttiParameters := rttiMethod.GetParameters;
+    LRttiParameters := LRttiMethod.GetParameters;
 
     // check for public AutoSetup class function
-    if SameText(rttiMethod.Name, cLuaAutoSetup) then
+    if SameText(LRttiMethod.Name, cLuaAutoSetup) then
     begin
-      if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType)
-        ) and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-        (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILua) then
+      if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType)
+        ) and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+        (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILua) then
       begin
         // call auto setup for this class
-        // rttiMethod.Invoke(aObject.ClassType, [Self]);
-        methodAutoSetup := rttiMethod;
+        // LRttiMethod.Invoke(aObject.ClassType, [Self]);
+        LMethodAutoSetup := LRttiMethod;
       end;
       continue;
     end;
 
     { Check if one parameter of type ILuaContext is present }
-    if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType))
-      and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-      (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILuaContext) then
+    if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType))
+      and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+      (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILuaContext) then
     begin
       // push closure
-      method.Code := rttiMethod.CodeAddress;
-      method.Data := aObject;
+      LMethod.Code := LRttiMethod.CodeAddress;
+      LMethod.Data := aObject;
       lua_pushlightuserdata(FState, Self);
-      lua_pushlightuserdata(FState, method.Code);
-      lua_pushlightuserdata(FState, method.Data);
+      lua_pushlightuserdata(FState, LMethod.Code);
+      lua_pushlightuserdata(FState, LMethod.Data);
       lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
       // add field to table
-      // lua_setfield(FState, -2,  Marshall.AsAnsi(rttiMethod.Name).ToPointer);
-      lua_setglobal(FState, Marshall.AsAnsi(rttiMethod.Name).ToPointer);
+      // lua_setfield(FState, -2,  LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
+      lua_setglobal(FState, LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
     end;
   end;
 
@@ -2204,10 +2216,10 @@ begin
   CleanStack;
 
   // invoke autosetup?
-  if Assigned(methodAutoSetup) then
+  if Assigned(LMethodAutoSetup) then
   begin
-    // call auto setup method
-    methodAutoSetup.Invoke(aObject, [Self]);
+    // call auto setup LMethod
+    LMethodAutoSetup.Invoke(aObject, [Self]);
 
     // clean up stack
     CleanStack;
@@ -2215,22 +2227,22 @@ begin
 
 end;
 
-procedure TLua.RegisterRoutines(const aTables: string; aClass: TClass;
-  const aTableName: string);
+procedure TLua.RegisterRoutines(const aTables: string; aClass: TClass; const aTableName: string);
 var
-  FRttiContext: TRttiContext;
-  rttiType: TRttiType;
-  rttiMethod: TRttiMethod;
-  methodAutoSetup: TRttiMethod;
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiMethod: TRttiMethod;
+  LMethodAutoSetup: TRttiMethod;
 
-  rttiParameters: TArray<System.Rtti.TRttiParameter>;
-  method: TMethod;
-  Marshall: TMarshaller;
-  Index: Integer;
-  Names: array of string;
+  LRttiParameters: TArray<System.Rtti.TRttiParameter>;
+  LMethod: TMethod;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LNames: array of string;
   TblName: string;
-  i: Integer;
-  Items: TStringArray;
+  LI: Integer;
+  LItems: TStringArray;
+  LLastIndex: Integer;
 begin
   // init the routines table name
   //if aTableName.IsEmpty then
@@ -2239,77 +2251,79 @@ begin
   else
     TblName := aTableName;
 
-  // parse table names in table.table.xxx format
-  Items := ParseTableNames(aTables);
+  // parse table LNames in table.table.xxx format
+  LItems := ParseTableNames(aTables);
 
-  // init sub table names
-  if Length(Items) > 0 then
+  // init sub table LNames
+  if Length(LItems) > 0 then
   begin
-    SetLength(Names, Length(Items) + 2);
+    SetLength(LNames, Length(LItems) + 2);
 
-    for i := 0 to High(Items) do
+    LLastIndex := 0;
+    for LI := 0 to High(LItems) do
     begin
-      Names[i] := Items[i];
+      LNames[LI] := LItems[LI];
+      LLastIndex := LI;
     end;
 
     // set last as table name for functions
-    Names[i] := TblName;
-    Names[i + 1] := TblName;
+    LNames[LLastIndex] := TblName;
+    LNames[LLastIndex + 1] := TblName;
   end
   else
   begin
-    SetLength(Names, 2);
-    Names[0] := TblName;
-    Names[1] := TblName;
+    SetLength(LNames, 2);
+    LNames[0] := TblName;
+    LNames[1] := TblName;
   end;
 
   // push global table to stack
-  if not PushGlobalTableForSet(Names, Index) then
+  if not PushGlobalTableForSet(LNames, LIndex) then
   begin
     CleanStack;
     Exit;
   end;
 
-  rttiType := FRttiContext.GetType(aClass);
-  methodAutoSetup := nil;
-  for rttiMethod in rttiType.GetMethods do
+  LRttiType := LRttiContext.GetType(aClass);
+  LMethodAutoSetup := nil;
+  for LRttiMethod in LRttiType.GetMethods do
   begin
-    if (rttiMethod.MethodKind <> mkClassProcedure) then
+    if (LRttiMethod.MethodKind <> mkClassProcedure) then
       continue;
-    if (rttiMethod.Visibility <> mvPublic) then
+    if (LRttiMethod.Visibility <> mvPublic) then
       continue;
 
-    rttiParameters := rttiMethod.GetParameters;
+    LRttiParameters := LRttiMethod.GetParameters;
 
     // check for public AutoSetup class function
-    if SameText(rttiMethod.Name, cLuaAutoSetup) then
+    if SameText(LRttiMethod.Name, cLuaAutoSetup) then
     begin
-      if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType)
-        ) and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-        (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILua) then
+      if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType)
+        ) and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+        (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILua) then
       begin
         // call auto setup for this class
-        // rttiMethod.Invoke(aClass, [Self]);
-        methodAutoSetup := rttiMethod;
+        // LRttiMethod.Invoke(aClass, [Self]);
+        LMethodAutoSetup := LRttiMethod;
       end;
       continue;
     end;
 
     { Check if one parameter of type ILuaContext is present }
-    if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType))
-      and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-      (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILuaContext) then
+    if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType))
+      and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+      (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILuaContext) then
     begin
       // push closure
-      method.Code := rttiMethod.CodeAddress;
-      method.Data := aClass;
+      LMethod.Code := LRttiMethod.CodeAddress;
+      LMethod.Data := aClass;
       lua_pushlightuserdata(FState, Self);
-      lua_pushlightuserdata(FState, method.Code);
-      lua_pushlightuserdata(FState, method.Data);
+      lua_pushlightuserdata(FState, LMethod.Code);
+      lua_pushlightuserdata(FState, LMethod.Data);
       lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
       // add field to table
-      lua_setfield(FState, -2, Marshall.AsAnsi(rttiMethod.Name).ToPointer);
+      lua_setfield(FState, -2, LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
     end;
   end;
 
@@ -2318,10 +2332,10 @@ begin
   CleanStack;
 
   // invoke autosetup?
-  if Assigned(methodAutoSetup) then
+  if Assigned(LMethodAutoSetup) then
   begin
-    // call auto setup method
-    methodAutoSetup.Invoke(aClass, [Self]);
+    // call auto setup LMethod
+    LMethodAutoSetup.Invoke(aClass, [Self]);
 
     // clean up stack
     // Lua_Pop(FState, Lua_GetTop(FState));
@@ -2333,18 +2347,19 @@ end;
 procedure TLua.RegisterRoutines(const aTables: string; aObject: TObject;
   const aTableName: string);
 var
-  FRttiContext: TRttiContext;
-  rttiType: TRttiType;
-  rttiMethod: TRttiMethod;
-  methodAutoSetup: TRttiMethod;
-  rttiParameters: TArray<System.Rtti.TRttiParameter>;
-  method: TMethod;
-  Marshall: TMarshaller;
-  Index: Integer;
-  Names: array of string;
+  LRttiContext: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiMethod: TRttiMethod;
+  LMethodAutoSetup: TRttiMethod;
+  LRttiParameters: TArray<System.Rtti.TRttiParameter>;
+  LMethod: TMethod;
+  LMarshall: TMarshaller;
+  LIndex: Integer;
+  LNames: array of string;
   TblName: string;
-  i: Integer;
-  Items: TStringArray;
+  LI: Integer;
+  LItems: TStringArray;
+  LLastIndex: Integer;
 begin
   // init the routines table name
   //if aTableName.IsEmpty then
@@ -2353,77 +2368,79 @@ begin
   else
     TblName := aTableName;
 
-  // parse table names in table.table.xxx format
-  Items := ParseTableNames(aTables);
+  // parse table LNames in table.table.xxx format
+  LItems := ParseTableNames(aTables);
 
-  // init sub table names
-  if Length(Items) > 0 then
+  // init sub table LNames
+  if Length(LItems) > 0 then
   begin
-    SetLength(Names, Length(Items) + 2);
+    SetLength(LNames, Length(LItems) + 2);
 
-    for i := 0 to High(Items) do
+    LLastIndex := 0;
+    for LI := 0 to High(LItems) do
     begin
-      Names[i] := Items[i];
+      LNames[LI] := LItems[LI];
+      LLastIndex := LI;
     end;
 
     // set last as table name for functions
-    Names[i] := TblName;
-    Names[i + 1] := TblName;
+    LNames[LLastIndex] := TblName;
+    LNames[LLastIndex + 1] := TblName;
   end
   else
   begin
-    SetLength(Names, 2);
-    Names[0] := TblName;
-    Names[1] := TblName;
+    SetLength(LNames, 2);
+    LNames[0] := TblName;
+    LNames[1] := TblName;
   end;
 
   // push global table to stack
-  if not PushGlobalTableForSet(Names, Index) then
+  if not PushGlobalTableForSet(LNames, LIndex) then
   begin
     CleanStack;
     Exit;
   end;
 
-  rttiType := FRttiContext.GetType(aObject.ClassType);
-  methodAutoSetup := nil;
-  for rttiMethod in rttiType.GetMethods do
+  LRttiType := LRttiContext.GetType(aObject.ClassType);
+  LMethodAutoSetup := nil;
+  for LRttiMethod in LRttiType.GetMethods do
   begin
-    if (rttiMethod.MethodKind <> mkProcedure) then
+    if (LRttiMethod.MethodKind <> mkProcedure) then
       continue;
-    if (rttiMethod.Visibility <> mvPublic) then
+    if (LRttiMethod.Visibility <> mvPublic) then
       continue;
 
-    rttiParameters := rttiMethod.GetParameters;
+    LRttiParameters := LRttiMethod.GetParameters;
 
     // check for public AutoSetup class function
-    if SameText(rttiMethod.Name, cLuaAutoSetup) then
+    if SameText(LRttiMethod.Name, cLuaAutoSetup) then
     begin
-      if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType)
-        ) and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-        (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILua) then
+      if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType)
+        ) and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+        (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILua) then
       begin
         // call auto setup for this class
-        // rttiMethod.Invoke(aObject.ClassType, [Self]);
-        methodAutoSetup := rttiMethod;
+        // LRttiMethod.Invoke(aObject.ClassType, [Self]);
+        LMethodAutoSetup := LRttiMethod;
       end;
       continue;
     end;
 
     { Check if one parameter of type ILuaContext is present }
-    if (Length(rttiParameters) = 1) and (Assigned(rttiParameters[0].ParamType))
-      and (rttiParameters[0].ParamType.TypeKind = tkInterface) and
-      (TRttiInterfaceType(rttiParameters[0].ParamType).GUID = ILuaContext) then
+    if (Length(LRttiParameters) = 1) and (Assigned(LRttiParameters[0].ParamType))
+      and (LRttiParameters[0].ParamType.TypeKind = tkInterface) and
+      (TRttiInterfaceType(LRttiParameters[0].ParamType).GUID = ILuaContext) then
     begin
       // push closure
-      method.Code := rttiMethod.CodeAddress;
-      method.Data := aObject;
+      LMethod.Code := LRttiMethod.CodeAddress;
+      LMethod.Data := aObject;
       lua_pushlightuserdata(FState, Self);
-      lua_pushlightuserdata(FState, method.Code);
-      lua_pushlightuserdata(FState, method.Data);
+      lua_pushlightuserdata(FState, LMethod.Code);
+      lua_pushlightuserdata(FState, LMethod.Data);
       lua_pushcclosure(FState, @LuaWrapperClosure, 3);
 
       // add field to table
-      lua_setfield(FState, -2, Marshall.AsAnsi(rttiMethod.Name).ToPointer);
+      lua_setfield(FState, -2, LMarshall.AsAnsi(LRttiMethod.Name).ToPointer);
     end;
   end;
 
@@ -2431,10 +2448,10 @@ begin
   CleanStack;
 
   // invoke autosetup?
-  if Assigned(methodAutoSetup) then
+  if Assigned(LMethodAutoSetup) then
   begin
-    // call auto setup method
-    methodAutoSetup.Invoke(aObject, [Self]);
+    // call auto setup LMethod
+    LMethodAutoSetup.Invoke(aObject, [Self]);
 
     // clean up stack
     CleanStack;
@@ -2444,23 +2461,23 @@ end;
 
 procedure TLua.CompileToStream(aFilename: string; aStream: TStream; aCleanOutput: Boolean);
 var
-  InFilename: string;
-  BundleFilename: string;
+  LInFilename: string;
+  LBundleFilename: string;
 begin
-  InFilename := aFilename;
-  BundleFilename := TPath.GetFileNameWithoutExtension(InFilename) +
+  LInFilename := aFilename;
+  LBundleFilename := TPath.GetFileNameWithoutExtension(LInFilename) +
     '_bundle.lua';
 
-  Bundle(InFilename, BundleFilename);
-  LoadFile(PChar(BundleFilename), False);
+  Bundle(LInFilename, LBundleFilename);
+  LoadFile(PChar(LBundleFilename), False);
   SaveByteCode(aStream);
   CleanStack;
 
   if aCleanOutput then
   begin
-    if TFile.Exists(BundleFilename) then
+    if TFile.Exists(LBundleFilename) then
     begin
-      TFile.Delete(BundleFilename);
+      TFile.Delete(LBundleFilename);
     end;
   end;
 end;

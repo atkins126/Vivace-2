@@ -70,3 +70,5 @@ modules/
 
 # Vivace files
 *.arc
+*.log
+*.cfg

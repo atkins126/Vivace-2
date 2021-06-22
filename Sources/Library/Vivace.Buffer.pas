@@ -4,38 +4,52 @@
   \ \ / / \ \ / / _` |/ __/ _ \
    \ V /| |\ V / (_| | (_|  __/
     \_/ |_| \_/ \__,_|\___\___|
-                   game toolkit
+                   Game Toolkit
 
- Copyright © 2020-21 tinyBigGAMES™ LLC
- All rights reserved.
+  Copyright © 2020-21 tinyBigGAMES™ LLC
+  All rights reserved.
 
- website: https://tinybiggames.com
- email  : support@tinybiggames.com
+  Website: https://tinybiggames.com
+  Email  : support@tinybiggames.com
 
- LICENSE: zlib/libpng
-
- Vivace Game Toolkit is licensed under an unmodified zlib/libpng license,
- which is an OSI-certified, BSD-like license that allows static linking
- with closed source software:
-
- This software is provided "as-is", without any express or implied warranty.
- In no event will the authors be held liable for any damages arising from
- the use of this software.
-
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it
- freely, subject to the following restrictions:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software in
      a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
 
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
+  2. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
 
-  3. This notice may not be removed or altered from any source distribution.
+  3. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
 
+  4. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
+
+  5. All video, audio, graphics and other content accessed through the
+     software in this distro is the property of the applicable content owner
+     and may be protected by applicable copyright law. This License gives
+     Customer no rights to such content, and Company disclaims any liability
+     for misuse of content.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
 unit Vivace.Buffer;
@@ -60,18 +74,24 @@ type
     FHandle: THandle;
     FName: string;
   public
+    property Name: string read FName;
+
     constructor Create(aSize: Integer);
     destructor Destroy; override;
-    function Write(const aBuffer; aCount: Longint): Longint; override;
-    function Write(const aBuffer: TBytes; aOffset, aCount: Longint): Longint; override;
+
+    function  Write(const aBuffer; aCount: Longint): Longint; override;
+    function  Write(const aBuffer: TBytes; aOffset, aCount: Longint): Longint; override;
+
     procedure SaveToFile(aFilename: string);
-    property Name: string read FName;
+
+    class function FromFile(aFilename: string): TBuffer;
   end;
 
 implementation
 
 uses
-  System.IOUtils;
+  System.IOUtils,
+  Vivace.External.Allegro;
 
 { TBuffer }
 
@@ -178,5 +198,25 @@ begin
     LFileStream.Free;
   end;
 end;
+
+class function TBuffer.FromFile(aFilename: string): TBuffer;
+var
+  LMarshaller: TMarshaller;
+  LStream: PALLEGRO_FILE;
+  LSize: Int64;
+begin
+  Result := nil;
+  if aFilename.IsEmpty then Exit;
+  if not al_filename_exists(LMarshaller.AsAnsi(aFilename).ToPointer) then Exit;
+  LStream := al_fopen(LMarshaller.AsAnsi(aFilename).ToPointer, 'rb');
+  try
+    LSize := al_fsize(LStream);
+    Result := TBuffer.Create(LSize);
+    al_fread(LStream, Result.Memory, LSize);
+  finally
+    al_fclose(LStream);
+  end;
+end;
+
 
 end.

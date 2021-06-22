@@ -4,38 +4,52 @@
   \ \ / / \ \ / / _` |/ __/ _ \
    \ V /| |\ V / (_| | (_|  __/
     \_/ |_| \_/ \__,_|\___\___|
-                   game toolkit
+                   Game Toolkit
 
- Copyright © 2020-21 tinyBigGAMES™ LLC
- All rights reserved.
+  Copyright © 2020-21 tinyBigGAMES™ LLC
+  All rights reserved.
 
- website: https://tinybiggames.com
- email  : support@tinybiggames.com
+  Website: https://tinybiggames.com
+  Email  : support@tinybiggames.com
 
- LICENSE: zlib/libpng
-
- Vivace Game Toolkit is licensed under an unmodified zlib/libpng license,
- which is an OSI-certified, BSD-like license that allows static linking
- with closed source software:
-
- This software is provided "as-is", without any express or implied warranty.
- In no event will the authors be held liable for any damages arising from
- the use of this software.
-
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it
- freely, subject to the following restrictions:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software in
      a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
 
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
+  2. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
 
-  3. This notice may not be removed or altered from any source distribution.
+  3. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
 
+  4. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
+
+  5. All video, audio, graphics and other content accessed through the
+     software in this distro is the property of the applicable content owner
+     and may be protected by applicable copyright law. This License gives
+     Customer no rights to such content, and Company disclaims any liability
+     for misuse of content.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+  COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
 unit Vivace.Utils;
@@ -43,7 +57,30 @@ unit Vivace.Utils;
 interface
 
 uses
+  System.Generics.Collections,
+  System.TypInfo,
   System.SysUtils;
+
+type
+
+ { TEnumConverter }
+  TEnumConverter = class
+  public
+    class function EnumToInt<T>(const aEnumValue: T): Integer;
+    class function EnumToString<T>(aEnumValue: T): string;
+  end;
+
+ { TDirectoryStack }
+  TDirectoryStack = class
+  protected
+    FStack: TStack<String>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Push(aPath: string);
+    procedure Pop;
+  end;
+
 
 function  GetParamValue(const aParamName: string; aSwitchChars: TSysCharSet; aSeperator: Char; var aValue: string): Boolean;
 function  GetParam(const aParamName: string; var aValue: string): Boolean; overload;
@@ -59,16 +96,82 @@ function  GetLegalTrademarks: string;
 
 function  GetFileSize(const aFilename: string): Int64;
 
-procedure ExportResDLL(const aResName: string; const aDllName: string; const aDestPath: string);
-function  LoadResDLL(const aResName: string): Pointer;
+function  ExportResDLL(const aResName: string; const aDllName: string; const aDestPath: string): Boolean;
+
+procedure DeferDelFile(const aFilename: string);
+
+function  FillStr(const aC: Char; const aCount: Integer): string;
+
+function  IsDebug: Boolean;
+
+function  FileCount(const aPath: string; const aSearchMask: string): Int64;
+
+function  ResourceExists(aResName: string): Boolean;
+
+procedure GotoURL(aURL: string);
+
+function  IsConsoleApp: Boolean;
+
+function GetVideoCardName: string;
+function GetVideoCardMemory: UInt64;
 
 implementation
 
 uses
   System.IOUtils,
   System.Classes,
+  System.Variants,
+  System.Win.ComObj,
   WinApi.Windows,
-  Vivace.MemoryModule;
+  WinApi.ShellAPI,
+  WinApi.ActiveX;
+
+{ TEnumConverter }
+class function TEnumConverter.EnumToInt<T>(const aEnumValue: T): Integer;
+begin
+  Result := 0;
+  Move(aEnumValue, Result, SizeOf(aEnumValue));
+end;
+
+class function TEnumConverter.EnumToString<T>(aEnumValue: T): string;
+begin
+  Result := GetEnumName(TypeInfo(T), EnumToInt(aEnumValue));
+end;
+
+{ TDirectoryStack }
+constructor TDirectoryStack.Create;
+begin
+  inherited;
+  FStack := TStack<String>.Create;
+end;
+
+destructor TDirectoryStack.Destroy;
+begin
+  FreeAndNil(FStack);
+  inherited;
+end;
+
+procedure TDirectoryStack.Push(aPath: string);
+var
+  LDir: string;
+begin
+  LDir := GetCurrentDir;
+  FStack.Push(LDir);
+  if not LDir.IsEmpty then
+  begin
+    SetCurrentDir(aPath);
+  end;
+end;
+
+procedure TDirectoryStack.Pop;
+var
+  LDir: string;
+begin
+  LDir := FStack.Pop;
+  SetCurrentDir(LDir);
+end;
+
+
 
 (* GetParameterValue
 
@@ -331,13 +434,14 @@ begin
   Result := Int64(LInfo.nFileSizeLow) or Int64(LInfo.nFileSizeHigh shl 32);
 end;
 
-procedure ExportResDLL(const aResName: string; const aDllName: string; const aDestPath: string);
+function ExportResDLL(const aResName: string; const aDllName: string; const aDestPath: string): Boolean;
 var
   LDLLRes: TResourceStream;
   LDLLFilename: string;
   LDLLName: string;
   LDestPath: string;
 begin
+  Result := False;
   if aResName.IsEmpty then Exit;
   if aDllName.IsEmpty then Exit;
   if aDestPath.IsEmpty then
@@ -356,6 +460,7 @@ begin
       LDLLRes := TResourceStream.Create(HInstance, aResName, RT_RCDATA);
       try
         LDLLRes.SaveToFile(LDLLFilename);
+        Result := TFile.Exists(LDLLFilename);
       finally
         FreeAndNil(LDLLRes);
       end;
@@ -364,18 +469,144 @@ begin
   end;
 end;
 
-function LoadResDLL(const aResName: string): Pointer;
+procedure DeferDelFile(const aFilename: string);
 var
-  LBuff: TResourceStream;
-begin
-  Result := nil;
-  if aResName.IsEmpty then Exit;
-  LBuff := TResourceStream.Create(HInstance, aResName, RT_RCDATA);
-  try
-    Result := TMemoryModule.LoadLibrary(LBuff.Memory);
-  finally
-    FreeAndNil(LBuff);
+  LCode: TStringList;
+  LFilename: string;
+
+  procedure C(const aMsg: string; const aArgs: array of const);
+  var
+    LLine: string;
+  begin
+    LLine := Format(aMsg, aArgs);
+    LCode.Add(LLine)
   end;
+
+begin
+  if aFilename.IsEmpty then Exit;
+  LFilename := ChangeFileExt(aFilename, '');
+  LFilename := LFilename + '_DeferDelFile.bat';
+  if TFile.Exists(LFilename) then Exit;
+
+  LCode := TStringList.Create;
+  try
+    C('@echo off', []);
+    C(':Repeat', []);
+    C('del "%s"', [aFilename]);
+    C('if exist "%s" goto Repeat', [aFilename]);
+    C('del "%s"', [LFilename]);
+    LCode.SaveToFile(LFilename);
+  finally
+    FreeAndNil(LCode);
+  end;
+
+  if TFile.Exists(LFilename) then
+  begin
+    ShellExecute(0, 'open', PChar(LFilename), nil, nil, SW_HIDE);
+  end;
+end;
+
+function FillStr(const aC: Char; const aCount: Integer): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 1 to aCount do
+  begin
+    Result := Result + aC;
+  end;
+end;
+
+function IsDebug: Boolean;
+begin
+  {$IFDEF DEBUG}
+    Result := True;
+  {$ELSE}
+    Result := False;
+  {$ENDIF DEBUG}
+end;
+
+function FileCount(const aPath: string; const aSearchMask: string): Int64;
+var
+  SearchRec: TSearchRec;
+  LPath: string;
+begin
+  Result := 0;
+  LPath := aPath;
+  LPath := System.IOUtils.TPath.Combine(aPath, aSearchMask);
+  if FindFirst(LPath, faAnyFile, SearchRec) = 0 then
+    repeat
+      if SearchRec.Attr <> faDirectory then
+        Inc(Result);
+    until FindNext(SearchRec) <> 0;
+end;
+
+function ResourceExists(aResName: string): Boolean;
+begin
+  Result := Boolean((FindResource(hInstance, PChar(aResName), RT_RCDATA) <> 0));
+end;
+
+procedure GotoURL(aURL: string);
+begin
+  if aURL.IsEmpty then Exit;
+  ShellExecute(0, 'OPEN', PChar(aURL), '', '', SW_SHOWNORMAL);
+end;
+
+function IsConsoleApp: Boolean;
+var
+  Stdout: THandle;
+begin
+  Stdout := GetStdHandle(Std_Output_Handle);
+  Win32Check(Stdout <> Invalid_Handle_Value);
+  Result := Stdout <> 0;
+end;
+
+function GetVideoCardName: string;
+const
+  WbemUser = '';
+  WbemPassword = '';
+  WbemComputer = 'localhost';
+  wbemFlagForwardOnly = $00000020;
+var
+  FSWbemLocator: OLEVariant;
+  FWMIService: OLEVariant;
+  FWbemObjectSet: OLEVariant;
+  FWbemObject: OLEVariant;
+  oEnum: IEnumvariant;
+  iValue: LongWord;
+begin;
+  try
+    FSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+    FWMIService := FSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2',
+      WbemUser, WbemPassword);
+    FWbemObjectSet := FWMIService.ExecQuery
+      ('SELECT Name,PNPDeviceID  FROM Win32_VideoController', 'WQL',
+      wbemFlagForwardOnly);
+    oEnum := IUnknown(FWbemObjectSet._NewEnum) as IEnumvariant;
+    while oEnum.Next(1, FWbemObject, iValue) = 0 do
+    begin
+      result := String(FWbemObject.Name);
+      FWbemObject := Unassigned;
+    end;
+  except
+  end;
+end;
+
+function GetVideoCardMemory: UInt64;
+var
+  DeviceMode: TDeviceMode;
+  i, m, max: UInt64;
+begin
+  max := 0;
+  i := 0;
+  while EnumDisplaySettings(nil, i, DeviceMode) do
+  begin
+    m := Round(DeviceMode.dmPelsWidth * DeviceMode.dmPelsHeight * (DeviceMode.dmBitsPerPel/8));
+    if m > max then
+      max := m;
+    inc(i);
+  end;
+  Result := max;
 end;
 
 { =========================================================================== }
