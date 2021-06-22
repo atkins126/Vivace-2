@@ -58,7 +58,9 @@ interface
 
 uses
   Vivace.Game,
-  Vivace.Font;
+  Vivace.Font,
+  Vivace.Math,
+  Vivace.Sprite;
 
 const
   cArchiveFilename   = 'Data.arc';
@@ -75,7 +77,10 @@ type
     FMonoFont: TFont;
     FPropFont: TFont;
     FSmallFont: TFont;
+    FSprite: TSprite;
   public
+    MousePos: TVector;
+    property Sprite: TSprite read FSprite;
     procedure OnSetConfig(var aConfig: TGameConfig); override;
     procedure OnLoad; override;
     procedure OnExit; override;
@@ -93,7 +98,6 @@ implementation
 
 uses
   System.SysUtils,
-  Vivace.Math,
   Vivace.Common,
   Vivace.Color,
   Vivace.Engine,
@@ -108,10 +112,12 @@ end;
 procedure TBaseExample.OnLoad;
 begin
   inherited;
+  FSprite := TSprite.Create;
 end;
 
 procedure TBaseExample.OnExit;
 begin
+  FreeAndNil(FSprite);
   inherited;
 end;
 
@@ -158,7 +164,7 @@ var
   LColor: TColor;
 begin
   inherited;
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, '`       - Command Console', []);
+  //Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, '`       - Command Console', []);
   Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'ESC     - Quit', []);
 
   gEngine.Display.GetViewportSize(nil, nil, @LWidth, @LHeight);
@@ -170,8 +176,13 @@ procedure TBaseExample.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
 
+  gEngine.Input.MouseGetInfo(MousePos);
+
   if gEngine.Input.KeyboardPressed(KEY_ESCAPE) then
     gEngine.SetTerminate(True);
+
+  if gEngine.Input.KeyboardPressed(KEY_F11) then
+    gEngine.Display.ToggleFullscreen;
 
 end;
 

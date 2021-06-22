@@ -158,17 +158,20 @@ begin
   LFilename := TPath.Combine(TOS.GetWorkPath, cDeferDeleteFilename);
   if not TFile.Exists(LFilename) then Exit;
   LFileList := TStringList.Create;
-  LFileList.LoadFromFile(LFilename);
-  for LName in LFileList do
-  begin
-    TOS.DeferDeleteWorkPathFile(LName);
-    //FIXME: calling the logger at this point will create it again and any
-    // entries will overwrite the current file already written. I need to
-    // find a better way to structure the logger, for now just not log anything
-    // here.
-    //TLogger.Log(etInfo, 'Defer deleting %s', [LName]);
+  try
+    LFileList.LoadFromFile(LFilename);
+    for LName in LFileList do
+    begin
+      TOS.DeferDeleteWorkPathFile(LName);
+      //FIXME: calling the logger at this point will create it again and any
+      // entries will overwrite the current file already written. I need to
+      // find a better way to structure the logger, for now just not log anything
+      // here.
+      //TLogger.Log(etInfo, 'Defer deleting %s', [LName]);
+    end;
+  finally
+    FreeAndNil(LFileList);
   end;
-  FreeAndNil(LFileList);
   TOS.DeferDeleteWorkPathFile(LFilename);
 end;
 

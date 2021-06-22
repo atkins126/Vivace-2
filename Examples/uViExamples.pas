@@ -60,7 +60,8 @@ uses
   Vivace.Game,
   Vivace.Color,
   uCommon,
-  uDisplay;
+  uDisplay,
+  uEntity;
 
 type
 
@@ -104,15 +105,19 @@ function  TExamples.OnStartupDialogRun: Boolean;
 type
   TMenuIds = (
     // Display
-    miPrimitives,
-    miTransform,
-    miViewport,
-    miBasic,
-    miToggleFullscreen
+    miDisplayPrimitives,
+    miDisplayTransform,
+    miDisplayViewport,
+    miDisplayBasic,
+    miDisplayToggleFullscreen,
 
     // Bitmap
 
     // Font
+
+    // Entity
+    miEntityBasic,
+    miEntityPolyPointCollision
   );
 
 var
@@ -120,6 +125,7 @@ var
   LDisplay: Integer;
   LBitmap: Integer;
   LFont: Integer;
+  LEntity: Integer;
   LSelItem: Integer;
 begin
   LTreeMenu := TTreeMenu.Create;
@@ -128,29 +134,36 @@ begin
 
     // Display
     LDisplay := LTreeMenu.AddItem(0, 'Display', TREEMENU_NONE, True);
-    LTreeMenu.AddItem(LDisplay, 'Transform', Ord(miTransform), True);
-    LTreeMenu.AddItem(LDisplay, 'Viewport', Ord(miViewport), True);
-    LTreeMenu.AddItem(LDisplay, 'Primitives', Ord(miPrimitives), True);
-    LTreeMenu.AddItem(LDisplay, 'Basic', Ord(miBasic), True);
-    LTreeMenu.AddItem(LDisplay, 'Toggle Fullscreen', Ord(miToggleFullscreen), True);
+    LTreeMenu.AddItem(LDisplay, 'Transform', Ord(miDisplayTransform), False);
+    LTreeMenu.AddItem(LDisplay, 'Viewport', Ord(miDisplayViewport), False);
+    LTreeMenu.AddItem(LDisplay, 'Primitives', Ord(miDisplayPrimitives), True);
+    LTreeMenu.AddItem(LDisplay, 'Basic', Ord(miDisplayBasic), True);
+    LTreeMenu.AddItem(LDisplay, 'Toggle Fullscreen', Ord(miDisplayToggleFullscreen), True);
     LTreeMenu.Sort(LDisplay);
 
     // Bitmap
-    LBitmap  := LTreeMenu.AddItem(0, 'Bitmap', TREEMENU_NONE, True);
+    LBitmap  := LTreeMenu.AddItem(0, 'Bitmap', TREEMENU_NONE, False);
 
     // Font
-    LFont  := LTreeMenu.AddItem(0, 'Font', TREEMENU_NONE, True);
+    LFont  := LTreeMenu.AddItem(0, 'Font', TREEMENU_NONE, False);
 
+    // Entity
+    LEntity := LTreeMenu.AddItem(0, 'Entity', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LEntity, 'Basic', Ord(miEntityBasic), True);
+    LTreeMenu.AddItem(LEntity, 'PolyPoint Collision', Ord(miEntityPolyPointCollision), True);
+    LTreeMenu.Sort(LDisplay);
 
     LSelItem := ConfigFile.GetValue('Examples.Menu', 'SelItem', TREEMENU_NONE);
     repeat
       LSelItem := LTreeMenu.Show(LSelItem);
       case TMenuIds(LSelItem) of
-        miTransform: ;
-        miViewport: ;
-        miBasic           : RunGame(TDisplayBasic);
-        miToggleFullscreen: RunGame(TDisplayToggleFullscreen);
-        miPrimitives      : RunGame(TDisplayPrimitives);
+        miDisplayTransform: ;
+        miDisplayViewport: ;
+        miDisplayBasic           : RunGame(TDisplayBasic);
+        miDisplayToggleFullscreen: RunGame(TDisplayToggleFullscreen);
+        miDisplayPrimitives      : RunGame(TDisplayPrimitives);
+        miEntityBasic            : RunGame(TEntityBasic);
+        miEntityPolyPointCollision        : RunGame(TEntityPolyPointCollision);
       end;
     until LSelItem = TREEMENU_QUIT;
 
@@ -166,10 +179,6 @@ end;
 procedure TExamples.OnLoad;
 begin
   inherited;
-
-  //gEngine.Styles.SetByName('Aqua Light Slate');
-  //gEngine.Styles.SetByIndex(0);
-  //gEngine.Styles.SetByIndex(8);
 end;
 
 

@@ -112,7 +112,9 @@ uses
   Vivace.Viewport in '..\Sources\Library\Vivace.Viewport.pas',
   uCommon in 'uCommon.pas',
   Vivace.RichEdit in '..\Sources\Library\Vivace.RichEdit.pas',
-  uDisplay in 'uDisplay.pas';
+  uDisplay in 'uDisplay.pas',
+  uEntity in 'uEntity.pas',
+  uActor in 'uActor.pas';
 
 begin
   RunGame(TExamples);

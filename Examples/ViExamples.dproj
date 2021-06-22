@@ -164,6 +164,8 @@
         <DCCReference Include="uCommon.pas"/>
         <DCCReference Include="..\Sources\Library\Vivace.RichEdit.pas"/>
         <DCCReference Include="uDisplay.pas"/>
+        <DCCReference Include="uEntity.pas"/>
+        <DCCReference Include="uActor.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

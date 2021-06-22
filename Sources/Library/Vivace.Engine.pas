@@ -962,12 +962,24 @@ begin
 end;
 
 procedure TEngine.Run(aGame: TCustomGameClass);
+var
+  LGame: TCustomGame;
 begin
-  FGame := aGame.Create;
+  // save current game
+  LGame := FGame;
   try
-    FGame.Run;
+    // create new game
+    FGame := aGame.Create;
+    try
+      // run new game
+      FGame.Run;
+    finally
+      // free new game
+      FreeAndNil(FGame);
+    end;
   finally
-    FreeAndNil(FGame);
+    // retore old game
+    FGame := LGame;
   end;
 end;
 

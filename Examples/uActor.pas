@@ -52,80 +52,10 @@
   OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
-unit Vivace.Styles;
-
-{$I Vivace.Defines.inc }
+unit uActor;
 
 interface
 
-uses
-  System.SysUtils,
-  System.Classes,
-  Vivace.Base,
-  Vivace.Common;
-
-type
-
-  { TStyles }
-  TStyles = class(TBaseObject)
-  protected
-    FList: TStringList;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function GetCount: Integer;
-    function GetName(aIndex: Integer): string;
-    procedure SetByName(aName: string);
-    procedure SetByIndex(aIndex: Integer);
-  end;
-
 implementation
-
-{$R Vivace.Styles.res}
-
-uses
-  VCL.Themes,
-  VCL.Styles,
-  Vivace.Utils,
-  Vivace.Engine;
-
-{ TStyles }
-constructor TStyles.Create;
-begin
-  inherited;
-  FList := TStringList.Create;
-  FList.AddStrings(TStyleManager.StyleNames);
-end;
-
-destructor TStyles.Destroy;
-begin
-  FreeAndNil(FList);
-  inherited;
-end;
-
-function TStyles.GetCount: Integer;
-begin
-  Result := FList.Count;
-end;
-
-function TStyles.GetName(aIndex: Integer): string;
-begin
-  Result := '';
-  if (aIndex < 0) or (aIndex > GetCount-1) then Exit;
-  Result := FList[aIndex];
-end;
-
-procedure TStyles.SetByName(aName: string);
-begin
-  if aName.IsEmpty then Exit;
-  //TStyleManager.ActiveStyle.
-  TStyleManager.TrySetStyle(aName, False);
-end;
-
-procedure TStyles.SetByIndex(aIndex: Integer);
-begin
-  SetByName(GetName(aIndex));
-end;
-
 
 end.
