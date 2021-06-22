@@ -12,9 +12,6 @@
         <Projects Include="..\Examples\ViExamples.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\..\Sources\Testbed\Testbed.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -50,23 +47,14 @@
     <Target Name="ViExamples:Make">
         <MSBuild Projects="..\Examples\ViExamples.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Testbed">
-        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj"/>
-    </Target>
-    <Target Name="Testbed:Clean">
-        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Testbed:Make">
-        <MSBuild Projects="..\..\..\Sources\Testbed\Testbed.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ViArc;ViDump;ViExamples;Testbed"/>
+        <CallTarget Targets="ViArc;ViDump;ViExamples"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ViArc:Clean;ViDump:Clean;ViExamples:Clean;Testbed:Clean"/>
+        <CallTarget Targets="ViArc:Clean;ViDump:Clean;ViExamples:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ViArc:Make;ViDump:Make;ViExamples:Make;Testbed:Make"/>
+        <CallTarget Targets="ViArc:Make;ViDump:Make;ViExamples:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
