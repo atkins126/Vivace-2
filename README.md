@@ -50,7 +50,7 @@ It's robust, designed for easy, fast & fun use an suitable for making all types 
 ## Known Issues
 - This project is in active development so changes will be frequent 
 - Documentation is WIP. They will continue to evolve
-- More examples will continually be added
+- More examples will continually be added over time
 
 ## A Tour of Vivace
 ### Game Object
