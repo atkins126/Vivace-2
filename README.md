@@ -51,10 +51,8 @@ You just have to derive a new class from the `TCustomGame` base class and overri
 uses
   Vivace.Color,
   Vivace.Math,
-  Vivace.Timer,
   Vivace.Input,
   Vivace.Font,
-  Vivace.Font.Builtin,
   Vivace.Game,
   Vivace.Engine,
   uCommon;
