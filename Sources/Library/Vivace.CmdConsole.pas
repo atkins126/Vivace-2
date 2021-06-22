@@ -1,12 +1,12 @@
-{==============================================================================
+ï»¿{==============================================================================
          _       ve'va'CHe
-  __   _(_)_   ____ _  ___ ___ ™
+  __   _(_)_   ____ _  ___ ___ â„¢
   \ \ / / \ \ / / _` |/ __/ _ \
    \ V /| |\ V / (_| | (_|  __/
     \_/ |_| \_/ \__,_|\___\___|
                    Game Toolkit
 
-  Copyright © 2020-21 tinyBigGAMES™ LLC
+  Copyright Â© 2020-21 tinyBigGAMESâ„¢ LLC
   All rights reserved.
 
   Website: https://tinybiggames.com
@@ -179,6 +179,7 @@ begin
       var LList: TStringList := TStringList.Create;
       try
         LList.Sorted := True;
+        LList.AddPair('up/down', 'Console history');
         LList.AddPair('cls', 'Clear console window');
         LList.AddPair('help', 'Display list of commands');
         for LRec in FCmdActionList do
@@ -263,6 +264,7 @@ begin
   FActive := False;
   FState := ccsInactive;
   FFont := TFont.Create;
+  FFont.Load(16);
   FFontHeight := FFont.GetLineHeight;
   FToggleKey :=  KEY_TILDE;
   FSlideSpeed := cDefaultSlideSpeed;

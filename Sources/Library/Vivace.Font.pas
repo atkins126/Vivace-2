@@ -63,7 +63,8 @@ uses
   Vivace.External.Allegro,
   Vivace.Base,
   Vivace.Common,
-  Vivace.Color;
+  Vivace.Color,
+  Vivace.Math;
 
 type
 
@@ -72,6 +73,7 @@ type
   protected
     FHandle: PALLEGRO_FONT;
     FFilename: string;
+    FPadding: TVector;
     procedure Default;
   public
     constructor Create; override;
@@ -102,7 +104,6 @@ uses
   System.Classes,
   Vivace.Utils,
   Vivace.Engine,
-  Vivace.Math,
   Vivace.Logger;
 
 { TFont }
@@ -115,6 +116,7 @@ begin
     if not FFilename.IsEmpty then
       TLogger.Log(etSuccess, 'Sucessfully unloaded font "%s"', [FFilename]);
     FFilename := '';
+    FPadding.Assign(0,0);
   end;
 end;
 
@@ -144,7 +146,11 @@ procedure TFont.LoadBuiltIn;
 begin
   Unload;
   FHandle := al_create_builtin_font;
-  if FHandle = nil then
+  if FHandle <> nil then
+    begin
+      //FPadding.Assign(0, 3);
+    end
+  else
     TLogger.Log(etError, 'Failed to load builtin font', [])
 end;
 
@@ -258,7 +264,7 @@ begin
   if FHandle = nil then
     Result := 0
   else
-    Result := al_get_font_line_height(FHandle);
+    Result := al_get_font_line_height(FHandle) + FPadding.Y;
 end;
 
 procedure TFont.Print(aX: Single; aY: Single; aColor: TColor; aAngle: Single; const aMsg: string; const aArgs: array of const);

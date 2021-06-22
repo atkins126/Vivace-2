@@ -158,6 +158,7 @@ var
   LColor: TColor;
 begin
   inherited;
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, '`       - Command Console', []);
   Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'ESC     - Quit', []);
 
   gEngine.Display.GetViewportSize(nil, nil, @LWidth, @LHeight);

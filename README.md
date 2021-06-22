@@ -3,34 +3,39 @@
 [![Chat on Discord](https://img.shields.io/discord/754884471324672040.svg?logo=discord)](https://discord.gg/tPWjMwK) [![GitHub stars](https://img.shields.io/github/stars/tinyBigGAMES/Vivace?style=social)](https://github.com/tinyBigGAMES/Vivace/stargazers) [![GitHub Watchers](https://img.shields.io/github/watchers/tinyBigGAMES/Vivace?style=social)](https://github.com/tinyBigGAMES/Vivace/network/members) [![GitHub forks](https://img.shields.io/github/forks/tinyBigGAMES/Vivace?style=social)](https://github.com/tinyBigGAMES/Vivace/network/members)
 [![Twitter Follow](https://img.shields.io/twitter/follow/tinyBigGAMES?style=social)](https://twitter.com/tinyBigGAMES)
 
+## Overview
+Vivace&trade; (*ve'va'CHe*) Game Toolkit is an SDK to allow easy, fast & fun 2D game development in <a href="https://www.embarcadero.com/products/delphi" target="_blank">Delphi</a> on desktop PC's running Microsoft Windows® and uses Direct3D® for hardware accelerated rendering.
+
+It's robust, designed for easy, fast & fun use an suitable for making all types of 2D games and other graphic simulations, You access the features from a simple and intuitive API, to allow you to rapidly and efficiently develop your graphics simulations. There is support for bitmaps, audio samples, streaming music, video playback, loading resources directly from a standard ZIP archive and much more.
+
 ## Downloads
 <a href="https://github.com/tinyBigGAMES/Vivace/archive/main.zip" target="_blank">**Development**</a> - This build represent the most recent development state an as such may or may not be as stable as the official release versions. If you like living on the bleeding edge, it's updated frequently (often daily) and will contain bug fixes and new features.
 
 <a href="https://github.com/tinyBigGAMES/Vivace/releases" target="_blank">**Releases**</a> - These are the official release versions and deemed to be the most stable.
 
-# Welcome to Vivace
-Vivace&trade; (*ve'va'CHe*) Game Toolkit is an SDK to allow easy, fast & fun 2D game development in [Delphi](https://www.embarcadero.com/products/delphi) on desktop PC's running Microsoft Windows® and uses Direct3D® for hardware accelerated rendering.
-
-It's robust, designed for easy, fast & fun use an suitable for making all types of 2D games and other graphic simulations, You access the features from a simple and intuitive API, to allow you to rapidly and efficiently develop your graphics simulations. There is support for bitmaps, audio samples, streaming music, video playback, loading resources directly from a standard ZIP archive and much more.
-
 ## Features
-- You interact with the toolkit via class objects and a thin OOP framework
-- Archive (standard zip, mount/unmount)
-- Display ( Direct3D, antialiasing, vsync, viewports, primitives, blending)
-- Input (keyboard, mouse and joystick)
-- Bitmap (color key transparency, scaling, rotation, flipped, titled)
-- Video (ogv format, play, pause, rewind)
-- Sprite (pages, groups, animation, polypoint collision)
-- Entity (defined from a sprite, position, scale, rotation, collision)
-- Actor (list, scene, statemachine)
-- Audio (samples, streams)
-- Speech (multiple voices, play, pause)
-- Font (true type, scale, rotate, 3 builtin)
-- Timing (time-based, frame elapsed, frame speed)
-- Misc (screenshake, screenshot, starfied, colors, ini based config files, startup dialog, treeview menu)
+- **Free and open source**
+- All required libraries are **bundled** in Vivace (<a href="https://github.com/liballeg/allegro5" target="_blank">Allegro</a>, <a href="https://github.com/Immediate-Mode-UI/Nuklear" target="_blank">Nulkear</a>, <a href="https://github.com/SFML/CSFML" target="_blank">CSFMLAudio</a>, <a href="https://github.com/LuaJIT/LuaJIT" target="_blank">LuaJIT</a>)
+- Written in **Object Pascal**
+- Hardware accelerated with **Direct3D**
+- You interact with the toolkit via **routines**, **class objects** and a thin **OOP framework**
+- **Archive** (mount/unmount, ZIP format )
+- **Display** ( Direct3D, antialiasing, vsync, viewports, primitives, blending)
+- **Input** (keyboard, mouse and joystick)
+- **Bitmap** (color key transparency, scaling, rotation, flipped, titled,  BMP, DDS, PCX, TGA, JPEG, PNG)
+- **Video** (play, pause, rewind, OGV format)
+- **Sprite** (pages, groups, animation, polypoint collision)
+- **Entity** (defined from a sprite, position, scale, rotation, collision)
+- **Actor** (list, scene, statemachine)
+- **Audio** (samples, streams, WAV, OGG/Vorbis, FLAC formats)
+- **Speech** (multiple voices, play, pause)
+- **Font** (true type, scale, rotate, 2 builtin)
+- **Timing** (time-based, frame elapsed, frame speed)
+- **Scripting** (load, save, easy manual binding to Pascal, FFI from script)
+- **Misc** (screenshake, screenshot, starfied, colors, ini based config files, startup dialog, treeview menu)
 
 ## Minimum System Requirements
-- [Delphi 10](https://www.embarcadero.com/products/delphi) or higher
+- <a href="https://www.embarcadero.com/products/delphi" target="_blank">Delphi 10</a> or higher
 - Microsoft Windows 10
 - DirectX 9
 
@@ -54,9 +59,8 @@ uses
   Vivace.Input,
   Vivace.Font,
   Vivace.Game,
-  Vivace.Engine,
-  uCommon;
-
+  Vivace.Engine;
+  
 const
   cArchiveFilename   = 'Data.arc';
 
