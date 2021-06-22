@@ -152,8 +152,8 @@ begin
   Pos.Assign(3, 3, 0);
 
   // display hud text
-  FFont.Print(Pos.X, Pos.Y, Pos.Z, WHITE, alLeft, 'fps %d', [gEngine.FrameRate]);
-  FFont.Print(Pos.X, Pos.Y, 0, GREEN, alLeft, 'Esc - Quit', [gEngine.GetFrameRate]);
+  FFont.Print(Pos.X, Pos.Y, Pos.Z, WHITE, alLeft, 'fps %d', [gEngine.GetFrameRate]);
+  FFont.Print(Pos.X, Pos.Y, 0, GREEN, alLeft, 'Esc - Quit', []);
 end;
 ```
 To run your game, call
