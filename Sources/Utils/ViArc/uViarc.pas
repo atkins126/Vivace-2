@@ -134,7 +134,7 @@ begin
     FCurFilename := aFilename;
   end;
   Done := Round((aPosition / aHeader.UncompressedSize) * 100);
-  TConsole.Write('   Adding %s (%d%s)...'#13, [aFilename, Done, '%'], etInfo);
+  TConsole.Write(#13'   Adding %s (%d%s)...', [aFilename, Done, '%'], etInfo);
 end;
 
 procedure TViArc.Build(aFilename: string; aPath: string);
@@ -202,8 +202,8 @@ begin
   // create zip archive and show progress
   Build(FName, Dir);
 
-  WriteLn;
-  WriteLn;
+  TConsole.WriteLn;
+  TConsole.WriteLn;
 
   // check if zip archive was created
   if TFile.Exists(FName) then
