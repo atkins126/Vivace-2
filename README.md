@@ -144,7 +144,7 @@ procedure TMyGame.OnRender;
 begin
 end;
 
-procedure TMyGame.OnRenderGUI;
+procedure TMyGame.OnRenderHUD;
 var
   Pos: TVector;
 begin
