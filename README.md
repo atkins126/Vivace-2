@@ -46,7 +46,7 @@ It's robust, designed for easy, fast & fun use an suitable for making all types 
 
 ## A Tour of Vivace
 ### Game Object
-You just have to derive a new class from the `TviGame` base class and override a few callback methods. You access the toolkit functionality from the classes in the various `Vivace.XXX` units.
+You just have to derive a new class from the `TCustomGame` base class and override a few callback methods. You access the toolkit functionality from the classes in the various `Vivace.XXX` units.
 ```pascal
 uses
   Vivace.Color,
