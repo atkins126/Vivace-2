@@ -173,3 +173,5 @@ Website: https://tinybiggames.com
 E-mail : mailto:support@tinybiggames.com  
 Discord: https://discord.gg/tPWjMwK  
 Twitter: https://twitter.com/tinyBigGAMES
+<br/><br/><br/>
+<a href="https://www.embarcadero.com/products/delphi" target="_blank"><center>![Powered By Delphi](Images/delphi.png)</center></a>
