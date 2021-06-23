@@ -175,5 +175,6 @@ Discord: https://discord.gg/tPWjMwK
 Twitter: https://twitter.com/tinyBigGAMES
 
 <p align="center">
-<a href="https://www.embarcadero.com/products/delphi" target="_blank">![Powered By Delphi](Images/delphi.png)</a>
+ <a href="https://www.embarcadero.com/products/delphi" target="_blank"><img src="images/delphi.png"></a>
 </p>
+
