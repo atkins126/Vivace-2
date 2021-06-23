@@ -60,7 +60,8 @@ uses
   Vivace.Game,
   Vivace.Font,
   Vivace.Math,
-  Vivace.Sprite;
+  Vivace.Sprite,
+  Vivace.Actor;
 
 const
   cArchiveFilename   = 'Data.arc';
@@ -78,9 +79,11 @@ type
     FPropFont: TFont;
     FSmallFont: TFont;
     FSprite: TSprite;
+    FScene: TActorScene;
   public
     MousePos: TVector;
     property Sprite: TSprite read FSprite;
+    property Scene: TActorScene read FScene;
     procedure OnSetConfig(var aConfig: TGameConfig); override;
     procedure OnLoad; override;
     procedure OnExit; override;
@@ -112,12 +115,10 @@ end;
 procedure TBaseExample.OnLoad;
 begin
   inherited;
-  FSprite := TSprite.Create;
 end;
 
 procedure TBaseExample.OnExit;
 begin
-  FreeAndNil(FSprite);
   inherited;
 end;
 
@@ -128,10 +129,15 @@ begin
   FPropFont := TFont.Create;
   FSmallFont := TFont.Create;
   FSmallFont.Load(12);
+  FSprite := TSprite.Create;
+  FScene := TActorScene.Create;
+  FScene.Alloc(1);
 end;
 
 procedure TBaseExample.OnShutdown;
 begin
+  FreeAndNil(FScene);
+  FreeAndNil(FSprite);
   FreeAndNil(FSmallFont);
   FreeAndNil(FPropFont);
   FreeAndNil(FMonoFont);

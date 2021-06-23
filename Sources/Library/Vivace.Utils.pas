@@ -61,6 +61,9 @@ uses
   System.TypInfo,
   System.SysUtils;
 
+const
+  cTrueFalseStr: array[False .. True] of string = ('False', 'True ');
+
 type
 
  { TEnumConverter }

@@ -61,7 +61,8 @@ uses
   Vivace.Color,
   uCommon,
   uDisplay,
-  uEntity;
+  uEntity,
+  uActor;
 
 type
 
@@ -117,7 +118,11 @@ type
 
     // Entity
     miEntityBasic,
-    miEntityPolyPointCollision
+    miEntityPolyPointCollision,
+    miEntityBlendMode,
+
+    //Actor
+    miActorBasic
   );
 
 var
@@ -126,6 +131,7 @@ var
   LBitmap: Integer;
   LFont: Integer;
   LEntity: Integer;
+  LActor: Integer;
   LSelItem: Integer;
 begin
   LTreeMenu := TTreeMenu.Create;
@@ -151,7 +157,13 @@ begin
     LEntity := LTreeMenu.AddItem(0, 'Entity', TREEMENU_NONE, True);
     LTreeMenu.AddItem(LEntity, 'Basic', Ord(miEntityBasic), True);
     LTreeMenu.AddItem(LEntity, 'PolyPoint Collision', Ord(miEntityPolyPointCollision), True);
-    LTreeMenu.Sort(LDisplay);
+    LTreeMenu.AddItem(LEntity, 'Blend Mode', Ord(miEntityBlendMode), True);
+    LTreeMenu.Sort(LEntity);
+
+    // Actor
+    LActor := LTreeMenu.AddItem(0, 'Actor', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LActor, 'Basic', Ord(miActorBasic), True);
+    LTreeMenu.Sort(LActor);
 
     LSelItem := ConfigFile.GetValue('Examples.Menu', 'SelItem', TREEMENU_NONE);
     repeat
@@ -159,11 +171,13 @@ begin
       case TMenuIds(LSelItem) of
         miDisplayTransform: ;
         miDisplayViewport: ;
-        miDisplayBasic           : RunGame(TDisplayBasic);
-        miDisplayToggleFullscreen: RunGame(TDisplayToggleFullscreen);
-        miDisplayPrimitives      : RunGame(TDisplayPrimitives);
-        miEntityBasic            : RunGame(TEntityBasic);
-        miEntityPolyPointCollision        : RunGame(TEntityPolyPointCollision);
+        miDisplayBasic            : RunGame(TDisplayBasic);
+        miDisplayToggleFullscreen : RunGame(TDisplayToggleFullscreen);
+        miDisplayPrimitives       : RunGame(TDisplayPrimitives);
+        miEntityBasic             : RunGame(TEntityBasic);
+        miEntityPolyPointCollision: RunGame(TEntityPolyPointCollision);
+        miEntityBlendMode         : RunGame(TEntityBlendMode);
+        miActorBasic              : RunGame(TActorBasic);
       end;
     until LSelItem = TREEMENU_QUIT;
 

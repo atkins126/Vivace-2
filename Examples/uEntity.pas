@@ -61,6 +61,7 @@ uses
   Vivace.Sprite,
   Vivace.Entity,
   Vivace.Math,
+  Vivace.Display,
   uCommon;
 
 type
@@ -68,7 +69,6 @@ type
   { TEntityBasic }
   TEntityBasic = class(TBaseExample)
   protected
-    FExplo: TEntity;
     FShip: TEntity;
   public
     procedure OnSetConfig(var aConfig: TGameConfig); override;
@@ -78,6 +78,21 @@ type
     procedure OnRender; override;
     procedure OnRenderHUD; override;
   end;
+
+  { TEntityBlendMode }
+  TEntityBlendMode = class(TBaseExample)
+  protected
+    FBlendMode: Boolean;
+    FExplo: TEntity;
+  public
+    procedure OnSetConfig(var aConfig: TGameConfig); override;
+    procedure OnStartup; override;
+    procedure OnShutdown; override;
+    procedure OnUpdate(aDeltaTime: Double); override;
+    procedure OnRender; override;
+    procedure OnRenderHUD; override;
+  end;
+
 
   { TEntityPolyPointCollision }
   TEntityPolyPointCollision = class(TBaseExample)
@@ -102,8 +117,10 @@ implementation
 uses
   System.SysUtils,
   Vivace.Engine,
-  Vivace.Display,
-  Vivace.Color;
+  Vivace.Color,
+  Vivace.Input,
+  Vivace.Common,
+  Vivace.Utils;
 
 { TEntityBasic }
 procedure TEntityBasic.OnSetConfig(var aConfig: TGameConfig);
@@ -117,76 +134,38 @@ procedure TEntityBasic.OnStartup;
 begin
   inherited;
 
-  // init explosion sprite
-  Sprite.LoadPage('arc/bitmaps/sprites/explosion.png', nil);
+  // init ship sprite
+  Sprite.LoadPage('arc/bitmaps/sprites/ship.png', nil);
   Sprite.AddGroup;
   Sprite.AddImageFromGrid(0, 0, 0, 0, 64, 64);
   Sprite.AddImageFromGrid(0, 0, 1, 0, 64, 64);
   Sprite.AddImageFromGrid(0, 0, 2, 0, 64, 64);
   Sprite.AddImageFromGrid(0, 0, 3, 0, 64, 64);
 
-  Sprite.AddImageFromGrid(0, 0, 0, 1, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 1, 1, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 2, 1, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 3, 1, 64, 64);
-
-  Sprite.AddImageFromGrid(0, 0, 0, 2, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 1, 2, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 2, 2, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 3, 2, 64, 64);
-
-  Sprite.AddImageFromGrid(0, 0, 0, 3, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 1, 3, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 2, 3, 64, 64);
-  Sprite.AddImageFromGrid(0, 0, 3, 3, 64, 64);
-
-  // init ship sprite
-  Sprite.LoadPage('arc/bitmaps/sprites/ship.png', nil);
-  Sprite.AddGroup;
-  Sprite.AddImageFromGrid(1, 1, 0, 0, 64, 64);
-  Sprite.AddImageFromGrid(1, 1, 1, 0, 64, 64);
-  Sprite.AddImageFromGrid(1, 1, 2, 0, 64, 64);
-  Sprite.AddImageFromGrid(1, 1, 3, 0, 64, 64);
-
-
-  // init explosion entity
-  FExplo := TEntity.Create;
-  FExplo.Init(Sprite, 0);
-  FExplo.SetFrameFPS(14);
-  FExplo.SetScaleAbs(1);
-  FExplo.SetPosAbs(Config.DisplayWidth/2, (Config.DisplayHeight/2)-64);
-
   // init ship entity
   FShip := TEntity.Create;
-  FShip.Init(Sprite, 1);
+  FShip.Init(Sprite, 0);
   FShip.SetFrameFPS(17);
   FShip.SetScaleAbs(1);
-  FShip.SetPosAbs(Config.DisplayWidth/2, (Config.DisplayHeight/2)+64);
+  FShip.SetPosAbs(Config.DisplayWidth/2, Config.DisplayHeight/2);
   FShip.SetFrameRange(1, 3);
 end;
 
 procedure TEntityBasic.OnShutdown;
 begin
   FreeAndNil(FShip);
-  FreeAndNil(FExplo);
   inherited;
 end;
 
 procedure TEntityBasic.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
-  FExplo.NextFrame;
   FShip.NextFrame;
 end;
 
 procedure TEntityBasic.OnRender;
 begin
   inherited;
-
-  gEngine.Display.SetBlender(BLEND_ADD, BLEND_ALPHA, BLEND_INVERSE_ALPHA);
-  gEngine.Display.SetBlendMode(bmAdditiveAlpha);
-  FExplo.Render(0,0);
-  gEngine.Display.RestoreDefaultBlendMode;
 
   FShip.Render(0, 0);
 end;
@@ -203,7 +182,6 @@ begin
   inherited;
 
   aConfig.DisplayTitle := cExampleTitle + 'Entity Collision';
-
 end;
 
 procedure TEntityPolyPointCollision.OnStartup;
@@ -239,8 +217,6 @@ begin
   FFigure.SetPosAbs(Config.DisplayWidth/2, Config.DisplayHeight/2);
   FFigure.TracePolyPoint(6, 12, 70);
   FFigure.SetRenderPolyPoint(True);
-
-
 end;
 
 procedure TEntityPolyPointCollision.OnShutdown;
@@ -272,17 +248,95 @@ procedure TEntityPolyPointCollision.OnRender;
 begin
   inherited;
 
-  //GV_RenderEntity(FFigure, 0, 0);
   FFigure.Render(0, 0);
-  //GV_RenderEntity(FBoss, 0, 0);
   FBoss.Render(0, 0);
-  if FCollide  then
+  if FCollide then
     gEngine.Display.DrawFilledRectangle(FHitPos.X, FHitPos.Y, 10, 10, RED);
 end;
 
 procedure TEntityPolyPointCollision.OnRenderHUD;
 begin
   inherited;
+end;
+
+
+{ TEntityBlendMode }
+procedure TEntityBlendMode.OnSetConfig(var aConfig: TGameConfig);
+begin
+  inherited;
+  aConfig.DisplayTitle := cExampleTitle + 'Entity Blend Mode';
+end;
+
+procedure TEntityBlendMode.OnStartup;
+begin
+  inherited;
+
+  // init explosion sprite
+  Sprite.LoadPage('arc/bitmaps/sprites/explosion.png', nil);
+  Sprite.AddGroup;
+  Sprite.AddImageFromGrid(0, 0, 0, 0, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 1, 0, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 2, 0, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 3, 0, 64, 64);
+
+  Sprite.AddImageFromGrid(0, 0, 0, 1, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 1, 1, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 2, 1, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 3, 1, 64, 64);
+
+  Sprite.AddImageFromGrid(0, 0, 0, 2, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 1, 2, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 2, 2, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 3, 2, 64, 64);
+
+  Sprite.AddImageFromGrid(0, 0, 0, 3, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 1, 3, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 2, 3, 64, 64);
+  Sprite.AddImageFromGrid(0, 0, 3, 3, 64, 64);
+
+  // init explosion entity
+  FExplo := TEntity.Create;
+  FExplo.Init(Sprite, 0);
+  FExplo.SetFrameFPS(14);
+  FExplo.SetScaleAbs(1);
+  FExplo.SetPosAbs(Config.DisplayWidth/2, Config.DisplayHeight/2);
+
+  FBlendMode := False;
+end;
+
+procedure TEntityBlendMode.OnShutdown;
+begin
+  FreeAndNil(FExplo);
+  inherited;
+end;
+
+procedure TEntityBlendMode.OnUpdate(aDeltaTime: Double);
+begin
+  inherited;
+
+  if gEngine.Input.KeyboardPressed(KEY_B) then
+  begin
+    FBlendMode := not FBlendMode;
+  end;
+
+  FExplo.NextFrame;
+end;
+
+procedure TEntityBlendMode.OnRender;
+begin
+  inherited;
+
+  if FBlendMode then gEngine.Display.SetBlendMode(bmAdditiveAlpha);
+  FExplo.Render(0,0);
+  gEngine.Display.RestoreDefaultBlendMode;
+end;
+
+procedure TEntityBlendMode.OnRenderHUD;
+begin
+  inherited;
+
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'B       - Toggle blending', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Blend:    %s', [cTrueFalseStr[FBlendMode]]);
 end;
 
 
