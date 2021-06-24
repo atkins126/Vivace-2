@@ -62,7 +62,11 @@ uses
   uCommon,
   uDisplay,
   uEntity,
-  uActor;
+  uActor,
+  uAstroBlaster,
+  uScroll,
+  uElastic,
+  uChainAction;
 
 type
 
@@ -122,7 +126,13 @@ type
     miEntityBlendMode,
 
     //Actor
-    miActorBasic
+    miActorBasic,
+
+    // Demo
+    miDemoAstroBlaster,
+    miDemoChainAction,
+    miDemoScroll,
+    miDemoElastic
   );
 
 var
@@ -131,6 +141,7 @@ var
   LBitmap: Integer;
   LFont: Integer;
   LEntity: Integer;
+  LDemo: Integer;
   LActor: Integer;
   LSelItem: Integer;
 begin
@@ -165,6 +176,17 @@ begin
     LTreeMenu.AddItem(LActor, 'Basic', Ord(miActorBasic), True);
     LTreeMenu.Sort(LActor);
 
+    LTreeMenu.Sort(0);
+
+    // Demo
+    LDemo := LTreeMenu.AddItem(0, 'Demo', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LDemo, 'AstroBlaster', Ord(miDemoAstroBlaster), True);
+    LTreeMenu.AddItem(LDemo, 'ChainAction', Ord(miDemoChainAction), True);
+    LTreeMenu.AddItem(LDemo, 'Scroll', Ord(miDemoScroll), True);
+    LTreeMenu.AddItem(LDemo, 'Elastic', Ord(miDemoElastic), True);
+    LTreeMenu.Sort(LDemo);
+
+
     LSelItem := ConfigFile.GetValue('Examples.Menu', 'SelItem', TREEMENU_NONE);
     repeat
       LSelItem := LTreeMenu.Show(LSelItem);
@@ -178,6 +200,10 @@ begin
         miEntityPolyPointCollision: RunGame(TEntityPolyPointCollision);
         miEntityBlendMode         : RunGame(TEntityBlendMode);
         miActorBasic              : RunGame(TActorBasic);
+        miDemoAstroBlaster        : RunGame(TAstroBlasterDemo);
+        miDemoScroll              : RunGame(TScrollDemo);
+        miDemoChainAction         : RunGame(TChainActionDemo);
+        miDemoElastic             : RunGame(TElasticDemo);
       end;
     until LSelItem = TREEMENU_QUIT;
 

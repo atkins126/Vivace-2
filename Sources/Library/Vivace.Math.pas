@@ -155,6 +155,8 @@ type
     class function  Pointf(aX: Single; aY: Single): TPointf; inline;
     class function  Vector(aX: Single; aY: Single): TVector; inline;
     class function  Rectangle(aX: Single; aY: Single; aWidth: Single; aHeight: Single): TRectangle; inline;
+
+    class procedure SmoothMove(var aValue: Single; aAmount: Single; aMax: Single; aDrag: Single); inline;
 end;
 
 implementation
@@ -356,6 +358,38 @@ begin
   Result.Y := aY;
   Result.Width := aWidth;
   Result.Height := aHeight;
+end;
+
+class procedure TMath.SmoothMove(var aValue: Single; aAmount: Single; aMax: Single; aDrag: Single);
+var
+  Amt: Single;
+begin
+  Amt := aAmount;
+
+  if Amt > 0 then
+  begin
+    aValue := aValue + Amt;
+    if aValue > aMax then
+      aValue := aMax;
+  end else if Amt < 0 then
+  begin
+    aValue := aValue + Amt;
+    if aValue < -aMax then
+      aValue := -aMax;
+  end else
+  begin
+    if aValue > 0 then
+    begin
+      aValue := aValue - aDrag;
+      if aValue < 0 then
+        aValue := 0;
+    end else if aValue < 0 then
+    begin
+      aValue := aValue + aDrag;
+      if aValue > 0 then
+        aValue := 0;
+    end;
+  end;
 end;
 
 

@@ -214,7 +214,7 @@ begin
   inherited;
 
   Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'S       - Spawn actors', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Count     %d', [Scene.Lists[0].Count]);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Count     %d', [Scene.Lists[0].Count]);
 
 end;
 

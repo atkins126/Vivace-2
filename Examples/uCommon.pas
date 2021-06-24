@@ -190,6 +190,9 @@ begin
   if gEngine.Input.KeyboardPressed(KEY_F11) then
     gEngine.Display.ToggleFullscreen;
 
+  if gEngine.Input.KeyboardPressed(KEY_F12) then
+    gEngine.Screenshot.Take;
+
 end;
 
 

@@ -114,7 +114,11 @@ uses
   Vivace.RichEdit in '..\Sources\Library\Vivace.RichEdit.pas',
   uDisplay in 'uDisplay.pas',
   uEntity in 'uEntity.pas',
-  uActor in 'uActor.pas';
+  uActor in 'uActor.pas',
+  uAstroBlaster in 'uAstroBlaster.pas',
+  uScroll in 'uScroll.pas',
+  uElastic in 'uElastic.pas',
+  uChainAction in 'uChainAction.pas';
 
 begin
   RunGame(TExamples);

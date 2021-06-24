@@ -103,6 +103,8 @@ type
     procedure Draw(aX, aY: Single; aRegion: PRectangle; aCenter: PVector;  aScale: PVector; aAngle: Single; aColor: TColor; aHFlip: Boolean; aVFlip: Boolean); overload;
     procedure Draw(aX, aY, aScale, aAngle: Single; aColor: TColor; aHAlign: THAlign; aVAlign: TVAlign; aHFlip: Boolean=False; aVFlip: Boolean=False); overload;
     procedure DrawTiled(aDeltaX: Single; aDeltaY: Single);
+
+    class function LoadBitmap(aFilename: string; aColorKey: PColor): TBitmap; inline;
   end;
 
 implementation
@@ -452,6 +454,12 @@ begin
     end;
    iy := iy+h;
   end;
+end;
+
+class function TBitmap.LoadBitmap(aFilename: string; aColorKey: PColor): TBitmap;
+begin
+  Result := TBitmap.Create;
+  Result.Load(aFilename, aColorKey);
 end;
 
 end.
