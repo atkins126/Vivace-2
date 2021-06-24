@@ -94,6 +94,8 @@ type
 
     procedure Align(var aX: Single; var aY: Single); overload;
     procedure Align(var aPos: TVector); overload;
+
+    class function CreateViewport(aX: Integer; aY: Integer; aWidth: Integer; aHeight: Integer): TViewport;
   end;
 
 implementation
@@ -246,6 +248,12 @@ procedure TViewport.Align(var aPos: TVector);
 begin
   aPos.X := FPos.X + aPos.X;
   aPos.Y := FPos.Y + aPos.Y;
+end;
+
+class function TViewport.CreateViewport(aX: Integer; aY: Integer; aWidth: Integer; aHeight: Integer): TViewport;
+begin
+  Result := TViewport.Create;
+  Result.Init(aX, aY, aWidth, aHeight);
 end;
 
 end.

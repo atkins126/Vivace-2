@@ -166,10 +166,14 @@
         <DCCReference Include="uDisplay.pas"/>
         <DCCReference Include="uEntity.pas"/>
         <DCCReference Include="uActor.pas"/>
-        <DCCReference Include="uAstroBlaster.pas"/>
-        <DCCReference Include="uScroll.pas"/>
-        <DCCReference Include="uElastic.pas"/>
-        <DCCReference Include="uChainAction.pas"/>
+        <DCCReference Include="uAstroBlasterDemo.pas"/>
+        <DCCReference Include="uScrollDemo.pas"/>
+        <DCCReference Include="uElasticDemo.pas"/>
+        <DCCReference Include="uChainActionDemo.pas"/>
+        <DCCReference Include="uBitmap.pas"/>
+        <DCCReference Include="uFont.pas"/>
+        <DCCReference Include="uViewportsDemo.pas"/>
+        <DCCReference Include="uGUIDemo.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

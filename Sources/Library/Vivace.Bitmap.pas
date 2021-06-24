@@ -142,11 +142,11 @@ begin
       FWidth := al_get_bitmap_width(FHandle.Bitmap);
       FHeight := al_get_bitmap_height(FHandle.Bitmap);
       FFilename := '';
-      TLogger.Log(etSuccess, 'Successfully allocated (%f x %f) bitmap', [aWidth, aHeight]);
+      TLogger.Log(etSuccess, 'Successfully allocated (%d x %d) bitmap', [aWidth, aHeight]);
     end
   else
     begin
-      TLogger.Log(etSuccess, 'Failed to allocate (%f x %f) bitmap', [aWidth, aHeight]);
+      TLogger.Log(etSuccess, 'Failed to allocate (%d x %d) bitmap', [aWidth, aHeight]);
     end;
 end;
 

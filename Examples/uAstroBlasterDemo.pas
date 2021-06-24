@@ -52,7 +52,7 @@
   OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
-unit uAstroBlaster;
+unit uAstroBlasterDemo;
 
 interface
 

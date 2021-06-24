@@ -63,10 +63,14 @@ uses
   uDisplay,
   uEntity,
   uActor,
-  uAstroBlaster,
-  uScroll,
-  uElastic,
-  uChainAction;
+  uAstroBlasterDemo,
+  uScrollDemo,
+  uElasticDemo,
+  uChainActionDemo,
+  uViewportsDemo,
+  uGUIDemo,
+  uBitmap,
+  uFont;
 
 type
 
@@ -111,18 +115,22 @@ type
   TMenuIds = (
     // Display
     miDisplayPrimitives,
-    miDisplayTransform,
-    miDisplayViewport,
+    miDisplayRotateViewport,
     miDisplayBasic,
     miDisplayToggleFullscreen,
 
     // Bitmap
+    miBitmapColorKeyTransparency,
+    miBitmapTrueTransparency,
+    miBitmapTiled,
 
     // Font
+    miFontUnicode,
 
     // Entity
     miEntityBasic,
     miEntityPolyPointCollision,
+    miEntityPolyPointCollisionPoint,
     miEntityBlendMode,
 
     //Actor
@@ -132,7 +140,9 @@ type
     miDemoAstroBlaster,
     miDemoChainAction,
     miDemoScroll,
-    miDemoElastic
+    miDemoElastic,
+    miDemoViewports,
+    miDemoGUI
   );
 
 var
@@ -151,23 +161,29 @@ begin
 
     // Display
     LDisplay := LTreeMenu.AddItem(0, 'Display', TREEMENU_NONE, True);
-    LTreeMenu.AddItem(LDisplay, 'Transform', Ord(miDisplayTransform), False);
-    LTreeMenu.AddItem(LDisplay, 'Viewport', Ord(miDisplayViewport), False);
+    LTreeMenu.AddItem(LDisplay, 'Rotate Viewport', Ord(miDisplayRotateViewport), True);
     LTreeMenu.AddItem(LDisplay, 'Primitives', Ord(miDisplayPrimitives), True);
     LTreeMenu.AddItem(LDisplay, 'Basic', Ord(miDisplayBasic), True);
     LTreeMenu.AddItem(LDisplay, 'Toggle Fullscreen', Ord(miDisplayToggleFullscreen), True);
     LTreeMenu.Sort(LDisplay);
 
     // Bitmap
-    LBitmap  := LTreeMenu.AddItem(0, 'Bitmap', TREEMENU_NONE, False);
+    LBitmap  := LTreeMenu.AddItem(0, 'Bitmap', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LBitmap, 'ColorKey Transparency', Ord(miBitmapColorKeyTransparency), True);
+    LTreeMenu.AddItem(LBitmap, 'True Transparency', Ord(miBitmapTrueTransparency), True);
+    LTreeMenu.AddItem(LBitmap, 'Tiled', Ord(miBitmapTiled), True);
+    LTreeMenu.Sort(LBitmap);
 
     // Font
-    LFont  := LTreeMenu.AddItem(0, 'Font', TREEMENU_NONE, False);
+    LFont  := LTreeMenu.AddItem(0, 'Font', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LFont, 'Unicode', Ord(miFontUnicode), True);
+    LTreeMenu.Sort(LFont);
 
     // Entity
     LEntity := LTreeMenu.AddItem(0, 'Entity', TREEMENU_NONE, True);
     LTreeMenu.AddItem(LEntity, 'Basic', Ord(miEntityBasic), True);
     LTreeMenu.AddItem(LEntity, 'PolyPoint Collision', Ord(miEntityPolyPointCollision), True);
+    LTreeMenu.AddItem(LEntity, 'PolyPoint Collision Point', Ord(miEntityPolyPointCollisionPoint), True);
     LTreeMenu.AddItem(LEntity, 'Blend Mode', Ord(miEntityBlendMode), True);
     LTreeMenu.Sort(LEntity);
 
@@ -184,6 +200,8 @@ begin
     LTreeMenu.AddItem(LDemo, 'ChainAction', Ord(miDemoChainAction), True);
     LTreeMenu.AddItem(LDemo, 'Scroll', Ord(miDemoScroll), True);
     LTreeMenu.AddItem(LDemo, 'Elastic', Ord(miDemoElastic), True);
+    LTreeMenu.AddItem(LDemo, 'Viewports', Ord(miDemoViewports), True);
+    LTreeMenu.AddItem(LDemo, 'GUI', Ord(miDemoGUI), True);
     LTreeMenu.Sort(LDemo);
 
 
@@ -191,19 +209,36 @@ begin
     repeat
       LSelItem := LTreeMenu.Show(LSelItem);
       case TMenuIds(LSelItem) of
-        miDisplayTransform: ;
-        miDisplayViewport: ;
-        miDisplayBasic            : RunGame(TDisplayBasic);
-        miDisplayToggleFullscreen : RunGame(TDisplayToggleFullscreen);
-        miDisplayPrimitives       : RunGame(TDisplayPrimitives);
-        miEntityBasic             : RunGame(TEntityBasic);
-        miEntityPolyPointCollision: RunGame(TEntityPolyPointCollision);
-        miEntityBlendMode         : RunGame(TEntityBlendMode);
-        miActorBasic              : RunGame(TActorBasic);
-        miDemoAstroBlaster        : RunGame(TAstroBlasterDemo);
-        miDemoScroll              : RunGame(TScrollDemo);
-        miDemoChainAction         : RunGame(TChainActionDemo);
-        miDemoElastic             : RunGame(TElasticDemo);
+        // display
+        miDisplayRotateViewport        : RunGame(TDisplayRotateViewport);
+        miDisplayBasic                 : RunGame(TDisplayBasic);
+        miDisplayToggleFullscreen      : RunGame(TDisplayToggleFullscreen);
+        miDisplayPrimitives            : RunGame(TDisplayPrimitives);
+
+        // bitmap
+        miBitmapColorKeyTransparency   : RunGame(TBitmapColorKeyTransparency);
+        miBitmapTrueTransparency       : RunGame(TBitmapTrueTransparency);
+        miBitmapTiled                  : RunGame(TBitmapTiled);
+
+        // font
+        miFontUnicode                  : RunGame(TFontUnicode);
+
+        // entity
+        miEntityBasic                  : RunGame(TEntityBasic);
+        miEntityPolyPointCollision     : RunGame(TEntityPolyPointCollision);
+        miEntityPolyPointCollisionPoint: RunGame(TEntityPolyPointCollisionPoint);
+        miEntityBlendMode              : RunGame(TEntityBlendMode);
+
+        // actor
+        miActorBasic                   : RunGame(TActorBasic);
+
+        // demo
+        miDemoAstroBlaster             : RunGame(TAstroBlasterDemo);
+        miDemoScroll                   : RunGame(TScrollDemo);
+        miDemoChainAction              : RunGame(TChainActionDemo);
+        miDemoElastic                  : RunGame(TElasticDemo);
+        miDemoViewports                : RunGame(TAViewportsDemo);
+        miDemoGUI                      : RunGame(TGUIDemo);
       end;
     until LSelItem = TREEMENU_QUIT;
 

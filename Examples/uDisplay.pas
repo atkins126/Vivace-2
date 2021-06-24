@@ -58,6 +58,8 @@ interface
 
 uses
   Vivace.Game,
+  Vivace.Viewport,
+  Vivace.Bitmap,
   uCommon;
 
 type
@@ -66,6 +68,7 @@ type
   TDisplayBasic = class(TBaseExample)
   public
     procedure OnSetConfig(var aConfig: TGameConfig); override;
+    procedure OnUpdate(aDeltaTime: Double); override;
   end;
 
   { TDisplayToggleFullscreen }
@@ -85,9 +88,26 @@ type
     procedure OnRenderHUD; override;
   end;
 
+  { TDisplayRotateViewport }
+  TDisplayRotateViewport = class(TBaseExample)
+  protected
+    FViewport: TViewport;
+    FBackground: TBitmap;
+    FSpeed: Single;
+    FAngle: Single;
+  public
+    procedure OnSetConfig(var aConfig: TGameConfig); override;
+    procedure OnStartup; override;
+    procedure OnShutdown; override;
+    procedure OnUpdate(aDeltaTime: Double); override;
+    procedure OnRender; override;
+    procedure OnRenderHUD; override;
+  end;
+
 implementation
 
 uses
+  System.SysUtils,
   Vivace.Engine,
   Vivace.Input,
   Vivace.Color,
@@ -100,6 +120,11 @@ begin
   inherited;
 
   aConfig.DisplayTitle := cExampleTitle + 'Basic Display';
+end;
+
+procedure TDisplayBasic.OnUpdate(aDeltaTime: Double);
+begin
+  inherited;
 end;
 
 { TDisplayToggleFullscreen }
@@ -170,9 +195,62 @@ end;
 procedure TDisplayPrimitives.OnRenderHUD;
 begin
   inherited;
-
 end;
 
 
+{ TDisplayRotateViewport }
+procedure TDisplayRotateViewport.OnSetConfig(var aConfig: TGameConfig);
+begin
+  inherited;
+  aConfig.DisplayTitle := cExampleTitle + 'Rotate Viewport';
+end;
+
+procedure TDisplayRotateViewport.OnStartup;
+begin
+  inherited;
+
+  FViewport := TViewport.CreateViewport((Config.DisplayWidth - 380) div 2, (Config.DisplayHeight-280) div 2, 380, 280);
+
+  FBackground := TBitmap.LoadBitmap('arc/bitmaps/backgrounds/bluestone.png', nil);
+end;
+
+procedure TDisplayRotateViewport.OnShutdown;
+begin
+  FreeAndNil(FBackground);
+  FreeAndNil(FViewport);
+  inherited;
+end;
+
+procedure TDisplayRotateViewport.OnUpdate(aDeltaTime: Double);
+begin
+  inherited;
+
+  FSpeed := FSpeed + (60 * aDeltaTime);
+
+  FAngle := FAngle + (7 * aDeltaTime);
+  TMath.ClipValue(FAngle, 0, 359, True);
+  FViewport.SetAngle(FAngle);
+end;
+
+procedure TDisplayRotateViewport.OnRender;
+var
+  FSize: TRectangle;
+begin
+  inherited;
+
+  gEngine.Display.SetViewport(FViewport);
+  gEngine.Display.GetViewportSize(FSize);
+
+  gEngine.Display.Clear(SKYBLUE);
+  FBackground.DrawTiled(0, FSpeed);
+  Font.Print(FSize.Width/2, 3, WHITE, haCenter, 'Viewport', []);
+
+  gEngine.Display.SetViewport(nil);
+end;
+
+procedure TDisplayRotateViewport.OnRenderHUD;
+begin
+  inherited;
+end;
 
 end.

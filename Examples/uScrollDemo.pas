@@ -52,7 +52,7 @@
   OF THE POSSIBILITY OF SUCH DAMAGE.
 ============================================================================== }
 
-unit uScroll;
+unit uScrollDemo;
 
 interface
 

@@ -115,10 +115,14 @@ uses
   uDisplay in 'uDisplay.pas',
   uEntity in 'uEntity.pas',
   uActor in 'uActor.pas',
-  uAstroBlaster in 'uAstroBlaster.pas',
-  uScroll in 'uScroll.pas',
-  uElastic in 'uElastic.pas',
-  uChainAction in 'uChainAction.pas';
+  uAstroBlasterDemo in 'uAstroBlasterDemo.pas',
+  uScrollDemo in 'uScrollDemo.pas',
+  uElasticDemo in 'uElasticDemo.pas',
+  uChainActionDemo in 'uChainActionDemo.pas',
+  uBitmap in 'uBitmap.pas',
+  uFont in 'uFont.pas',
+  uViewportsDemo in 'uViewportsDemo.pas',
+  uGUIDemo in 'uGUIDemo.pas';
 
 begin
   RunGame(TExamples);

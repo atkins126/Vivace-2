@@ -111,6 +111,23 @@ type
     procedure OnRenderHUD; override;
   end;
 
+  { TEntityPolyPointCollisionPoint }
+  TEntityPolyPointCollisionPoint = class(TBaseExample)
+  protected
+    FFigure: TEntity;
+    FFigureAngle: Single;
+    FCollide: Boolean;
+    FHitPos: TVector;
+  public
+    procedure OnSetConfig(var aConfig: TGameConfig); override;
+    procedure OnStartup; override;
+    procedure OnShutdown; override;
+    procedure OnUpdate(aDeltaTime: Double); override;
+    procedure OnRender; override;
+    procedure OnRenderHUD; override;
+  end;
+
+
 
 implementation
 
@@ -257,6 +274,76 @@ end;
 procedure TEntityPolyPointCollision.OnRenderHUD;
 begin
   inherited;
+end;
+
+{ TEntityPolyPointCollisionPoint }
+procedure TEntityPolyPointCollisionPoint.OnSetConfig(var aConfig: TGameConfig);
+begin
+  inherited;
+
+  aConfig.DisplayTitle := cExampleTitle + 'Entity Collision Point';
+end;
+
+procedure TEntityPolyPointCollisionPoint.OnStartup;
+begin
+  inherited;
+
+  // init figure sprite
+  Sprite.LoadPage('arc/bitmaps/sprites/figure.png', @COLORKEY);
+  Sprite.AddGroup;
+  Sprite.AddImageFromGrid(0, 0, 0, 0, 128, 128);
+
+  // init figure entity
+  FFigure := TEntity.Create;
+  FFigure.Init(Sprite, 0);
+  FFigure.SetFrameFPS(17);
+  FFigure.SetScaleAbs(1);
+  FFigure.SetPosAbs(Config.DisplayWidth/2, Config.DisplayHeight/2);
+  FFigure.TracePolyPoint(6, 12, 70);
+  FFigure.SetRenderPolyPoint(True);
+end;
+
+procedure TEntityPolyPointCollisionPoint.OnShutdown;
+begin
+  FreeAndNil(FFigure);
+  inherited;
+end;
+
+procedure TEntityPolyPointCollisionPoint.OnUpdate(aDeltaTime: Double);
+begin
+  inherited;
+
+  FHitPos.Assign(MousePos);
+
+  if FFigure.CollidePolyPointPoint(FHitPos) then
+    FCollide := True
+  else
+    FCollide := False;
+
+  FFigureAngle := FFigureAngle + (30.0 * aDeltaTime);
+  TMath.ClipValue(FFigureAngle, 0, 359, True);
+  FFigure.RotateAbs(FFigureAngle);
+end;
+
+procedure TEntityPolyPointCollisionPoint.OnRender;
+var
+  LPos: TVector;
+begin
+  inherited;
+
+  FFigure.Render(0, 0);
+  if FCollide then
+  begin
+    LPos := FFigure.GetPos;
+    Font.Print(LPos.X-64, LPos.Y-64, WHITE, haLeft, '(%3f,%3f)', [FHitPos.X, FHitPos.Y]);
+    gEngine.Display.DrawFilledRectangle(FHitPos.X, FHitPos.Y, 10, 10, RED);
+  end;
+end;
+
+procedure TEntityPolyPointCollisionPoint.OnRenderHUD;
+begin
+  inherited;
+  Font.Print(Config.DisplayWidth/2, (Config.DisplayHeight/2) - 100, YELLOW, haCenter, 'Move mouse pointer over figure outline', []);
 end;
 
 
