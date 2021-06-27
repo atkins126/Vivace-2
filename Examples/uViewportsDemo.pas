@@ -78,9 +78,7 @@ const
   BALL_SIZE      = 30;
   BALL_SIZE_HALF = BALL_SIZE div 2;
 
-
 type
-
   { TViewportWindow }
   TViewportWindow = record
     w,h: Integer;
@@ -178,7 +176,6 @@ type
 var
   Game: TAViewportsDemo = nil;
 
-
 implementation
 
 uses
@@ -192,10 +189,12 @@ uses
   Vivace.Input,
   Vivace.Display;
 
+
 {  TAViewport }
 constructor TAViewport.Create;
 begin
   inherited;
+
   FPos.X := 10;
   FPos.Y := 10;
   FSize.X := 50;
@@ -216,6 +215,7 @@ end;
 destructor TAViewport.Destroy;
 begin
   FreeAndNil(FHandle);
+
   inherited;
 end;
 
@@ -310,6 +310,7 @@ end;
 procedure TAViewport1.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
   // update angle by DeltaTime to keep it constant. In this case the default
   // fps is 30 so we are in effect adding on degree every second.
   FAngle := FAngle + (30.0 * aDeltaTime);
@@ -322,6 +323,7 @@ end;
 procedure TAViewport1.OnRender;
 begin
   inherited;
+
   // render polygon in center of screen
   //Polygon_Render(FPolygon, Round(FSize.X / 2), Round(FSize.Y / 2), 1, FAngle, 1, YELLOW, FLIP_NONE, @FOrigin);
   FPolygon.Render(FSize.X / 2, FSize.Y / 2, 1, FAngle, 1, YELLOW, @FOrigin, False, False);
@@ -364,6 +366,7 @@ end;
 
 destructor TAViewport2.Destroy;
 begin
+
   inherited;
 end;
 
@@ -465,12 +468,14 @@ end;
 destructor TAViewport3.Destroy;
 begin
   FreeAndNil(FTileTexture);
+
   inherited;
 end;
 
 procedure TAViewport3.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
   FTilePos.y := FTilePos.y + ((7.0*60) * aDeltaTime);
 end;
 
@@ -517,18 +522,21 @@ end;
 destructor TAViewport4.Destroy;
 begin
   FreeAndNil(FStarField);
+
   inherited;
 end;
 
 procedure TAViewport4.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
   FStarfield.Update(aDeltaTime);
 end;
 
 procedure TAViewport4.OnRender;
 begin
   inherited;
+
   FStarfield.Render;
   PrintCaption(WHITE);
   gEngine.Display.SetViewport(nil);
@@ -539,12 +547,14 @@ end;
 constructor TAViewportsDemo.Create;
 begin
   inherited;
+
   Game := Self;
 end;
 
 destructor TAViewportsDemo.Destroy;
 begin
   Game := nil;
+
   inherited;
 end;
 
@@ -579,12 +589,12 @@ begin
 
   FMusic := gEngine.Audio.LoadMusic('arc/audio/music/song01.ogg');
   gEngine.Audio.PlayMusic(FMusic, 1.0, True);
-
 end;
 
 procedure TAViewportsDemo.OnShutdown;
 begin
   gEngine.Audio.UnloadMusic(FMusic);
+
   inherited;
 end;
 
@@ -606,7 +616,6 @@ procedure TAViewportsDemo.OnRenderHUD;
 begin
   inherited;
 
-  //GV_PrintFontY(MonoFont, HudPos.X, HudPos.Y, 0, GREEN, haLeft, 'xxx       - xxxxxxxxxx', []);
 end;
 
 end.

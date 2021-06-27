@@ -66,7 +66,6 @@ uses
   uCommon;
 
 const
-
   // player
   PLAYER_TURNRATE            = 162;
   PLAYER_FRICTION            = 1;
@@ -83,7 +82,7 @@ const
 
 
 type
-
+  { TView }
   TView = record
     Move     : Single;
     Bounce   : Single;
@@ -93,6 +92,7 @@ type
     Pos      : TVector;
   end;
 
+  { TPlayer }
   TPlayer = record
     Timer    : Single;
     Frame    : Integer;
@@ -137,10 +137,12 @@ uses
   Vivace.Input,
   Vivace.Display;
 
+
 { TScrollDemo }
 procedure TScrollDemo.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Scroll Demo';
   aConfig.DisplayClearColor := BLACK;
 end;
@@ -148,11 +150,13 @@ end;
 procedure TScrollDemo.OnLoad;
 begin
   inherited;
+
 end;
 
 procedure TScrollDemo.OnExit;
 begin
   inherited;
+
 end;
 
 procedure TScrollDemo.OnStartup;
@@ -194,7 +198,6 @@ begin
 
   FMusic := gEngine.Audio.LoadMusic('arc/audio/music/song05.ogg');
   gEngine.Audio.PlayMusic(FMusic, 0.5, True);
-
 end;
 
 procedure TScrollDemo.OnShutdown;
@@ -278,7 +281,6 @@ begin
   // update FPlayer
   FPlayer.ScreenPos.X := FPlayer.WorldPos.X - FView.Pos.X + Config.DisplayWidth  /2;
   FPlayer.ScreenPos.Y := FPlayer.WorldPos.Y - FView.Pos.Y + Config.DisplayHeight /2;
-
 end;
 
 procedure TScrollDemo.OnRender;
@@ -311,12 +313,12 @@ procedure TScrollDemo.OnRenderHUD;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'F11     - Fullscreen toggle', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'F12     - Screenshot', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Left    - Rotate left', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Right   - Rotate right', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Up      - Thrust', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Pos:      [X:%7.0f Y:%7.0f]', [FPlayer.WorldPos.X, FPlayer.WorldPos.Y]);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'F11       - Fullscreen toggle', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'F12       - Screenshot', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Left      - Rotate left', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Right     - Rotate right', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'Up        - Thrust', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Pos:        [X:%7.0f Y:%7.0f]', [FPlayer.WorldPos.X, FPlayer.WorldPos.Y]);
 end;
 
 end.

@@ -254,13 +254,13 @@ end;
 
 class function TEase.Position(aStartPos: Double; aEndPos: Double; aCurrentPos: Double; aEaseType: TEaseType): Double;
 var
-  t, b, c, d: Real;
+  LT, LB, LC, LD: Double;
 begin
-  c := aEndPos - aStartPos;
-  d := 100;
-  t := aCurrentPos;
-  b := aStartPos;
-  Result := Value(t, b, c, d, aEaseType);
+  LC := aEndPos - aStartPos;
+  LD := 100;
+  LT := aCurrentPos;
+  LB := aStartPos;
+  Result := Value(LT, LB, LC, LD, aEaseType);
   if Result > 100 then
     Result := 100;
 end;

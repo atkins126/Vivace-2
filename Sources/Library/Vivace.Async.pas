@@ -79,7 +79,6 @@ type
     property Finished: Boolean read FFinished;
     constructor Create; virtual;
     destructor Destroy; override;
-
     procedure Execute; override;
   end;
 
@@ -106,10 +105,12 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
 { TAsyncThread }
 constructor TAsyncThread.Create;
 begin
   inherited Create(True);
+
   FTask := nil;
   FWait := nil;
   FFinished := False;
@@ -117,6 +118,7 @@ end;
 
 destructor TAsyncThread.Destroy;
 begin
+
   inherited;
 end;
 
@@ -137,6 +139,7 @@ end;
 constructor TAsync.Create;
 begin
   inherited;
+
   FCriticalSection := TCriticalSection.Create;
   FQueue := TList<TAsyncThread>.Create;
 end;
@@ -145,6 +148,7 @@ destructor TAsync.Destroy;
 begin
   FreeAndNil(FQueue);
   FreeAndNil(FCriticalSection);
+
   inherited;
 end;
 
@@ -156,8 +160,7 @@ begin
   //Enter;
   LAsyncThread := TAsyncThread.Create;
   LAsyncThread.TaskProc := aTask;
-  if Assigned(aWait) then
-    LAsyncThread.WaitProc := aWait;
+  if Assigned(aWait) then LAsyncThread.WaitProc := aWait;
   FQueue.Add(LAsyncThread);
   LAsyncThread.Start;
   //Leave;

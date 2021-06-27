@@ -82,7 +82,6 @@ const
   EVENT_CMDCON_INACTIVE = 10001;
 
 type
-
   { TEngine }
   TEngine = class(TBaseObject)
   protected
@@ -123,7 +122,6 @@ type
     FLua: TLua;
     procedure Startup;
     procedure Shutdown;
-
   public
     Joystick: TJoystick;
     property Queue: PALLEGRO_EVENT_QUEUE read FQueue;
@@ -196,7 +194,6 @@ type
 
     procedure GameLoop;
     procedure Run(aGame: TCustomGameClass);
-
   end;
 
 var
@@ -214,10 +211,10 @@ uses
   Vivace.Logger,
   Vivace.Video;
 
+
 { TEngine }
 procedure TEngine.Startup;
 begin
-
   if al_is_system_installed then Exit;
 
   // init allegro
@@ -260,9 +257,6 @@ begin
   FCmdConActive.&type := EVENT_CMDCON_ACTIVE;
   FCmdConInactive.&type := EVENT_CMDCON_INACTIVE;
 
-//  al_emit_user_event(@FUserEventSrc , @FCmdConActive , nil);
-//  al_emit_user_event(@FUserEventSrc , @FCmdConInactive , nil);
-
   // init audio
   if not al_is_audio_installed then
   begin
@@ -288,7 +282,7 @@ begin
     TLogger.Log(etError, 'Was not able to initialized PhysicalFS', []);
 
 
-// init timing
+  // init timing
   FTimer.LNow := 0;
   FTimer.Passed := 0;
   FTimer.Last := 0;
@@ -646,6 +640,7 @@ end;
 constructor TEngine.Create;
 begin
   inherited;
+
   gEngine := Self;
   Startup;
 end;
@@ -653,12 +648,12 @@ end;
 destructor TEngine.Destroy;
 begin
   Shutdown;
+
   inherited;
   gEngine := nil;
 end;
 
 // Events
-
 procedure TEngine.EmitCmdConInactiveEvent;
 begin
  al_emit_user_event(@FUserEventSrc , @FCmdConInactive , nil);

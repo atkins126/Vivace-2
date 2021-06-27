@@ -160,6 +160,7 @@ uses
   Vivace.Color,
   Vivace.Math;
 
+
 { TGUI }
 function get_font_width(handle: nk_handle; height: Single; const text: PAnsiChar; len: Integer): Single; cdecl;
 var
@@ -304,12 +305,14 @@ end;
 constructor TGUI.Create;
 begin
   inherited;
+
   FOpened := False;
 end;
 
 destructor TGUI.Destroy;
 begin
   Close;
+
   inherited;
 end;
 
@@ -515,7 +518,7 @@ end;
 procedure TGUI.Render;
 var
   LCmd: pnk_command;
-  Color: ALLEGRO_COLOR;
+  LColor: ALLEGRO_COLOR;
   LVertices: array of Single;
   Points: array [0 .. 7] of Single;
   LVX,LVY,LVW,LVH: Integer;
@@ -545,95 +548,95 @@ begin
       _NK_COMMAND_LINE:
         begin
           var c: Pnk_command_line := Pnk_command_line(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_line(c.&begin.x, c.&begin.y, c.&end.x, c.&end.y, Color,  c.line_thickness);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_line(c.&begin.x, c.&begin.y, c.&end.x, c.&end.y, LColor,  c.line_thickness);
         end;
 
       _NK_COMMAND_RECT:
         begin
           var c: Pnk_command_rect := Pnk_command_rect(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_rounded_rectangle(c.x, c.y, (c.x + c.w), (c.y + c.h), c.rounding, c.rounding, Color, c.line_thickness);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_rounded_rectangle(c.x, c.y, (c.x + c.w), (c.y + c.h), c.rounding, c.rounding, LColor, c.line_thickness);
         end;
 
       _NK_COMMAND_RECT_FILLED:
         begin
           var c: Pnk_command_rect_filled := Pnk_command_rect_filled(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_filled_rounded_rectangle(c.x, c.y, (c.x + c.w), (c.y + c.h), c.rounding, c.rounding, Color);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_filled_rounded_rectangle(c.x, c.y, (c.x + c.w), (c.y + c.h), c.rounding, c.rounding, LColor);
         end;
 
       _NK_COMMAND_CIRCLE:
         begin
           var c: Pnk_command_circle := Pnk_command_circle(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           var xr: Single := c.w / 2;
           var yr: Single := c.h / 2;
-          al_draw_ellipse(c.x + xr, c.y + yr, xr, yr, Color, c.line_thickness);
+          al_draw_ellipse(c.x + xr, c.y + yr, xr, yr, LColor, c.line_thickness);
         end;
 
       _NK_COMMAND_CIRCLE_FILLED:
         begin
           var c: Pnk_command_circle_filled := Pnk_command_circle_filled(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           var xr: Single := c.w / 2;
           var yr: Single := c.h / 2;
-          al_draw_filled_ellipse(c.x + xr, c.y + yr, xr, yr, Color);
+          al_draw_filled_ellipse(c.x + xr, c.y + yr, xr, yr, LColor);
         end;
 
       _NK_COMMAND_TRIANGLE:
         begin
           var c: Pnk_command_triangle := Pnk_command_triangle(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_triangle(c.a.x, c.a.y, c.b.x, c.b.y, c.c.x, c.c.y, Color,  c.line_thickness);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_triangle(c.a.x, c.a.y, c.b.x, c.b.y, c.c.x, c.c.y, LColor,  c.line_thickness);
         end;
 
       _NK_COMMAND_TRIANGLE_FILLED:
         begin
           var c: Pnk_command_triangle_filled := Pnk_command_triangle_filled(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_filled_triangle(c.a.x, c.a.y, c.b.x, c.b.y, c.c.x, c.c.y, Color);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_filled_triangle(c.a.x, c.a.y, c.b.x, c.b.y, c.c.x, c.c.y, LColor);
         end;
 
       _NK_COMMAND_POLYGON:
         begin
           var c: Pnk_command_polygon := Pnk_command_polygon(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           SetLength(LVertices, c.point_count * 2);
           for var i := 0 to c.point_count - 1 do
           begin
             LVertices[i * 2] := c.Points[i].x;
             LVertices[(i * 2) + 1] := c.Points[i].y;
           end;
-          al_draw_polyline(@LVertices, (2 * sizeof(Single)), c.point_count, ALLEGRO_LINE_JOIN_ROUND, ALLEGRO_LINE_CAP_CLOSED, Color, c.line_thickness, 0.0);
+          al_draw_polyline(@LVertices, (2 * sizeof(Single)), c.point_count, ALLEGRO_LINE_JOIN_ROUND, ALLEGRO_LINE_CAP_CLOSED, LColor, c.line_thickness, 0.0);
           LVertices := nil;
         end;
 
       _NK_COMMAND_POLYGON_FILLED:
         begin
           var c: Pnk_command_polygon_filled := Pnk_command_polygon_filled(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           SetLength(LVertices, c.point_count * 2);
           for var i := 0 to c.point_count - 1 do
           begin
             LVertices[i * 2] := c.Points[i].x;
             LVertices[(i * 2) + 1] := c.Points[i].y;
           end;
-          al_draw_filled_polygon(@LVertices, c.point_count, Color);
+          al_draw_filled_polygon(@LVertices, c.point_count, LColor);
           LVertices := nil;
         end;
 
       _NK_COMMAND_POLYLINE:
         begin
           var c: Pnk_command_polyline := Pnk_command_polyline(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           SetLength(LVertices, c.point_count * 2);
           for var i := 0 to c.point_count - 1 do
           begin
             LVertices[i * 2] := c.Points[i].x;
             LVertices[(i * 2) + 1] := c.Points[i].y;
           end;
-          al_draw_polyline(@LVertices, (2 * sizeof(Single)), c.point_count,  ALLEGRO_LINE_JOIN_ROUND, ALLEGRO_LINE_CAP_ROUND, Color, c.line_thickness, 0.0);
+          al_draw_polyline(@LVertices, (2 * sizeof(Single)), c.point_count,  ALLEGRO_LINE_JOIN_ROUND, ALLEGRO_LINE_CAP_ROUND, LColor, c.line_thickness, 0.0);
           LVertices := nil;
         end;
 
@@ -648,7 +651,7 @@ begin
       _NK_COMMAND_CURVE:
         begin
           var c: Pnk_command_curve := Pnk_command_curve(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
+          LColor := nk_color_to_allegro_color(c.Color);
           Points[0] := c.&begin.x;
           Points[1] := c.&begin.y;
           Points[2] := c.ctrl[0].x;
@@ -657,14 +660,14 @@ begin
           Points[5] := c.ctrl[1].y;
           Points[6] := c.&end.x;
           Points[7] := c.&end.y;
-          al_draw_spline(@Points, Color, c.line_thickness);
+          al_draw_spline(@Points, LColor, c.line_thickness);
         end;
 
       _NK_COMMAND_ARC:
         begin
           var c: Pnk_command_arc := Pnk_command_arc(LCmd);
-          Color := nk_color_to_allegro_color(c.Color);
-          al_draw_arc(c.cx, c.cy, c.r, c.a[0], c.a[1], Color, c.line_thickness);
+          LColor := nk_color_to_allegro_color(c.Color);
+          al_draw_arc(c.cx, c.cy, c.r, c.a[0], c.a[1], LColor, c.line_thickness);
         end;
 
       _NK_COMMAND_IMAGE:

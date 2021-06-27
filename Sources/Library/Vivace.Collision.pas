@@ -65,7 +65,6 @@ uses
   Vivace.Math;
 
 type
-
   { TLineIntersection }
   TLineIntersection = (liNone, liTrue, liParallel);
 
@@ -90,7 +89,7 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
-
+{ TCollision }
 class function TCollision.PointInRectangle(aPoint: TVector; aRect: TRectangle): Boolean;
 begin
   if ((aPoint.x >= aRect.x) and (aPoint.x <= (aRect.x + aRect.width)) and

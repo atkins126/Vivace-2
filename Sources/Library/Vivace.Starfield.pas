@@ -113,14 +113,15 @@ uses
   Vivace.Engine,
   Vivace.Color;
 
-{  TStarfield }
+
+{ TStarfield }
 procedure TStarfield.TransformDrawPoint(aX, aY, aZ: Single; aVPX, aVPY, aVPW, aVPH: Integer);
 var
-  X, Y: Single;
-  sw, sh: Single;
-  ooz: Single;
-  cv: byte;
-  color: TColor;
+  LX, LY: Single;
+  LSW, LSH: Single;
+  LOOZ: Single;
+  LCV: byte;
+  LColor: TColor;
 
   function IsVisible(vx, vy, vw, vh: Single): Boolean;
   begin
@@ -141,56 +142,58 @@ begin
   FCenter.X := (aVPW / 2) + aVPX;
   FCenter.Y := (aVPH / 2) + aVPY;
 
-  ooz := ((1.0 / aZ) * FViewScale);
-  X := (FCenter.X - aVPX) - (aX * ooz) * FViewScaleRatio;
-  Y := (FCenter.Y - aVPY) + (aY * ooz) * FViewScaleRatio;
-  sw := (1.0 * ooz);
-  if sw < 1 then
-    sw := 1;
-  sh := (1.0 * ooz);
-  if sh < 1 then
-    sh := 1;
-  if not IsVisible(X, Y, sw, sh) then
+  LOOZ := ((1.0 / aZ) * FViewScale);
+  LX := (FCenter.X - aVPX) - (aX * LOOZ) * FViewScaleRatio;
+  LY := (FCenter.Y - aVPY) + (aY * LOOZ) * FViewScaleRatio;
+  LSW := (1.0 * LOOZ);
+  if LSW < 1 then
+    LSW := 1;
+  LSH := (1.0 * LOOZ);
+  if LSH < 1 then
+    LSH := 1;
+  if not IsVisible(LX, LY, LSW, LSH) then
     Exit;
-  cv := round(255.0 - (((1.0 / FMax.Z) / (1.0 / aZ)) * 255.0));
+  LCV := round(255.0 - (((1.0 / FMax.Z) / (1.0 / aZ)) * 255.0));
 
-  color.Make(cv, cv, cv, cv);
+  LColor.Make(LCV, LCV, LCV, LCV);
 
-  X := X - FVirtualPos.X;
-  Y := Y - FVirtualPos.Y;
+  LX := LX - FVirtualPos.X;
+  LY := LY - FVirtualPos.Y;
 
-  gEngine.Display.DrawFilledRectangle(X, Y, sw, sh, color);
+  gEngine.Display.DrawFilledRectangle(LX, LY, LSW, LSH, LColor);
 end;
 
 constructor TStarfield.Create;
 begin
   inherited;
+
   Init(250, -1000, -1000, 10, 1000, 1000, 1000, 120);
 end;
 
 destructor TStarfield.Destroy;
 begin
   Done;
+
   inherited;
 end;
 
 procedure TStarfield.Init(aStarCount: Cardinal; aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aViewScale: Single);
 var
-  vpx, vpy: Integer;
-  vpw, vph: Integer;
-  I: Integer;
+  LVPX, LVPY: Integer;
+  LVPW, LVPH: Integer;
+  LI: Integer;
 begin
   Done;
 
   FStarCount := aStarCount;
   SetLength(FStar, FStarCount);
 
-  gEngine.Display.GetViewportSize(@vpx, @vpy, @vpw, @vph);
+  gEngine.Display.GetViewportSize(@LVPX, @LVPY, @LVPW, @LVPH);
 
   FViewScale := aViewScale;
-  FViewScaleRatio := vpw / vph;
-  FCenter.X := (vpw / 2) + vpx;
-  FCenter.Y := (vph / 2) + vpy;
+  FViewScaleRatio := LVPW / LVPH;
+  FCenter.X := (LVPW / 2) + LVPX;
+  FCenter.Y := (LVPH / 2) + LVPY;
   FCenter.Z := 0;
 
   FMin.X := aMinX;
@@ -200,11 +203,11 @@ begin
   FMax.Y := aMaxY;
   FMax.Z := aMaxZ;
 
-  for I := 0 to FStarCount - 1 do
+  for LI := 0 to FStarCount - 1 do
   begin
-    FStar[I].X := TMath.RandomRange(FMin.X, FMax.X);
-    FStar[I].Y := TMath.RandomRange(FMin.Y, FMax.Y);
-    FStar[I].Z := TMath.RandomRange(FMin.Z, FMax.Z);
+    FStar[LI].X := TMath.RandomRange(FMin.X, FMax.X);
+    FStar[LI].Y := TMath.RandomRange(FMin.Y, FMax.Y);
+    FStar[LI].Z := TMath.RandomRange(FMin.Z, FMax.Z);
   end;
 
   SetXSpeed(0.0);
@@ -249,7 +252,7 @@ end;
 
 procedure TStarfield.Update(aDeltaTime: Single);
 var
-  I: Integer;
+  LI: Integer;
 
   procedure SetRandomPos(aIndex: Integer);
   begin
@@ -260,46 +263,46 @@ var
 
 begin
 
-  for I := 0 to FStarCount - 1 do
+  for LI := 0 to FStarCount - 1 do
   begin
-    FStar[I].X := FStar[I].X + (FSpeed.X * aDeltaTime);
-    FStar[I].Y := FStar[I].Y + (FSpeed.Y * aDeltaTime);
-    FStar[I].Z := FStar[I].Z + (FSpeed.Z * aDeltaTime);
+    FStar[LI].X := FStar[LI].X + (FSpeed.X * aDeltaTime);
+    FStar[LI].Y := FStar[LI].Y + (FSpeed.Y * aDeltaTime);
+    FStar[LI].Z := FStar[LI].Z + (FSpeed.Z * aDeltaTime);
 
-    if FStar[I].X < FMin.X then
+    if FStar[LI].X < FMin.X then
     begin
-      SetRandomPos(I);
-      FStar[I].X := FMax.X;
+      SetRandomPos(LI);
+      FStar[LI].X := FMax.X;
     end;
 
-    if FStar[I].X > FMax.X then
+    if FStar[LI].X > FMax.X then
     begin
-      SetRandomPos(I);
-      FStar[I].X := FMin.X;
+      SetRandomPos(LI);
+      FStar[LI].X := FMin.X;
     end;
 
-    if FStar[I].Y < FMin.Y then
+    if FStar[LI].Y < FMin.Y then
     begin
-      SetRandomPos(I);
-      FStar[I].Y := FMax.Y;
+      SetRandomPos(LI);
+      FStar[LI].Y := FMax.Y;
     end;
 
-    if FStar[I].Y > FMax.Y then
+    if FStar[LI].Y > FMax.Y then
     begin
-      SetRandomPos(I);
-      FStar[I].Y := FMin.Y;
+      SetRandomPos(LI);
+      FStar[LI].Y := FMin.Y;
     end;
 
-    if FStar[I].Z < FMin.Z then
+    if FStar[LI].Z < FMin.Z then
     begin
-      SetRandomPos(I);
-      FStar[I].Z := FMax.Z;
+      SetRandomPos(LI);
+      FStar[LI].Z := FMax.Z;
     end;
 
-    if FStar[I].Z > FMax.Z then
+    if FStar[LI].Z > FMax.Z then
     begin
-      SetRandomPos(I);
-      FStar[I].Z := FMin.Z;
+      SetRandomPos(LI);
+      FStar[LI].Z := FMin.Z;
     end;
 
   end;
@@ -307,13 +310,13 @@ end;
 
 procedure TStarfield.Render;
 var
-  I: Integer;
-  vpx, vpy, vpw, vph: Integer;
+  LI: Integer;
+  LVPX, LVPY, LVPW, LVPH: Integer;
 begin
-  gEngine.Display.GetViewportSize(@vpx, @vpy, @vpw, @vph);
-  for I := 0 to FStarCount - 1 do
+  gEngine.Display.GetViewportSize(@LVPX, @LVPY, @LVPW, @LVPH);
+  for LI := 0 to FStarCount - 1 do
   begin
-    TransformDrawPoint(FStar[I].X, FStar[I].Y, FStar[I].Z, vpx, vpy, vpw, vph);
+    TransformDrawPoint(FStar[LI].X, FStar[LI].Y, FStar[LI].Z, LVPX, LVPY, LVPW, LVPH);
   end;
 end;
 

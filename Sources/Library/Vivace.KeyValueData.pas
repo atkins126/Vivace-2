@@ -97,12 +97,14 @@ uses
 constructor TKeyValueData.Create;
 begin
   inherited;
+
   FData := TStringList.Create;
 end;
 
 destructor TKeyValueData.Destroy;
 begin
   FreeAndNil(FData);
+
   inherited;
 end;
 

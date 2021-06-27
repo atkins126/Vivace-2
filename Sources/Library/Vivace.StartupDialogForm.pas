@@ -245,7 +245,6 @@ begin
   finally
     FreeAndNil(LBuffer);
   end;
-
 end;
 
 procedure TStartupDialogForm.SetReadmeText(aText: string);
@@ -330,7 +329,6 @@ begin
   FRunOnce := False;
   FState := sdsQuit;
 
-  //LoadDefaultIcon(Handle);
   UpdateConfigInfo;
 end;
 
@@ -348,7 +346,6 @@ end;
 procedure TStartupDialogForm.LogoImageDblClick(Sender: TObject);
 begin
   //
-  // DoClickUrl;
 end;
 
 procedure TStartupDialogForm.MoreButtonClick(Sender: TObject);

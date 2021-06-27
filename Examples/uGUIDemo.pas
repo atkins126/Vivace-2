@@ -110,7 +110,8 @@ uses
   Vivace.Input,
   Vivace.Display;
 
-{ TIMGUIEx }
+
+{ TGUIDemo }
  procedure TGUIDemo.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
@@ -122,6 +123,7 @@ end;
 procedure TGUIDemo.OnLoad;
 begin
   inherited;
+
   MusicVolume := 0.3;
   Difficulty := 0;
   Chk1 := False;
@@ -133,6 +135,7 @@ end;
 procedure TGUIDemo.OnExit;
 begin
   inherited;
+
 end;
 
 procedure TGUIDemo.OnStartup;
@@ -141,6 +144,7 @@ begin
 
   FStarfield := TStarfield.Create;
   FSfx := gEngine.Audio.LoadSound('arc/audio/sfx/digthis.ogg');
+
   FMusic := gEngine.Audio.LoadMusic('arc/audio/music/song07.ogg');
   gEngine.Audio.PlayMusic(FMusic, MusicVolume, True);
 end;
@@ -150,6 +154,7 @@ begin
   gEngine.Audio.UnloadMusic(FMusic);
   gEngine.Audio.UnloadSound(FSfx);
   FreeAndNil(FStarfield);
+
   inherited;
 end;
 
@@ -172,6 +177,7 @@ end;
 procedure TGUIDemo.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 procedure TGUIDemo.OnProcessIMGUI;
@@ -208,7 +214,6 @@ begin
   end;
   gEngine.GUI.WindowEnd;
 
-
   if chk2 then
   begin
     if gEngine.GUI.WindowBegin('Window 2', 'Window 2', 350, 150, 320, 220, cGuiWindowFlags) then
@@ -225,7 +230,6 @@ begin
     if ThemeChanged then
       gEngine.GUI.SetStyle(Theme);
   end;
-
 end;
 
 end.

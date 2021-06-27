@@ -67,7 +67,6 @@ uses
   Vivace.Color;
 
 type
-
   { TSpriteImageRegion }
   PSpriteImageRegion = ^TSpriteImageRegion;
   TSpriteImageRegion = record
@@ -133,29 +132,30 @@ uses
   Vivace.PolyPoint,
   Vivace.Engine;
 
+
 { TSprite }
 procedure TSprite.Clear;
 var
-  I: Integer;
+  LI: Integer;
 begin
   if FBitmap <> nil then
   begin
     // free group data
-    for I := 0 to FGroupCount - 1 do
+    for LI := 0 to FGroupCount - 1 do
     begin
       // free image array
-      FGroup[I].Image := nil;
+      FGroup[LI].Image := nil;
 
       // free polypoint
-      FreeAndNil(FGroup[I].PolyPoint);
+      FreeAndNil(FGroup[LI].PolyPoint);
     end;
 
     // free page
-    for I := 0 to FPageCount - 1 do
+    for LI := 0 to FPageCount - 1 do
     begin
-      if Assigned(FBitmap[I]) then
+      if Assigned(FBitmap[LI]) then
       begin
-        FreeAndNil(FBitmap[I]);
+        FreeAndNil(FBitmap[LI]);
       end;
     end;
 
@@ -169,6 +169,7 @@ end;
 constructor TSprite.Create;
 begin
   inherited;
+
   FBitmap := nil;
   FGroup := nil;
   FPageCount := 0;
@@ -178,6 +179,7 @@ end;
 destructor TSprite.Destroy;
 begin
   Clear;
+
   inherited;
 end;
 
@@ -256,29 +258,28 @@ procedure TSprite.DrawImage(aNum: Integer; aGroup: Integer; aX: Single;
   aY: Single; aOrigin: PVector; aScale: PVector; aAngle: Single; aColor: TColor;
   aHFlip: Boolean; aVFlip: Boolean; aDrawPolyPoint: Boolean);
 var
-  PageNum: Integer;
-  RectP: PRectangle;
-  oxy: TVector;
+  LPageNum: Integer;
+  LRectP: PRectangle;
+  LOXY: TVector;
 begin
-  RectP := @FGroup[aGroup].Image[aNum].Rect;
-  PageNum := FGroup[aGroup].Image[aNum].Page;
-  FBitmap[PageNum].Draw(aX, aY, RectP, aOrigin, aScale, aAngle, aColor,
-    aHFlip, aVFlip);
+  LRectP := @FGroup[aGroup].Image[aNum].Rect;
+  LPageNum := FGroup[aGroup].Image[aNum].Page;
+  FBitmap[LPageNum].Draw(aX, aY, LRectP, aOrigin, aScale, aAngle, aColor, aHFlip, aVFlip);
 
   if aDrawPolyPoint then
   begin
-    oxy.X := 0;
-    oxy.Y := 0;
+    LOXY.X := 0;
+    LOXY.Y := 0;
     if aOrigin <> nil then
     begin
-      oxy.X := FGroup[aGroup].Image[aNum].Rect.Width;
-      oxy.Y := FGroup[aGroup].Image[aNum].Rect.Height;
+      LOXY.X := FGroup[aGroup].Image[aNum].Rect.Width;
+      LOXY.Y := FGroup[aGroup].Image[aNum].Rect.Height;
 
-      oxy.X := Round(oxy.X * aOrigin.X);
-      oxy.Y := Round(oxy.Y * aOrigin.Y);
+      LOXY.X := Round(LOXY.X * aOrigin.X);
+      LOXY.Y := Round(LOXY.Y * aOrigin.Y);
     end;
     TPolyPoint(FGroup[aGroup].PolyPoint).Render(aNum, aX, aY, aScale.X, aAngle,
-      YELLOW, @oxy, aHFlip, aVFlip);
+      YELLOW, @LOXY, aHFlip, aVFlip);
   end;
 end;
 
@@ -307,58 +308,58 @@ function TSprite.GroupPolyPointCollide(aNum1: Integer; aGroup1: Integer;
   aOrigin2: PVector; aHFlip2: Boolean; aVFlip2: Boolean; aShrinkFactor: Single;
   var aHitPos: TVector): Boolean;
 var
-  PP1, PP2: TPolyPoint;
-  Radius1: Integer;
-  Radius2: Integer;
-  Origini1, Origini2: TVector;
-  Origini1P, Origini2P: PVector;
+  LPP1, LPP2: TPolyPoint;
+  LRadius1: Integer;
+  LRadius2: Integer;
+  LOrigini1, LOrigini2: TVector;
+  LOrigini1P, LOrigini2P: PVector;
 begin
   Result := False;
 
   if (aSprite2 = nil) then
     Exit;
 
-  PP1 := FGroup[aGroup1].PolyPoint;
-  PP2 := aSprite2.FGroup[aGroup2].PolyPoint;
+  LPP1 := FGroup[aGroup1].PolyPoint;
+  LPP2 := aSprite2.FGroup[aGroup2].PolyPoint;
 
-  if not PP1.Valid(aNum1) then
+  if not LPP1.Valid(aNum1) then
     Exit;
-  if not PP2.Valid(aNum2) then
+  if not LPP2.Valid(aNum2) then
     Exit;
 
-  Radius1 := Round(FGroup[aGroup1].Image[aNum1].Rect.Height + FGroup[aGroup1]
+  LRadius1 := Round(FGroup[aGroup1].Image[aNum1].Rect.Height + FGroup[aGroup1]
     .Image[aNum1].Rect.Width) div 2;
 
-  Radius2 := Round(aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Height +
+  LRadius2 := Round(aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Height +
     aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Width) div 2;
 
-  if not TCollision.RadiusOverlap(Radius1, aX1, aY1, Radius2, aX2, aY2, aShrinkFactor) then
+  if not TCollision.RadiusOverlap(LRadius1, aX1, aY1, LRadius2, aX2, aY2, aShrinkFactor) then
     Exit;
 
-  Origini2.X := aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Width;
-  Origini2.Y := aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Height;
+  LOrigini2.X := aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Width;
+  LOrigini2.Y := aSprite2.FGroup[aGroup2].Image[aNum2].Rect.Height;
 
-  Origini1P := nil;
+  LOrigini1P := nil;
   if aOrigin1 <> nil then
   begin
-    Origini1.X := Round(FGroup[aGroup1].Image[aNum1].Rect.Width * aOrigin1.X);
-    Origini1.Y := Round(FGroup[aGroup1].Image[aNum1].Rect.Height * aOrigin1.Y);
-    Origini1P := @Origini1;
+    LOrigini1.X := Round(FGroup[aGroup1].Image[aNum1].Rect.Width * aOrigin1.X);
+    LOrigini1.Y := Round(FGroup[aGroup1].Image[aNum1].Rect.Height * aOrigin1.Y);
+    LOrigini1P := @LOrigini1;
   end;
 
-  Origini2P := nil;
+  LOrigini2P := nil;
   if aOrigin2 <> nil then
   begin
-    Origini2.X := Round(aSprite2.FGroup[aGroup2].Image[aNum2]
+    LOrigini2.X := Round(aSprite2.FGroup[aGroup2].Image[aNum2]
       .Rect.Width * aOrigin2.X);
-    Origini2.Y := Round(aSprite2.FGroup[aGroup2].Image[aNum2]
+    LOrigini2.Y := Round(aSprite2.FGroup[aGroup2].Image[aNum2]
       .Rect.Height * aOrigin2.Y);
-    Origini2P := @Origini2;
+    LOrigini2P := @LOrigini2;
   end;
 
-  Result := PP1.Collide(aNum1, aGroup1, aX1, aY1, aScale1, aAngle1, Origini1P,
-    aHFlip1, aVFlip1, PP2, aNum2, aGroup2, aX2, aY2, aScale2, aAngle2,
-    Origini2P, aHFlip2, aVFlip2, aHitPos);
+  Result := LPP1.Collide(aNum1, aGroup1, aX1, aY1, aScale1, aAngle1, LOrigini1P,
+    aHFlip1, aVFlip1, LPP2, aNum2, aGroup2, aX2, aY2, aScale2, aAngle2,
+    LOrigini2P, aHFlip2, aVFlip2, aHitPos);
 end;
 
 function TSprite.GroupPolyPointCollidePoint(aNum: Integer; aGroup: Integer;
@@ -366,38 +367,38 @@ function TSprite.GroupPolyPointCollidePoint(aNum: Integer; aGroup: Integer;
   aHFlip: Boolean; aVFlip: Boolean; aShrinkFactor: Single;
   var aPoint: TVector): Boolean;
 var
-  PP1: TPolyPoint;
-  Radius1: Integer;
-  Radius2: Integer;
-  Origini1: TVector;
-  Origini1P: PVector;
+  LPP1: TPolyPoint;
+  LRadius1: Integer;
+  LRadius2: Integer;
+  LOrigini1: TVector;
+  LOrigini1P: PVector;
 
 begin
   Result := False;
 
-  PP1 := FGroup[aGroup].PolyPoint;
+  LPP1 := FGroup[aGroup].PolyPoint;
 
-  if not PP1.Valid(aNum) then
+  if not LPP1.Valid(aNum) then
     Exit;
 
-  Radius1 := Round(FGroup[aGroup].Image[aNum].Rect.Height + FGroup[aGroup].Image
+  LRadius1 := Round(FGroup[aGroup].Image[aNum].Rect.Height + FGroup[aGroup].Image
     [aNum].Rect.Width) div 2;
 
-  Radius2 := 2;
+  LRadius2 := 2;
 
-  if not TCollision.RadiusOverlap(Radius1, aX, aY, Radius2, aPoint.X, aPoint.Y,
+  if not TCollision.RadiusOverlap(LRadius1, aX, aY, LRadius2, aPoint.X, aPoint.Y,
     aShrinkFactor) then
     Exit;
 
-  Origini1P := nil;
+  LOrigini1P := nil;
   if aOrigin <> nil then
   begin
-    Origini1.X := FGroup[aGroup].Image[aNum].Rect.Width * aOrigin.X;
-    Origini1.Y := FGroup[aGroup].Image[aNum].Rect.Height * aOrigin.Y;
-    Origini1P := @Origini1;
+    LOrigini1.X := FGroup[aGroup].Image[aNum].Rect.Width * aOrigin.X;
+    LOrigini1.Y := FGroup[aGroup].Image[aNum].Rect.Height * aOrigin.Y;
+    LOrigini1P := @LOrigini1;
   end;
 
-  Result := PP1.CollidePoint(aNum, aGroup, aX, aY, aScale, aAngle, Origini1P,
+  Result := LPP1.CollidePoint(aNum, aGroup, aX, aY, aScale, aAngle, LOrigini1P,
     aHFlip, aVFlip, aPoint);
 end;
 

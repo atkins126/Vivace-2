@@ -131,30 +131,6 @@ begin
   end;
 end;
 
-(*
-procedure TTreeMenuForm.SelMenu(aId: Integer);
-var
-  LNode: TTreeNode;
-begin
-  SelId := aId;
-  if TreeView.Items.Count = 0 then Exit;
-  TreeView.HideSelection := False;
-  LNode := TreeView.Items[0];
-  while LNode <> nil do
-  begin
-    if LNode.SelectedIndex = aId then
-    begin
-      LNode.Selected := True;
-      LNode.MakeVisible;
-      Break;
-    end;
-    LNode := LNode.GetNext;
-  end;
-  FQuitState := qsNone;
-  FQuit := False;
-end;
-*)
-
 procedure TTreeMenuForm.SelMenu(aId: Integer);
 var
   LNode: TTreeNode;

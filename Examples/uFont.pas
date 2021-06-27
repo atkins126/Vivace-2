@@ -66,7 +66,6 @@ uses
   uCommon;
 
 type
-
   { TFontUnicode }
   TFontUnicode = class(TBaseExample)
   protected
@@ -87,10 +86,12 @@ uses
   Vivace.Color,
   Vivace.Common;
 
-  { TFontUnicode }
+
+{ TFontUnicode }
 procedure TFontUnicode.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Unicode Font';
 end;
 
@@ -105,17 +106,20 @@ end;
 procedure TFontUnicode.OnShutdown;
 begin
   FreeAndNil(FUniFont);
+
   inherited;
 end;
 
 procedure TFontUnicode.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
 end;
 
 procedure TFontUnicode.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TFontUnicode.OnRenderHUD;
@@ -124,8 +128,6 @@ begin
 
   FUniFont.Print(Config.DisplayWidth div 2, Config.DisplayHeight div 2, YELLOW, haCenter, ' en   zh      ja       ko        de   es   pt     fr      vi    id', []);
   FUniFont.Print(Config.DisplayWidth div 2, (Config.DisplayHeight div 2)+18, GREEN, haCenter, 'Hello|你好|こんにちは|안녕하세요|Hallo|Hola|Olá|Bonjour|Xin chào|Halo', []);
-
-
 end;
 
 end.

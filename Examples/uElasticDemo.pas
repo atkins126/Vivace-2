@@ -65,7 +65,6 @@ uses
   Vivace.Bitmap,
   uCommon;
 
-
 const
   cGravity          = 0.04;
   cXDecay           = 0.97;
@@ -119,21 +118,25 @@ uses
   Vivace.Input,
   Vivace.Display;
 
+
 { TElasticDemo }
 procedure TElasticDemo.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Elastic Demo';
 end;
 
 procedure TElasticDemo.OnLoad;
 begin
   inherited;
+
 end;
 
 procedure TElasticDemo.OnExit;
 begin
   inherited;
+
 end;
 
 procedure TElasticDemo.OnStartup;
@@ -166,8 +169,7 @@ var
 begin
   inherited;
 
-  if not gEngine.FrameSpeed(FTimer, gEngine.GetUpdateSpeed) then
-    Exit;
+  if not gEngine.FrameSpeed(FTimer, gEngine.GetUpdateSpeed) then Exit;
 
   FBead[0].X := MousePos.X;
   FBead[0].Y := MousePos.Y;
@@ -289,6 +291,7 @@ end;
 procedure TElasticDemo.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 

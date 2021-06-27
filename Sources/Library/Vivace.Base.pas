@@ -59,7 +59,6 @@ unit Vivace.Base;
 interface
 
 type
-
   { TBaseObject }
   TBaseObject = class
   public
@@ -73,10 +72,12 @@ implementation
 constructor TBaseObject.Create;
 begin
   inherited;
+
 end;
 
 destructor TBaseObject.Destroy;
 begin
+
   inherited;
 end;
 

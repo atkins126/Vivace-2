@@ -107,10 +107,12 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
 { TTreeMenu }
 constructor TTreeMenu.Create;
 begin
   inherited;
+
   FForm := TTreeMenuForm.Create(nil);
   FForm.StatusBar.SimplePanel := True;
 end;
@@ -118,6 +120,7 @@ end;
 destructor TTreeMenu.Destroy;
 begin
   FreeAndNil(FForm);
+
   inherited;
 end;
 

@@ -87,7 +87,6 @@ const
   BLEND_DEST_MINUS_SRC = 2;
 
 type
-
   { TBlendMode }
   TBlendMode = (bmPreMultipliedAlpha, bmNonPreMultipliedAlpha, bmAdditiveAlpha, bmCopySrcToDest, bmMultiplySrcAndDest);
 
@@ -171,9 +170,7 @@ type
     procedure GetMonitorSize(var aSize: TVector);
 
     function  GetMemorySize: UInt64;
-
   end;
-
 
 implementation
 
@@ -187,6 +184,7 @@ uses
   Vivace.Utils,
   Vivace.Engine,
   Vivace.Logger;
+
 
 { TDisplay }
 procedure TDisplay.ResizeForDPI;
@@ -281,7 +279,6 @@ begin
       FBlackbar[3].Y := FTransSize.Y+FTransSize.Height;
       FBlackbar[3].Width := FTransSize.Width;
       FBlackbar[3].Height := LScreenY - FBlackbar[3].Y;
-
     end
   else
     begin
@@ -336,12 +333,14 @@ end;
 constructor TDisplay.Create;
 begin
   inherited;
+
   FHandle.Display := nil;
 end;
 
 destructor TDisplay.Destroy;
 begin
   Close;
+
   inherited;
 end;
 
@@ -367,8 +366,7 @@ begin
   gEngine.OnDisplayOpenBefore;
 
   FHandle.Display := al_create_display(aWidth, aHeight);
-  if FHandle.Display <> nil then
-  begin
+  if FHandle.Display <> nil then begin
     Clear(BLACK); Show;
     al_register_event_source(gEngine.Queue, al_get_display_event_source(FHandle.Display));
     LoadDefaultIcon;
@@ -383,8 +381,7 @@ begin
     gEngine.OnDisplayOpenAfter;
     TLogger.Log(etSuccess, 'Succesfully initialized Display to %d x %d resolution', [aWidth, aHeight]);
   end
-  else
-  begin
+  else begin
     TLogger.Log(etError, 'Failed to initialize.', [aWidth, aHeight]);
   end;
 end;
@@ -589,7 +586,6 @@ begin
     TViewport(FViewport).SetActive(False);
   end;
 end;
-
 
 procedure TDisplay.GetViewportSize(aX: PInteger; aY: PInteger; aWidth: PInteger; aHeight: PInteger);
 begin
@@ -840,6 +836,5 @@ begin
   LD3d := al_get_d3d_device(Handle.Display);
   Result := LD3d.GetAvailableTextureMem;
 end;
-
 
 end.

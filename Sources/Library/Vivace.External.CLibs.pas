@@ -122,7 +122,7 @@ begin
               begin
                 LZipFile.Extract(LName, LWorkPath);
                 if TFile.Exists(TPath.Combine(LWorkPath, LName)) then
-                  TLogger.Log(etSuccess, 'Sucessfully extracted %s', [LName]);
+                  TLogger.Log(etSuccess, 'Successfully extracted %s', [LName]);
               end;
             end;
             IdOpenSSLSetLibPath(TOS.GetWorkPath);

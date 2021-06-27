@@ -84,6 +84,7 @@ uses
   System.SysUtils,
   WinApi.Windows;
 
+
 { TEnvVars }
 class function TEnvVars.GetValue(const aVarName: string): string;
 var

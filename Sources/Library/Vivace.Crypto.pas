@@ -82,6 +82,7 @@ type
   HCRYPTKEY   = Cardinal;
   ALG_ID      = Cardinal;
   HCRYPTHASH  = Cardinal;
+
 const
   _lib_ADVAPI32    = 'ADVAPI32.dll';
   CALG_SHA_256     = 32780;
@@ -90,6 +91,7 @@ const
   PROV_RSA_AES     = 24;
   KP_MODE          = 4;
   CRYPT_MODE_CBC   = 1;
+
 function CryptAcquireContext(var Prov: HCRYPTPROV; Container: PChar; Provider: PChar; ProvType: LongWord; Flags: LongWord): LongBool; stdcall; external _lib_ADVAPI32 name 'CryptAcquireContextW';
 function CryptDeriveKey(Prov: HCRYPTPROV; Algid: ALG_ID; BaseData: HCRYPTHASH; Flags: LongWord; var Key: HCRYPTKEY): LongBool; stdcall; external _lib_ADVAPI32 name 'CryptDeriveKey';
 function CryptSetKeyParam(hKey: HCRYPTKEY; dwParam: LongInt; pbData: PBYTE; dwFlags: LongInt): LongBool stdcall; stdcall; external _lib_ADVAPI32 name 'CryptSetKeyParam';
@@ -100,6 +102,7 @@ function CryptHashData(Hash: HCRYPTHASH; Data: PChar; DataLen: LongWord; Flags: 
 function CryptReleaseContext(hProv: HCRYPTPROV; dwFlags: LongWord): LongBool; stdcall; external _lib_ADVAPI32 name 'CryptReleaseContext';
 function CryptDestroyHash(hHash: HCRYPTHASH): LongBool; stdcall; external _lib_ADVAPI32 name 'CryptDestroyHash';
 function CryptDestroyKey(hKey: HCRYPTKEY): LongBool; stdcall; external _lib_ADVAPI32 name 'CryptDestroyKey';
+
 {$WARN SYMBOL_PLATFORM OFF}
 function __CryptAcquireContext(ProviderType: Integer): HCRYPTPROV;
 begin
@@ -111,105 +114,112 @@ begin
       RaiseLastOSError;
   end;
 end;
+
 function __AES128_DeriveKeyFromPassword(m_hProv: HCRYPTPROV; Password: string): HCRYPTKEY;
 var
-  hHash: HCRYPTHASH;
-  Mode: DWORD;
+  LHash: HCRYPTHASH;
+  LMode: DWORD;
 begin
-  Win32Check(CryptCreateHash(m_hProv, CALG_SHA_256, 0, 0, hHash));
+  Win32Check(CryptCreateHash(m_hProv, CALG_SHA_256, 0, 0, LHash));
   try
-    Win32Check(CryptHashData(hHash, PChar(Password), Length(Password) * SizeOf(Char), 0));
-    Win32Check(CryptDeriveKey(m_hProv, CALG_AES_128, hHash, 0, Result));
+    Win32Check(CryptHashData(LHash, PChar(Password), Length(Password) * SizeOf(Char), 0));
+    Win32Check(CryptDeriveKey(m_hProv, CALG_AES_128, LHash, 0, Result));
     // Wine uses a different default mode of CRYPT_MODE_EBC
-    Mode := CRYPT_MODE_CBC;
-    Win32Check(CryptSetKeyParam(Result, KP_MODE, Pointer(@Mode), 0));
+    LMode := CRYPT_MODE_CBC;
+    Win32Check(CryptSetKeyParam(Result, KP_MODE, Pointer(@LMode), 0));
   finally
-    CryptDestroyHash(hHash);
+    CryptDestroyHash(LHash);
   end;
 end;
+
 function Base64_Encode(Value: TBytes): string;
 var
-  Encoder: TIdEncoderMIME;
+  LEncoder: TIdEncoderMIME;
 begin
-  Encoder := TIdEncoderMIME.Create(nil);
+  LEncoder := TIdEncoderMIME.Create(nil);
   try
-    Result := Encoder.EncodeBytes(TIdBytes(Value));
+    Result := LEncoder.EncodeBytes(TIdBytes(Value));
   finally
-    Encoder.Free;
+    LEncoder.Free;
   end;
 end;
+
 function Base64_Decode(Value: string): TBytes;
 var
-  Encoder: TIdDecoderMIME;
+  LEncoder: TIdDecoderMIME;
 begin
-  Encoder := TIdDecoderMIME.Create(nil);
+  LEncoder := TIdDecoderMIME.Create(nil);
   try
-    Result := TBytes(Encoder.DecodeBytes(Value));
+    Result := TBytes(LEncoder.DecodeBytes(Value));
   finally
-    Encoder.Free;
+    LEncoder.Free;
   end;
 end;
+
 { TCrpyto }
 class function TCrpyto.Encrypt(aPassword: string; aValue: string): string;
 var
-  hCProv: HCRYPTPROV;
-  hKey: HCRYPTKEY;
-  lul_datalen: Integer;
-  lul_buflen: Integer;
-  Buffer: TBytes;
+  LCProv: HCRYPTPROV;
+  LKey: HCRYPTKEY;
+  LLul_datalen: Integer;
+  LLul_buflen: Integer;
+  LBuffer: TBytes;
 begin
   Assert(aPassword <> '');
   if (aValue = '') then
     Result := ''
   else begin
-    hCProv := __CryptAcquireContext(PROV_RSA_AES);
+    LCProv := __CryptAcquireContext(PROV_RSA_AES);
     try
-      hKey := __AES128_DeriveKeyFromPassword(hCProv, aPassword);
+      LKey := __AES128_DeriveKeyFromPassword(LCProv, aPassword);
       try
-        // allocate buffer space
-        lul_datalen := Length(aValue) * SizeOf(Char);
-        Buffer := TEncoding.Unicode.GetBytes(aValue + '        ');
-        lul_buflen := Length(Buffer);
-        // encrypt to buffer
-        Win32Check(CryptEncrypt(hKey, 0, True, 0, @Buffer[0], lul_datalen, lul_buflen));
-        SetLength(Buffer, lul_datalen);
+        // allocate LBuffer space
+        LLul_datalen := Length(aValue) * SizeOf(Char);
+        LBuffer := TEncoding.Unicode.GetBytes(aValue + '        ');
+        LLul_buflen := Length(LBuffer);
+
+        // encrypt to LBuffer
+        Win32Check(CryptEncrypt(LKey, 0, True, 0, @LBuffer[0], LLul_datalen, LLul_buflen));
+        SetLength(LBuffer, LLul_datalen);
+
         // base 64 result
-        Result := Base64_Encode(Buffer);
+        Result := Base64_Encode(LBuffer);
       finally
-        CryptDestroyKey(hKey);
+        CryptDestroyKey(LKey);
       end;
     finally
-      CryptReleaseContext(hCProv, 0);
+      CryptReleaseContext(LCProv, 0);
     end;
   end;
 end;
+
 class function TCrpyto.Decrypt(aPassword: string; aValue: string): string;
 var
-  hCProv: HCRYPTPROV;
-  hKey: HCRYPTKEY;
-  lul_datalen: Integer;
-  Buffer: TBytes;
+  LCProv: HCRYPTPROV;
+  LKey: HCRYPTKEY;
+  LLul_datalen: Integer;
+  LBuffer: TBytes;
 begin
   Assert(aPassword <> '');
   if aValue = '' then
     Result := ''
   else begin
-    hCProv := __CryptAcquireContext(PROV_RSA_AES);
+    LCProv := __CryptAcquireContext(PROV_RSA_AES);
     try
-      hKey := __AES128_DeriveKeyFromPassword(hCProv, aPassword);
+      LKey := __AES128_DeriveKeyFromPassword(LCProv, aPassword);
       try
         // decode base64
-        Buffer := Base64_Decode(aValue);
-        // allocate buffer space
-        lul_datalen := Length(Buffer);
-        // decrypt buffer to to string
-        Win32Check(CryptDecrypt(hKey, 0, True, 0, @Buffer[0], lul_datalen));
-        Result := TEncoding.Unicode.GetString(Buffer, 0, lul_datalen);
+        LBuffer := Base64_Decode(aValue);
+        // allocate LBuffer space
+        LLul_datalen := Length(LBuffer);
+        // decrypt LBuffer to to string
+        Win32Check(CryptDecrypt(LKey, 0, True, 0, @LBuffer[0], LLul_datalen));
+        Result := TEncoding.Unicode.GetString(LBuffer, 0, LLul_datalen);
       finally
-        CryptDestroyKey(hKey);
+        CryptDestroyKey(LKey);
       end;
     finally
-      CryptReleaseContext(hCProv, 0);
+      CryptReleaseContext(LCProv, 0);
     end;
   end;
 end;

@@ -66,11 +66,7 @@ uses
   Vivace.Common,
   Vivace.Console;
 
-const
-  cLogExt = 'log';
-
 type
-
   { TLogger }
   TLogger = class
   public
@@ -146,7 +142,6 @@ begin
   if mRunOnce then Exit;
   mRunOnce := True;
   MLogger.LogHeader;
-
 end;
 
 procedure CreateLogger;
@@ -165,6 +160,7 @@ begin
     FreeAndNil(mLogger);
   end;
 end;
+
 
 { TLogger }
 class procedure TLogger.SetLogFilename(aFilename: string);
@@ -237,6 +233,7 @@ class procedure TLogger.Free;
 begin
   FreeLogger;
 end;
+
 
 { TMLogger }
 procedure TMLogger.LogToFile;
@@ -325,12 +322,13 @@ end;
 constructor TMLogger.Create;
 begin
   inherited;
+
   FFormatSettings.DateSeparator := '/';
   FFormatSettings.TimeSeparator := ':';
   FFormatSettings.ShortDateFormat := 'DD-MM-YYY HH:NN:SS';
   FFormatSettings.ShortTimeFormat := 'HH:NN:SS';
 
-  FLogFilename := TPath.ChangeExtension(ParamStr(0), cLogExt);
+  FLogFilename := TPath.ChangeExtension(ParamStr(0), LOG_EXT);
   FLogToConsole := True;
   FLogToFile := True;
   FLogToMail := False;
@@ -479,6 +477,7 @@ begin
   FreeAndNil(FMail);
   FreeAndNil(FMailLog);
   FreeAndNil(FLog);
+
   inherited;
 end;
 

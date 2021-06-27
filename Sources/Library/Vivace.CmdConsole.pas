@@ -69,8 +69,10 @@ uses
   Vivace.Font;
 
 type
-
+  { TCmdConsoleState }
   TCmdConsoleState = (ccsInactive, ccsSlideDown, ccsSlideUp);
+
+  { TCmdConsoleActionEvent }
   TCmdConsoleActionEvent = procedure of object;
 
   { TCmdConsoleAction }
@@ -151,6 +153,7 @@ const
   cDefaultMargins = 2;
   cDefaultMaxCmdHistoryCount = 20;
   cDefaultMaxTextLinesCount = 1080;
+
 
 { TCmdConsole }
 function TCmdConsole.ProcessCmd(aName: string; var aWasInternalCmd: Boolean): Boolean;
@@ -240,6 +243,7 @@ end;
 constructor TCmdConsole.Create;
 begin
   inherited;
+
   FActive := False;
   FState := ccsInactive;
   FEnabled := False;
@@ -256,6 +260,7 @@ begin
   FreeAndNil(FCmdParams);
   FreeAndNil(FCmdHistory);
   FreeAndNil(FTextLines);
+
   inherited;
 end;
 
@@ -362,8 +367,7 @@ begin
 
   if gEngine.Input.KeyboardPressed(FToggleKey) then
   begin
-    if Toggle then
-      Exit;
+    if Toggle then Exit;
   end;
 
   if FState = ccsInactive then Exit;
@@ -502,8 +506,7 @@ begin
 
   for LRec in FCmdActionList do
   begin
-    if SameText(aName, LRec.Name) then
-      Exit;
+    if SameText(aName, LRec.Name) then Exit;
   end;
 
   LRec.Name := aName;

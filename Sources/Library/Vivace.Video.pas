@@ -116,13 +116,12 @@ uses
   Vivace.Engine;
 
 var
-  VideoList: TList<TVideo> = nil;
+  mVideoList: TList<TVideo> = nil;
 
 
-{ TGVVideo }
+{ TVideo }
 procedure TVideo.Unload;
 begin
-
   if FHandle <> nil then
   begin
     al_set_video_playing(FHandle, False);
@@ -168,6 +167,7 @@ end;
 constructor TVideo.Create;
 begin
   inherited;
+
   FHandle := nil;
   FLoop := False;
   FPlaying := False;
@@ -175,36 +175,31 @@ begin
   FVoice := nil;
   FMixer := nil;
   FFilename := '';
-  VideoList.Add(Self);
+  mVideoList.Add(Self);
 end;
 
 destructor TVideo.Destroy;
 begin
-  VideoList.Remove(Self);
+  mVideoList.Remove(Self);
   Unload;
+
   inherited;
 end;
 
 procedure TVideo.Draw(aX, aY: Single);
 var
-  frame: PALLEGRO_BITMAP;
+  LFrame: PALLEGRO_BITMAP;
 begin
-  if FHandle = nil then
-    Exit;
+  if FHandle = nil then Exit;
+  if not GetPlaying then Exit;
 
-  if not GetPlaying then
+  LFrame := al_get_video_frame(FHandle);
+  if LFrame <> nil then
   begin
-    Exit;
-  end;
-
-  frame := al_get_video_frame(FHandle);
-  if frame <> nil then
-  begin
-    al_draw_scaled_bitmap(frame, 0, 0, al_get_bitmap_width(frame),
-      al_get_bitmap_height(frame), aX, aY, al_get_video_scaled_width(FHandle),
+    al_draw_scaled_bitmap(LFrame, 0, 0, al_get_bitmap_width(LFrame),
+      al_get_bitmap_height(LFrame), aX, aY, al_get_video_scaled_width(FHandle),
       al_get_video_scaled_height(FHandle), 0);
   end;
-
 end;
 
 function TVideo.GetLooping: Boolean;
@@ -224,7 +219,6 @@ procedure TVideo.Load(aFilename: string);
 var
   LMarsheller: TMarshaller;
   LOk: Boolean;
-
 begin
   if aFilename.IsEmpty then  Exit;
 
@@ -301,8 +295,7 @@ end;
 procedure TVideo.SetPause(aPause: Boolean);
 begin
   // if not FPlaying then Exit;
-  if FHandle = nil then
-    Exit;
+  if FHandle = nil then Exit;
 
   // if trying to pause and video is not playing, just exit
   if (aPause = True) then
@@ -329,8 +322,7 @@ end;
 
 procedure TVideo.Rewind;
 begin
-  if FHandle = nil then
-    Exit;
+  if FHandle = nil then Exit;
   al_seek_video(FHandle, 0);
 end;
 
@@ -338,7 +330,7 @@ class procedure TVideo.PauseAll(aPause: Boolean);
 var
   V: TVideo;
 begin
-  for V in VideoList do
+  for V in mVideoList do
   begin
     V.Pause := aPause;
   end;
@@ -346,29 +338,29 @@ end;
 
 class procedure TVideo.FreeAll;
 var
-  V: TVideo;
+  LV: TVideo;
 begin
-  for V in VideoList do
+  for LV in mVideoList do
   begin
-    FreeAndNil(V);
+    FreeAndNil(LV);
   end;
-  VideoList.Clear;
+  mVideoList.Clear;
 end;
 
 class procedure TVideo.FinishedEvent(aHandle: PALLEGRO_VIDEO);
 var
-  V: TVideo;
+  LV: TVideo;
 begin
-  for V in VideoList do
+  for LV in mVideoList do
   begin
-    if V.Handle <> aHandle then
+    if LV.Handle <> aHandle then
       continue;
 
-    if V.Looping then
+    if LV.Looping then
     begin
-      V.Rewind;
-      if not V.Pause then
-        V.Playing := True;
+      LV.Rewind;
+      if not LV.Pause then
+        LV.Playing := True;
     end;
 
   end;
@@ -377,7 +369,7 @@ end;
 initialization
 begin
   // init video list
-  VideoList := TList<TVideo>.Create;
+  mVideoList := TList<TVideo>.Create;
 end;
 
 finalization
@@ -386,7 +378,7 @@ begin
   TVideo.FreeAll;
 
   // free video list
-  FreeAndNil(VideoList);
+  FreeAndNil(mVideoList);
 end;
 
 end.

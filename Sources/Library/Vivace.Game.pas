@@ -68,7 +68,6 @@ uses
   Vivace.Font;
 
 type
-
   { TBaseGame }
   TBaseGame = class(TBaseObject)
   public
@@ -109,7 +108,6 @@ type
   { TCustomGameClass }
   TCustomGameClass = class of TCustomGame;
 
-
   { TGameConfig }
   TGameConfig = record
     ConfigFilename: string;
@@ -148,7 +146,6 @@ type
     procedure OnUpdate(aDeltaTime: Double); override;
   end;
 
-
 // Routines
 procedure RunGame(aGame: TCustomGameClass);
 
@@ -159,6 +156,7 @@ uses
   Vivace.Utils,
   Vivace.Engine,
   Vivace.Logger;
+
 
 // Routines
 procedure RunGame(aGame: TCustomGameClass);
@@ -171,6 +169,7 @@ begin
       TLogger.Log(etException, '%s: %s', [E.ClassName, E.Message]);
   end;
 end;
+
 
 { TBaseGame }
 constructor TBaseGame.Create;
@@ -192,10 +191,12 @@ end;
 constructor TCustomGame.Create;
 begin
   inherited;
+
 end;
 
 destructor TCustomGame.Destroy;
 begin
+
   inherited;
 end;
 

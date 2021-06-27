@@ -102,10 +102,12 @@ uses
   Vivace.Engine,
   Vivace.OS;
 
-{ TGVStartupDialog }
+
+{ TStartupDialog }
 constructor TStartupDialog.Create;
 begin
   inherited;
+
   FDialog := TStartupDialogForm.Create(nil);
   FDialog.Enabled := True;
 end;
@@ -113,6 +115,7 @@ end;
 destructor TStartupDialog.Destroy;
 begin
   FreeAndNil(FDialog);
+
   inherited;
 end;
 

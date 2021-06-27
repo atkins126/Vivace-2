@@ -110,8 +110,6 @@ type
     procedure OnRenderHUD; override;
   end;
 
-
-
 implementation
 
 uses
@@ -122,10 +120,12 @@ uses
   Vivace.Common,
   Vivace.Engine;
 
-  { TBitmapBasic }
+
+{ TBitmapBasic }
 procedure TBitmapColorKeyTransparency.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Bitmap ColorKey Transparency';
 end;
 
@@ -144,12 +144,14 @@ procedure TBitmapColorKeyTransparency.OnShutdown;
 begin
   FreeAndNil(FBitmap[1]);
   FreeAndNil(FBitmap[0]);
+
   inherited;
 end;
 
 procedure TBitmapColorKeyTransparency.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
 end;
 
 procedure TBitmapColorKeyTransparency.OnRender;
@@ -168,12 +170,15 @@ end;
 procedure TBitmapColorKeyTransparency.OnRenderHUD;
 begin
   inherited;
+
 end;
+
 
 { TBitmapTrueTransparency }
 procedure TBitmapTrueTransparency.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Bitmap True Transparency';
 end;
 
@@ -187,12 +192,14 @@ end;
 procedure TBitmapTrueTransparency.OnShutdown;
 begin
   FreeAndNil(FBitmap);
+
   inherited;
 end;
 
 procedure TBitmapTrueTransparency.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
 end;
 
 procedure TBitmapTrueTransparency.OnRender;
@@ -201,13 +208,12 @@ begin
 
   FBitmap.Draw(Config.DisplayWidth/2, Config.DisplayHeight/2, 1, 0, WHITE, haCenter, vaCenter);
   Font.Print(Config.DisplayWidth/2, (Config.DisplayHeight/2)+130, ORANGE, haCenter, 'true transparency', []);
-
-
 end;
 
 procedure TBitmapTrueTransparency.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 
@@ -215,6 +221,7 @@ end;
 procedure TBitmapTiled.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Tiled Bitmap';
 end;
 
@@ -239,7 +246,6 @@ begin
   FPos[1].Clear;
   FPos[2].Clear;
   FPos[3].Clear;
-
 end;
 
 procedure TBitmapTiled.OnShutdown;
@@ -286,6 +292,7 @@ end;
 procedure TBitmapTiled.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 end.

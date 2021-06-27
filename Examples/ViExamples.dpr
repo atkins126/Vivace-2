@@ -122,7 +122,8 @@ uses
   uBitmap in 'uBitmap.pas',
   uFont in 'uFont.pas',
   uViewportsDemo in 'uViewportsDemo.pas',
-  uGUIDemo in 'uGUIDemo.pas';
+  uGUIDemo in 'uGUIDemo.pas',
+  uAudio in 'uAudio.pas';
 
 begin
   RunGame(TExamples);

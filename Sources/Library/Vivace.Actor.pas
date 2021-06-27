@@ -70,7 +70,6 @@ uses
   Vivace.Entity;
 
 type
-
   // Class Forwards
   TActorList = class;
   TAIStateMachine = class;
@@ -281,6 +280,7 @@ uses
   Vivace.Color,
   Vivace.Bitmap;
 
+
 { TActor }
 function TActor.GetAttribute(aIndex: Byte): Boolean;
 begin
@@ -334,6 +334,7 @@ end;
 constructor TActor.Create;
 begin
   inherited;
+
   FOwner := nil;
   FPrev := nil;
   FNext := nil;
@@ -347,17 +348,18 @@ end;
 destructor TActor.Destroy;
 begin
   FreeAndNil(FChildren);
+
   inherited;
 end;
 
 function TActor.AttributesAreSet(aAttrs: TActorAttributeSet): Boolean;
 var
-  A: Byte;
+  LA: Byte;
 begin
   Result := False;
-  for A in aAttrs do
+  for LA in aAttrs do
   begin
-    if A in FAttributes then
+    if LA in FAttributes then
     begin
       Result := True;
       Break;
@@ -380,10 +382,12 @@ begin
   Result := False;
 end;
 
+
 { TAIState }
 constructor TAIState.Create;
 begin
   inherited;
+
   FStateMachine := nil;
   FOwner := nil;
   FChildren := TActorList.Create;
@@ -392,6 +396,7 @@ end;
 destructor TAIState.Destroy;
 begin
   FreeAndNil(FChildren);
+
   inherited;
 end;
 
@@ -415,11 +420,11 @@ begin
   FChildren.Render([]);
 end;
 
+
 { TGVAIStateMachine }
 procedure TAIStateMachine.ChangeStateObj(aValue: TAIState);
 begin
-  if not Assigned(aValue) then
-    Exit;
+  if not Assigned(aValue) then  Exit;
 
   FPreviousState := FCurrentState;
 
@@ -480,8 +485,7 @@ end;
 function TAIStateMachine.GetStates(aIndex: Integer): TAIState;
 begin
   Result := nil;
-  if (aIndex < 0) or (aIndex > FStateList.Count - 1) then
-    Exit;
+  if (aIndex < 0) or (aIndex > FStateList.Count - 1) then Exit;
   Result := TAIState(FStateList.Items[aIndex]);
 end;
 
@@ -492,12 +496,12 @@ end;
 
 procedure TAIStateMachine.SetCurrentState(aIndex: Integer);
 var
-  obj: TAIState;
+  LObj: TAIState;
 begin
-  obj := GetStates(aIndex);
-  if Assigned(obj) then
+  LObj := GetStates(aIndex);
+  if Assigned(LObj) then
   begin
-    SetCurrentStateObj(obj);
+    SetCurrentStateObj(LObj);
     FStateIndex := aIndex;
   end;
 end;
@@ -509,12 +513,12 @@ end;
 
 procedure TAIStateMachine.SetGlobalState(aIndex: Integer);
 var
-  obj: TAIState;
+  LObj: TAIState;
 begin
-  obj := GetStates(aIndex);
-  if Assigned(obj) then
+  LObj := GetStates(aIndex);
+  if Assigned(LObj) then
   begin
-    SetGlobalStateObj(obj);
+    SetGlobalStateObj(LObj);
   end;
 end;
 
@@ -525,18 +529,19 @@ end;
 
 procedure TAIStateMachine.SetPreviousState(aIndex: Integer);
 var
-  obj: TAIState;
+  LObj: TAIState;
 begin
-  obj := GetStates(aIndex);
-  if Assigned(obj) then
+  LObj := GetStates(aIndex);
+  if Assigned(LObj) then
   begin
-    SetPreviousStateObj(obj);
+    SetPreviousStateObj(LObj);
   end;
 end;
 
 constructor TAIStateMachine.Create;
 begin
   inherited;
+
   FOwner := nil;
   FCurrentState := nil;
   FGlobalState := nil;
@@ -548,6 +553,7 @@ end;
 destructor TAIStateMachine.Destroy;
 begin
   FreeAndNil(FStateList);
+
   inherited;
 end;
 
@@ -635,27 +641,29 @@ end;
 
 function TAIStateMachine.NextState(aWrap: Boolean): Integer;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := -1;
   if FStateList.Count < 2 then
     Exit;
 
-  I := FStateIndex;
-  Inc(I);
-  if I > FStateList.Count - 1 then
+  LI := FStateIndex;
+  Inc(LI);
+  if LI > FStateList.Count - 1 then
   begin
     if not aWrap then
       Exit;
-    I := 0;
+    LI := 0;
   end;
-  ChangeState(I);
+  ChangeState(LI);
 end;
+
 
 { TAIActor }
 constructor TAIActor.Create;
 begin
   inherited;
+
   FStateMachine := TAIStateMachine.Create;
   FStateMachine.Owner := self;
 end;
@@ -663,6 +671,7 @@ end;
 destructor TAIActor.Destroy;
 begin
   FreeAndNil(FStateMachine);
+
   inherited;
 end;
 
@@ -678,10 +687,12 @@ begin
   FStateMachine.Render;
 end;
 
+
 { TActorList }
 constructor TActorList.Create;
 begin
   inherited;
+
   FHead := nil;
   FTail := nil;
   FCount := 0;
@@ -690,13 +701,13 @@ end;
 destructor TActorList.Destroy;
 begin
   Clear([]);
+
   inherited;
 end;
 
 procedure TActorList.Add(aActor: TActor);
 begin
-  if not Assigned(aActor) then
-    Exit;
+  if not Assigned(aActor) then Exit;
 
   aActor.Prev := FTail;
   aActor.Next := nil;
@@ -717,38 +728,37 @@ end;
 
 procedure TActorList.Remove(aActor: TActor; aDispose: Boolean);
 var
-  Flag: Boolean;
+  LFlag: Boolean;
 begin
-  if not Assigned(aActor) then
-    Exit;
+  if not Assigned(aActor) then Exit;
 
-  Flag := False;
+  LFlag := False;
 
   if aActor.Next <> nil then
   begin
     aActor.Next.Prev := aActor.Prev;
-    Flag := True;
+    LFlag := True;
   end;
 
   if aActor.Prev <> nil then
   begin
     aActor.Prev.Next := aActor.Next;
-    Flag := True;
+    LFlag := True;
   end;
 
   if FTail = aActor then
   begin
     FTail := FTail.Prev;
-    Flag := True;
+    LFlag := True;
   end;
 
   if FHead = aActor then
   begin
     FHead := FHead.Next;
-    Flag := True;
+    LFlag := True;
   end;
 
-  if Flag = True then
+  if LFlag = True then
   begin
     Dec(FCount);
     if aDispose then
@@ -760,97 +770,96 @@ end;
 
 procedure TActorList.Clear(aAttrs: TActorAttributeSet);
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
 begin
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
-    Exit;
+  if LP = nil then Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next object
-    N := P.Next;
+    LN := LP.Next;
 
-    if NoAttrs then
+    if LNoAttrs then
     begin
-      Remove(P, True);
+      Remove(LP, True);
     end
     else
     begin
-      if P.AttributesAreSet(aAttrs) then
+      if LP.AttributesAreSet(aAttrs) then
       begin
-        Remove(P, True);
+        Remove(LP, True);
       end;
     end;
 
     // get pointer to next object
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
 
 procedure TActorList.Clean;
 var
-  P: TActor;
-  N: TActor;
+  LP: TActor;
+  LN: TActor;
 begin
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
+  if LP = nil then
     Exit;
 
   repeat
     // save pointer to next object
-    N := P.Next;
+    LN := LP.Next;
 
-    if P.Terminated then
+    if LP.Terminated then
     begin
-      Remove(P, True);
+      Remove(LP, True);
     end;
 
     // get pointer to next object
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
 
 procedure TActorList.ForEach(aSender: TActor; aAttrs: TActorAttributeSet; aEventId: Integer; var aDone: Boolean);
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
 begin
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
+  if LP = nil then
     Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next actor
-    N := P.Next;
+    LN := LP.Next;
 
     // destroy actor if not terminated
-    if not P.Terminated then
+    if not LP.Terminated then
     begin
       // no attributes specified so update this actor
-      if NoAttrs then
+      if LNoAttrs then
       begin
         aDone := False;
-        P.OnVisit(aSender, aEventId, aDone);
+        LP.OnVisit(aSender, aEventId, aDone);
         if aDone then
         begin
           Exit;
@@ -859,10 +868,10 @@ begin
       else
       begin
         // update this actor if it has specified attribute
-        if P.AttributesAreSet(aAttrs) then
+        if LP.AttributesAreSet(aAttrs) then
         begin
           aDone := False;
-          P.OnVisit(aSender, aEventId, aDone);
+          LP.OnVisit(aSender, aEventId, aDone);
           if aDone then
           begin
             Exit;
@@ -872,55 +881,54 @@ begin
     end;
 
     // get pointer to next actor
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
 
 procedure TActorList.Update(aAttrs: TActorAttributeSet; aDeltaTime: Double);
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
 begin
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
-    Exit;
+  if LP = nil then  Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next actor
-    N := P.Next;
+    LN := LP.Next;
 
     // destroy actor if not terminated
-    if not P.Terminated then
+    if not LP.Terminated then
     begin
       // no attributes specified so update this actor
-      if NoAttrs then
+      if LNoAttrs then
       begin
         // call actor's OnUpdate method
-        P.OnUpdate(aDeltaTime);
+        LP.OnUpdate(aDeltaTime);
       end
       else
       begin
         // update this actor if it has specified attribute
-        if P.AttributesAreSet(aAttrs) then
+        if LP.AttributesAreSet(aAttrs) then
         begin
           // call actor's OnUpdate method
-          P.OnUpdate(aDeltaTime);
+          LP.OnUpdate(aDeltaTime);
         end;
       end;
     end;
 
     // get pointer to next actor
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 
   // perform garbage collection
   Clean;
@@ -928,80 +936,78 @@ end;
 
 procedure TActorList.Render(aAttrs: TActorAttributeSet);
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
 begin
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
-    Exit;
+  if LP = nil then Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next actor
-    N := P.Next;
+    LN := LP.Next;
 
     // destroy actor if not terminated
-    if not P.Terminated then
+    if not LP.Terminated then
     begin
       // no attributes specified so update this actor
-      if NoAttrs then
+      if LNoAttrs then
       begin
         // call actor's OnRender method
-        P.OnRender;
+        LP.OnRender;
       end
       else
       begin
         // update this actor if it has specified attribute
-        if P.AttributesAreSet(aAttrs) then
+        if LP.AttributesAreSet(aAttrs) then
         begin
           // call actor's OnRender method
-          P.OnRender;
+          LP.OnRender;
         end;
       end;
     end;
 
     // get pointer to next actor
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
 
 function TActorList.SendMessage(aAttrs: TActorAttributeSet; aMsg: PActorMessage; aBroadcast: Boolean): TActor;
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
 begin
   Result := nil;
 
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
-    Exit;
+  if LP = nil then Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next actor
-    N := P.Next;
+    LN := LP.Next;
 
     // destroy actor if not terminated
-    if not P.Terminated then
+    if not LP.Terminated then
     begin
       // no attributes specified so update this actor
-      if NoAttrs then
+      if LNoAttrs then
       begin
         // send message to object
-        Result := P.OnMessage(aMsg);
+        Result := LP.OnMessage(aMsg);
         if not aBroadcast then
         begin
           if Result <> nil then
@@ -1013,10 +1019,10 @@ begin
       else
       begin
         // update this actor if it has specified attribute
-        if P.AttributesAreSet(aAttrs) then
+        if LP.AttributesAreSet(aAttrs) then
         begin
           // send message to object
-          Result := P.OnMessage(aMsg);
+          Result := LP.OnMessage(aMsg);
           if not aBroadcast then
           begin
             if Result <> nil then
@@ -1030,56 +1036,53 @@ begin
     end;
 
     // get pointer to next actor
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
 
 procedure TActorList.CheckCollision(aAttrs: TActorAttributeSet; aActor: TActor);
 var
-  P: TActor;
-  N: TActor;
-  NoAttrs: Boolean;
-  HitPos: TVector;
+  LP: TActor;
+  LN: TActor;
+  LNoAttrs: Boolean;
+  LHitPos: TVector;
 begin
   // check if terminated
-  if aActor.Terminated then
-    Exit;
+  if aActor.Terminated then Exit;
 
   // check if can collide
-  if not aActor.CanCollide then
-    Exit;
+  if not aActor.CanCollide then Exit;
 
   // get pointer to head
-  P := FHead;
+  LP := FHead;
 
   // exit if list is empty
-  if P = nil then
-    Exit;
+  if LP = nil then Exit;
 
   // check if we should check for attrs
-  NoAttrs := Boolean(aAttrs = []);
+  LNoAttrs := Boolean(aAttrs = []);
 
   repeat
     // save pointer to next actor
-    N := P.Next;
+    LN := LP.Next;
 
     // destroy actor if not terminated
-    if not P.Terminated then
+    if not LP.Terminated then
     begin
       // no attributes specified so check collision with this actor
-      if NoAttrs then
+      if LNoAttrs then
       begin
 
-        if P.CanCollide then
+        if LP.CanCollide then
         begin
           // HitPos.Clear;
-          HitPos.X := 0;
-          HitPos.Y := 0;
-          if aActor.Collide(P, HitPos) then
+          LHitPos.X := 0;
+          LHitPos.Y := 0;
+          if aActor.Collide(LP, LHitPos) then
           begin
-            P.OnCollide(aActor, HitPos);
-            aActor.OnCollide(P, HitPos);
+            LP.OnCollide(aActor, LHitPos);
+            aActor.OnCollide(LP, LHitPos);
             // Exit;
           end;
         end;
@@ -1088,17 +1091,17 @@ begin
       else
       begin
         // check collision with this actor if it has specified attribute
-        if P.AttributesAreSet(aAttrs) then
+        if LP.AttributesAreSet(aAttrs) then
         begin
-          if P.CanCollide then
+          if LP.CanCollide then
           begin
             // HitPos.Clear;
-            HitPos.X := 0;
-            HitPos.Y := 0;
-            if aActor.Collide(P, HitPos) then
+            LHitPos.X := 0;
+            LHitPos.Y := 0;
+            if aActor.Collide(LP, LHitPos) then
             begin
-              P.OnCollide(aActor, HitPos);
-              aActor.OnCollide(P, HitPos);
+              LP.OnCollide(aActor, LHitPos);
+              aActor.OnCollide(LP, LHitPos);
               // Exit;
             end;
           end;
@@ -1108,10 +1111,11 @@ begin
     end;
 
     // get pointer to next actor
-    P := N;
+    LP := LN;
 
-  until P = nil;
+  until LP = nil;
 end;
+
 
 { TActorScene }
 function TActorScene.GetList(aIndex: Integer): TActorList;
@@ -1127,6 +1131,7 @@ end;
 constructor TActorScene.Create;
 begin
   inherited;
+
   FLists := nil;
   FCount := 0;
 end;
@@ -1134,30 +1139,31 @@ end;
 destructor TActorScene.Destroy;
 begin
   Dealloc;
+
   inherited;
 end;
 
 procedure TActorScene.Alloc(aNum: Integer);
 var
-  I: Integer;
+  LI: Integer;
 begin
   Dealloc;
   FCount := aNum;
   SetLength(FLists, FCount);
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    FLists[I] := TActorList.Create;
+    FLists[LI] := TActorList.Create;
   end;
 end;
 
 procedure TActorScene.Dealloc;
 var
-  I: Integer;
+  LI: Integer;
 begin
   ClearAll;
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    FLists[I].Free;
+    FLists[LI].Free;
   end;
   FLists := nil;
   FCount := 0;
@@ -1165,61 +1171,56 @@ end;
 
 procedure TActorScene.Clean(aIndex: Integer);
 begin
-  if (aIndex < 0) or (aIndex > FCount - 1) then
-    Exit;
+  if (aIndex < 0) or (aIndex > FCount - 1) then Exit;
   FLists[aIndex].Clean;
 end;
 
 procedure TActorScene.Clear(aIndex: Integer; aAttrs: TActorAttributeSet);
 begin
-  if (aIndex < 0) or (aIndex > FCount - 1) then
-    Exit;
-
+  if (aIndex < 0) or (aIndex > FCount - 1) then Exit;
   FLists[aIndex].Clear(aAttrs);
 end;
 
 procedure TActorScene.ClearAll;
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    FLists[I].Clear([]);
+    FLists[LI].Clear([]);
   end;
 end;
 
 procedure TActorScene.Update(aAttrs: TActorAttributeSet; aDeltaTime: Double);
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    FLists[I].Update(aAttrs, aDeltaTime);
+    FLists[LI].Update(aAttrs, aDeltaTime);
   end;
 end;
 
 procedure TActorScene.Render(aAttrs: TActorAttributeSet; aBefore: TActorSceneEvent; aAfter: TActorSceneEvent);
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    if Assigned(aBefore) then
-      aBefore(I);
-    FLists[I].Render(aAttrs);
-    if Assigned(aAfter) then
-      aAfter(I);
+    if Assigned(aBefore) then aBefore(LI);
+    FLists[LI].Render(aAttrs);
+    if Assigned(aAfter) then aAfter(LI);
   end;
 end;
 
 function TActorScene.SendMessage(aAttrs: TActorAttributeSet; aMsg: PActorMessage; aBroadcast: Boolean): TActor;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := nil;
-  for I := 0 to FCount - 1 do
+  for LI := 0 to FCount - 1 do
   begin
-    Result := FLists[I].SendMessage(aAttrs, aMsg, aBroadcast);
+    Result := FLists[LI].SendMessage(aAttrs, aMsg, aBroadcast);
     if not aBroadcast then
     begin
       if Result <> nil then
@@ -1230,16 +1231,19 @@ begin
   end;
 end;
 
+
 { TEntityActor }
 constructor TEntityActor.Create;
 begin
   inherited;
+
   FEntity := nil;
 end;
 
 destructor TEntityActor.Destroy;
 begin
   FreeAndNil(FEntity);
+
   inherited;
 end;
 
@@ -1287,12 +1291,14 @@ end;
 constructor TAIEntityActor.Create;
 begin
   inherited;
+
   FStateMachine := TAIStateMachine.Create;
 end;
 
 destructor TAIEntityActor.Destroy;
 begin
   FreeAndNil(FStateMachine);
+
   inherited;
 end;
 

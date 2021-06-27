@@ -66,7 +66,6 @@ uses
   Vivace.Color;
 
 type
-
   { TPolygonSegment }
   TPolygonSegment = record
     Point: TVector;
@@ -109,7 +108,8 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
-{ TGVPolygon }
+
+{ TPolygon }
 procedure TPolygon.Clear;
 begin
   FSegment := nil;
@@ -120,11 +120,13 @@ end;
 constructor TPolygon.Create;
 begin
   inherited;
+
   Clear;
 end;
 
 destructor TPolygon.Destroy;
 begin
+
   inherited;
 end;
 
@@ -133,8 +135,7 @@ var
   LSize: Integer;
   LHandle: PALLEGRO_FILE;
 begin
-  if aFilename.IsEmpty then
-    Exit;
+  if aFilename.IsEmpty then Exit;
 
   LHandle := al_fopen(PAnsiChar(AnsiString(aFilename)), 'wb');
 
@@ -219,8 +220,7 @@ begin
   FWorldPoint[FItemCount - 1].Y := 0;
 end;
 
-function TPolygon.Transform(aX: Single; aY: Single; aScale: Single;
-  aAngle: Single; aOrigin: PVector; aHFlip: Boolean; aVFlip: Boolean): Boolean;
+function TPolygon.Transform(aX: Single; aY: Single; aScale: Single; aAngle: Single; aOrigin: PVector; aHFlip: Boolean; aVFlip: Boolean): Boolean;
 var
   LI: Integer;
   LP: TVector;

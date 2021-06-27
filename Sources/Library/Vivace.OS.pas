@@ -59,7 +59,6 @@ unit Vivace.OS;
 interface
 
 type
-
   { TDialogMessage }
   TMessageDialog = (mdDefault = $00000000, mdError = $00000010, mdWarning = $00000030, mdInfo = $00000040);
 
@@ -94,6 +93,7 @@ uses
   WinApi.Windows,
   Vivace.EnvVars,
   Vivace.Utils;
+
 
 { TOS }
 class function TOS.GetWorkPath: string;
@@ -200,7 +200,6 @@ begin
  FillChar (LMemStatus, SizeOf(MemoryStatusEx), #0);
  LMemStatus.dwLength := SizeOf(MemoryStatusEx);
  GlobalMemoryStatusEx (LMemStatus);
- //Result:= Real2Str(MS_Ex.ullTotalPhys / GB, 2)+ ' GB';
  aAvailMem := LMemStatus.ullAvailPhys;
  aTotalMem := LMemStatus.ullTotalPhys;
 end;

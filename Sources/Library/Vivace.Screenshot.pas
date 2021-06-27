@@ -87,10 +87,12 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
 { TScreenshot }
 constructor TScreenshot.Create;
 begin
   inherited;
+
   FFlag := False;
   FFilename := '';
   FDir := 'Screenshots';
@@ -100,27 +102,28 @@ end;
 
 destructor TScreenshot.Destroy;
 begin
+
   inherited;
 end;
 
 procedure TScreenshot.Init(aDir: string; aBaseFilename: string);
 var
-  Dir: string;
-  BaseFilename: string;
+  LDir: string;
+  LBaseFilename: string;
 begin
   FFilename := '';
   FFlag := False;
 
-  Dir := aDir;
-  BaseFilename := aBaseFilename;
+  LDir := aDir;
+  LBaseFilename := aBaseFilename;
 
-  if Dir.IsEmpty then
-    Dir := 'Screenshots';
-  FDir := Dir;
+  if LDir.IsEmpty then
+    LDir := 'Screenshots';
+  FDir := LDir;
 
-  if BaseFilename.IsEmpty then
-    BaseFilename := 'Screen';
-  FBaseFilename := BaseFilename;
+  if LBaseFilename.IsEmpty then
+    LBaseFilename := 'Screen';
+  FBaseFilename := LBaseFilename;
 
   ChangeFileExt(FBaseFilename, '');
 end;
@@ -132,34 +135,33 @@ end;
 
 procedure TScreenshot.Process;
 var
-  c: Integer;
-  f, d, b: string;
+  LC: Integer;
+  LF, LD, LB: string;
 begin
-  if gEngine.Screenshake.Active then
-    Exit;
-  if not FFlag then
-    Exit;
+  if gEngine.Screenshake.Active then Exit;
+  if not FFlag then Exit;
+
   FFlag := False;
 
   // director
-  d := ExpandFilename(FDir);
-  ForceDirectories(d);
+  LD := ExpandFilename(FDir);
+  ForceDirectories(LD);
 
   // base name
-  b := FBaseFilename;
+  LB := FBaseFilename;
 
   // search file maks
-  f := b + '*.png';
+  LF := LB + '*.png';
 
   // file count
-  c := FileCount(d, f);
+  LC := FileCount(LD, LF);
 
   // screenshot file mask
-  f := Format('%s\%s (%.3d).png', [d, b, c]);
-  FFilename := f;
+  LF := Format('%s\%s (%.3d).png', [LD, LB, LC]);
+  FFilename := LF;
 
   // save screenshot
-  gEngine.Display.Save(f);
+  gEngine.Display.Save(LF);
 end;
 
 end.

@@ -74,7 +74,7 @@ type
     class procedure Init(aMju: Extended = 6; aMaxStepBack: Integer = 10; aAlphaThreshold: Byte = 70);
     class procedure Done;
     class function  GetPointCount: Integer;
-    class procedure PrimaryTrace(Tex: TBitmap; W, H: Single);
+    class procedure PrimaryTrace(aTex: TBitmap; aWidth, aHeight: Single);
     class procedure SimplifyPoly;
     class procedure ApplyPolyPoint(aPolyPoint: TPolyPoint; aNum: Integer; aOrigin: PVector);
   end;
@@ -86,17 +86,17 @@ uses
   Vivace.Color;
 
 type
-
+  { TR_Point }
   TR_Point = record
     X, Y: Integer;
   end;
 
 var
-  PolyArr: array of TR_Point;
-  PntCount: Integer;
-  Mju: Extended = 6;
-  MaxStepBack: Integer = 10;
-  AlphaThreshold: Byte = 70; // alpha channel threshhold
+  mPolyArr: array of TR_Point;
+  mPntCount: Integer;
+  mMju: Extended = 6;
+  mMaxStepBack: Integer = 10;
+  mAlphaThreshold: Byte = 70; // alpha channel threshhold
 
 function IsNeighbour(X1, Y1, X2, Y2: Integer): Boolean;
 begin
@@ -105,49 +105,49 @@ end;
 
 function IsPixEmpty(Tex: TBitmap; X, Y: Integer; W, H: Single): Boolean;
 var
-  Color: TColor;
+  LColor: TColor;
 begin
   if (X < 0) or (Y < 0) or (X > W - 1) or (Y > H - 1) then
     Result := true
   else
   begin
-    Color := Tex.GetPixel(X, Y);
-    Result := Boolean(Color.alpha * 255 < AlphaThreshold);
+    LColor := Tex.GetPixel(X, Y);
+    Result := Boolean(LColor.alpha * 255 < mAlphaThreshold);
   end;
 end;
 
 // some point list functions
 procedure AddPoint(X, Y: Integer);
 var
-  L: Integer;
+  LL: Integer;
 begin
-  Inc(PntCount);
+  Inc(mPntCount);
   // L := Length(PolyArr);
-  L := High(PolyArr) + 1;
-  if L < PntCount then
-    SetLength(PolyArr, L + MaxStepBack);
-  PolyArr[PntCount - 1].X := X;
-  PolyArr[PntCount - 1].Y := Y;
+  LL := High(mPolyArr) + 1;
+  if LL < mPntCount then
+    SetLength(mPolyArr, LL + mMaxStepBack);
+  mPolyArr[mPntCount - 1].X := X;
+  mPolyArr[mPntCount - 1].Y := Y;
 end;
 
 procedure DelPoint(Index: Integer);
 var
-  I: Integer;
+  LI: Integer;
 begin
-  if PntCount > 1 then
-    for I := Index to PntCount - 2 do
-      PolyArr[I] := PolyArr[I + 1];
-  Dec(PntCount);
+  if mPntCount > 1 then
+    for LI := Index to mPntCount - 2 do
+      mPolyArr[LI] := mPolyArr[LI + 1];
+  Dec(mPntCount);
 end;
 
 function IsInList(X, Y: Integer): Boolean;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := False;
-  for I := 0 to PntCount - 1 do
+  for LI := 0 to mPntCount - 1 do
   begin
-    Result := (PolyArr[I].X = X) and (PolyArr[I].Y = Y);
+    Result := (mPolyArr[LI].X = X) and (mPolyArr[LI].Y = Y);
     if Result then
       Break;
   end;
@@ -155,25 +155,25 @@ end;
 
 procedure FindStartingPoint(Tex: TBitmap; var X, Y: Integer; W, H: Single);
 var
-  I, J: Integer;
+  LI, LJ: Integer;
 begin
   X := 1000000; // init X and Y with huge values
   Y := 1000000;
   // and simply find the non-zero point with lowest Y
-  I := 0;
-  J := 0;
-  while (X = 1000000) and (I <= H) do
+  LI := 0;
+  LJ := 0;
+  while (X = 1000000) and (LI <= H) do
   begin
-    if not IsPixEmpty(Tex, I, J, W, H) then
+    if not IsPixEmpty(Tex, LI, LJ, W, H) then
     begin
-      X := I;
-      Y := J;
+      X := LI;
+      Y := LJ;
     end;
-    Inc(I);
-    if I = W then
+    Inc(LI);
+    if LI = W then
     begin
-      I := 0;
-      Inc(J);
+      LI := 0;
+      Inc(LJ);
     end;
   end;
   if X = 1000000 then
@@ -190,11 +190,11 @@ const
 
 function CountEmptyAround(Tex: TBitmap; X, Y: Integer; W, H: Single): Integer;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := 0;
-  for I := 1 to 8 do
-    if IsPixEmpty(Tex, X + Neighbours[I, 1], Y + Neighbours[I, 2], W, H) then
+  for LI := 1 to 8 do
+    if IsPixEmpty(Tex, X + Neighbours[LI, 1], Y + Neighbours[LI, 2], W, H) then
       Inc(Result);
 end;
 
@@ -204,25 +204,25 @@ end;
 // simplified
 function FindNearestButNotNeighbourOfOther(Tex: TBitmap; Xs, Ys, XOther, YOther: Integer; var XF, YF: Integer; W, H: Single): Boolean;
 var
-  I, MaxEmpty, E: Integer;
-  Xt, Yt: Integer;
+  LI, LMaxEmpty, LE: Integer;
+  LXt, LYt: Integer;
 begin
-  MaxEmpty := 0;
+  LMaxEmpty := 0;
   Result := False;
-  for I := 1 to 8 do
+  for LI := 1 to 8 do
   begin
-    Xt := Xs + Neighbours[I, 1];
-    Yt := Ys + Neighbours[I, 2];
+    LXt := Xs + Neighbours[LI, 1];
+    LYt := Ys + Neighbours[LI, 2];
     // is it non-empty and not-a-neighbour point?
-    if (not IsInList(Xt, Yt)) and (not IsNeighbour(Xt, Yt, XOther, YOther)) and
-      (not IsPixEmpty(Tex, Xt, Yt, W, H)) then
+    if (not IsInList(LXt, LYt)) and (not IsNeighbour(LXt, LYt, XOther, YOther)) and
+      (not IsPixEmpty(Tex, LXt, LYt, W, H)) then
     begin
-      E := CountEmptyAround(Tex, Xt, Yt, W, H); // ok. count empties around
-      if E > MaxEmpty then // the best choice point has max empty neighbours
+      LE := CountEmptyAround(Tex, LXt, LYt, W, H); // ok. count empties around
+      if LE > LMaxEmpty then // the best choice point has max empty neighbours
       begin
-        XF := Xt;
-        YF := Yt;
-        MaxEmpty := E;
+        XF := LXt;
+        YF := LYt;
+        LMaxEmpty := LE;
         Result := true;
       end;
     end;
@@ -232,23 +232,23 @@ end;
 // simplifying procedures
 function LineLength(X1, Y1, X2, Y2: Integer): Extended;
 var
-  A, B: Integer;
+  LA, LB: Integer;
 begin
-  A := Abs(X2 - X1);
-  B := Abs(Y2 - Y1);
-  Result := Sqrt(A * A + B * B);
+  LA := Abs(X2 - X1);
+  LB := Abs(Y2 - Y1);
+  Result := Sqrt(LA * LA + LB * LB);
 end;
 
 function TriangleSquare(X1, Y1, X2, Y2, X3, Y3: Integer): Extended;
 var
-  P: Extended;
-  A, B, C: Extended;
+  LP: Extended;
+  LA, LB, LC: Extended;
 begin
-  A := LineLength(X1, Y1, X2, Y2);
-  B := LineLength(X2, Y2, X3, Y3);
-  C := LineLength(X3, Y3, X1, Y1);
-  P := A + B + C;
-  Result := Sqrt(P * (P - A) * (P - B) * (P - C)); // using Heron's formula
+  LA := LineLength(X1, Y1, X2, Y2);
+  LB := LineLength(X2, Y2, X3, Y3);
+  LC := LineLength(X3, Y3, X1, Y1);
+  LP := LA + LB + LC;
+  Result := Sqrt(LP * (LP - LA) * (LP - LB) * (LP - LC)); // using Heron's formula
 end;
 
 // for alternate method simplifying I decided to use "thinness" of triangles
@@ -256,104 +256,104 @@ end;
 // triangle is "thin" - so it can be approximated to line
 function TriangleThinness(X1, Y1, X2, Y2, X3, Y3: Integer): Extended;
 var
-  P: Extended;
-  A, B, C, S: Extended;
+  LP: Extended;
+  LA, LB, LC, LS: Extended;
 begin
-  A := LineLength(X1, Y1, X2, Y2);
-  B := LineLength(X2, Y2, X3, Y3);
-  C := LineLength(X3, Y3, X1, Y1);
-  P := A + B + C;
-  S := Sqrt(P * (P - A) * (P - B) * (P - C));
-  // using Heron's formula to find triangle's square
-  Result := S / P;
+  LA := LineLength(X1, Y1, X2, Y2);
+  LB := LineLength(X2, Y2, X3, Y3);
+  LC := LineLength(X3, Y3, X1, Y1);
+  LP := LA + LB + LC;
+  LS := Sqrt(LP * (LP - LA) * (LP - LB) * (LP - LC));
+  // using Heron's formula to find triangle'LS square
+  Result := LS / LP;
   // so if this result less than some Mju then we can approximate particular triangle
 end;
 
 { TPolyPointTrace }
 class procedure TPolyPointTrace.ApplyPolyPoint(aPolyPoint: TPolyPoint; aNum: Integer; aOrigin: PVector);
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to PntCount - 1 do
+  for LI := 0 to mPntCount - 1 do
   begin
-    aPolyPoint.AddPoint(aNum, PolyArr[I].X, PolyArr[I].Y, aOrigin);
+    aPolyPoint.AddPoint(aNum, mPolyArr[LI].X, mPolyArr[LI].Y, aOrigin);
   end;
 end;
 
 class procedure TPolyPointTrace.Init(aMju: Extended = 6; aMaxStepBack: Integer = 10; aAlphaThreshold: Byte = 70);
 begin
   Done;
-  Mju := aMju;
-  MaxStepBack := aMaxStepBack;
-  AlphaThreshold := aAlphaThreshold;
+  mMju := aMju;
+  mMaxStepBack := aMaxStepBack;
+  mAlphaThreshold := aAlphaThreshold;
 end;
 
 class procedure TPolyPointTrace.Done;
 begin
-  PntCount := 0;
-  PolyArr := nil;
+  mPntCount := 0;
+  mPolyArr := nil;
 end;
 
 class function TPolyPointTrace.GetPointCount: Integer;
 begin
-  Result := PntCount;
+  Result := mPntCount;
 end;
 
 // primarily tracer procedure (gives too precise polyline - need to simplify later)
-class procedure TPolyPointTrace.PrimaryTrace(Tex: TBitmap; W, H: Single);
+class procedure TPolyPointTrace.PrimaryTrace(aTex: TBitmap; aWidth, aHeight: Single);
 var
-  I: Integer;
-  Xn, Yn, Xnn, Ynn: Integer;
-  NextPointFound: Boolean;
-  Back: Integer;
-  StepBack: Integer;
+  LI: Integer;
+  LXn, LYn, LXnn, LYnn: Integer;
+  LNextPointFound: Boolean;
+  LBack: Integer;
+  LLStepBack: Integer;
 begin
-  FindStartingPoint(Tex, Xn, Yn, W, H);
-  NextPointFound := Xn <> 1000000;
-  StepBack := 0;
-  while NextPointFound do
+  FindStartingPoint(aTex, LXn, LYn, aWidth, aHeight);
+  LNextPointFound := LXn <> 1000000;
+  LLStepBack := 0;
+  while LNextPointFound do
   begin
-    NextPointFound := False;
-    // checking if we got back to starting point...
-    if not((PntCount > 3) and IsNeighbour(Xn, Yn, PolyArr[0].X, PolyArr[0].Y))
+    LNextPointFound := False;
+    // checking if we got LBack to starting point...
+    if not((mPntCount > 3) and IsNeighbour(LXn, LYn, mPolyArr[0].X, mPolyArr[0].Y))
     then
     begin
-      if PntCount > 7 then
-        Back := 7
+      if mPntCount > 7 then
+        LBack := 7
       else
-        Back := PntCount;
-      if Back = 0 then // no points in list - take any near point
-        NextPointFound := FindNearestButNotNeighbourOfOther(Tex, Xn, Yn, -100,
-          -100, Xnn, Ynn, W, H)
+        LBack := mPntCount;
+      if LBack = 0 then // no points in list - take any near point
+        LNextPointFound := FindNearestButNotNeighbourOfOther(aTex, LXn, LYn, -100,
+          -100, LXnn, LYnn, aWidth, aHeight)
       else
-        // checking near but not going back
-        for I := 1 to Back do
+        // checking near but not going LBack
+        for LI := 1 to LBack do
         begin
-          NextPointFound := FindNearestButNotNeighbourOfOther(Tex, Xn, Yn,
-            PolyArr[PntCount - I].X, PolyArr[PntCount - I].Y, Xnn, Ynn, W, H);
-          NextPointFound := NextPointFound and (not IsInList(Xnn, Ynn));
-          if NextPointFound then
+          LNextPointFound := FindNearestButNotNeighbourOfOther(aTex, LXn, LYn,
+            mPolyArr[mPntCount - LI].X, mPolyArr[mPntCount - LI].Y, LXnn, LYnn, aWidth, aHeight);
+          LNextPointFound := LNextPointFound and (not IsInList(LXnn, LYnn));
+          if LNextPointFound then
             Break;
         end;
-      AddPoint(Xn, Yn);
-      if NextPointFound then
+      AddPoint(LXn, LYn);
+      if LNextPointFound then
       begin
-        Xn := Xnn;
-        Yn := Ynn;
-        StepBack := 0;
+        LXn := LXnn;
+        LYn := LYnn;
+        LLStepBack := 0;
       end
-      else if StepBack < MaxStepBack then
+      else if LLStepBack < mMaxStepBack then
       begin
-        Xn := PolyArr[PntCount - StepBack * 2 - 2].X;
-        Yn := PolyArr[PntCount - StepBack * 2 - 2].Y;
-        Inc(StepBack);
-        NextPointFound := true;
+        LXn := mPolyArr[mPntCount - LLStepBack * 2 - 2].X;
+        LYn := mPolyArr[mPntCount - LLStepBack * 2 - 2].Y;
+        Inc(LLStepBack);
+        LNextPointFound := true;
       end;
     end;
   end;
   // close the poly
-  if PntCount > 0 then
-    AddPoint(PolyArr[0].X, PolyArr[0].Y);
+  if mPntCount > 0 then
+    AddPoint(mPolyArr[0].X, mPolyArr[0].Y);
 end;
 
 class procedure TPolyPointTrace.SimplifyPoly;
@@ -367,11 +367,11 @@ begin
   begin
     I := 0;
     Finished := true;
-    while I <= PntCount - 3 do
+    while I <= mPntCount - 3 do
     begin
-      Thinness := TriangleThinness(PolyArr[I].X, PolyArr[I].Y, PolyArr[I + 1].X,
-        PolyArr[I + 1].Y, PolyArr[I + 2].X, PolyArr[I + 2].Y);
-      if Thinness < Mju then
+      Thinness := TriangleThinness(mPolyArr[I].X, mPolyArr[I].Y, mPolyArr[I + 1].X,
+        mPolyArr[I + 1].Y, mPolyArr[I + 2].X, mPolyArr[I + 2].Y);
+      if Thinness < mMju then
       // the square of triangle is too thin - we can approximate it!
       begin
         DelPoint(I + 1); // so delete middle point

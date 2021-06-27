@@ -87,7 +87,7 @@ const
   CIRCLE_COUNT = 80;
 
 type
-{ TCommonEntity }
+  { TCommonEntity }
   TCommonEntity = class(TEntityActor)
   public
     constructor Create; override;
@@ -95,7 +95,7 @@ type
     function  Collide(aActor: TActor; var aHitPos: TVector): Boolean; override;
   end;
 
-{ TCircle }
+  { TCircle }
   TCircle = class(TCommonEntity)
   protected
     FColor: TColor;
@@ -117,7 +117,6 @@ type
     FFade: Single;
     FSpeed: Single;
   public
-
     constructor Create; override;
     destructor Destroy; override;
     procedure Setup(aX, aY: Single; aColor: TColor); overload;
@@ -162,7 +161,6 @@ type
 var
   Game: TChainActionDemo = nil;
 
-
 implementation
 
 uses
@@ -175,16 +173,19 @@ uses
   Vivace.Input,
   Vivace.Display;
 
+
 { TCommonEntity }
 constructor TCommonEntity.Create;
 begin
   inherited;
+
   CanCollide := True;
 end;
 
 procedure TCommonEntity.OnCollide(aActor: TActor; aHitPos: TVector);
 begin
   inherited;
+
 end;
 
 function  TCommonEntity.Collide(aActor: TActor; var aHitPos: TVector): Boolean;
@@ -198,24 +199,24 @@ begin
   end;
 end;
 
+
 { TCircle }
 constructor TCircle.Create;
 var
-  ok: Boolean;
-  VP: TRectangle;
-  A: Single;
+  LOK: Boolean;
+  LVP: TRectangle;
+  LA: Single;
 begin
   inherited;
 
-  gEngine.Display.GetViewportSize(VP);
+  gEngine.Display.GetViewportSize(LVP);
 
   Init(Game.Sprite, 0);
   Entity.SetShrinkFactor(SHRINK_FACTOR);
   Entity.SetScaleAbs(CIRCLE_SCALE);
-  Entity.SetPosAbs(TMath.RandomRange(32, (VP.Width-1)-32),
-    TMath.RandomRange(32, (VP.Width-1)-32));
+  Entity.SetPosAbs(TMath.RandomRange(32, (LVP.Width-1)-32), TMath.RandomRange(32, (LVP.Width-1)-32));
 
-  ok := False;
+  LOK := False;
   repeat
     Sleep(1);
     FColor.Make(
@@ -229,59 +230,61 @@ begin
        FColor.Equal(WHITE) then
       continue;
 
-    ok := True;
-  until ok;
+    LOK := True;
+  until LOK;
 
-  ok := False;
+  LOK := False;
   repeat
     Sleep(1);
-    A := TMath.RandomRange(0, 359);
-    if (Abs(A) >=90-10) and (Abs(A) <= 90+10) then continue;
-    if (Abs(A) >=270-10) and (Abs(A) <= 270+10) then continue;
+    LA := TMath.RandomRange(0, 359);
+    if (Abs(LA) >=90-10) and (Abs(LA) <= 90+10) then continue;
+    if (Abs(LA) >=270-10) and (Abs(LA) <= 270+10) then continue;
 
-    ok := True;
-  until ok;
+    LOK := True;
+  until LOK;
 
-  Entity.RotateAbs(A);
+  Entity.RotateAbs(LA);
   Entity.SetColor(FColor);
   FSpeed := TMath.RandomRange(3*35, 7*35);
 end;
 
 destructor TCircle.Destroy;
 begin
+
   inherited;
 end;
 
 procedure TCircle.OnUpdate(aDeltaTime: Double);
 var
-  V: TVector;
-  VP: TRectangle;
-  R: Single;
+  LV: TVector;
+  LVP: TRectangle;
+  LR: Single;
 begin
-  gEngine.Display.GetViewportSize(VP);
+  gEngine.Display.GetViewportSize(LVP);
 
   Entity.Thrust(FSpeed * aDeltaTime);
 
-  V := Entity.GetPos;
+  LV := Entity.GetPos;
 
-  R := Entity.GetRadius / 2;
+  LR := Entity.GetRadius / 2;
 
-  if V.x < -R then
-    V.x := VP.Width-1
-  else if V.x > (VP.Width-1)+R then
-    V.x := -R;
+  if LV.x < -LR then
+    LV.x := LVP.Width-1
+  else if LV.x > (LVP.Width-1)+LR then
+    LV.x := -LR;
 
-  if V.y < -R then
-    V.y := (VP.Height-1)
-  else if V.y > (VP.Height-1)+R then
-    V.y := -R;
+  if LV.y < -LR then
+    LV.y := (LVP.Height-1)
+  else if LV.y > (LVP.Height-1)+LR then
+    LV.y := -LR;
 
-  Entity.SetPosAbs(V.X, V.Y);
+  Entity.SetPosAbs(LV.X, LV.Y);
 end;
 
 procedure TCircle.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TCircle.OnCollide(aActor: TActor; aHitPos: TVector);
@@ -290,6 +293,7 @@ var
 begin
   Terminated := True;
   LPos := Entity.GetPos;
+
   Game.SpawnExplosion(LPos.X, LPos.Y, FColor);
   Game.Explosions := Game.Explosions + 1;
 end;
@@ -299,9 +303,12 @@ end;
 constructor TCircleExplosion.Create;
 begin
   inherited;
+
   Init(Game.Sprite, 0);
+
   Entity.SetShrinkFactor(SHRINK_FACTOR);
   Entity.SetScaleAbs(CIRCLE_SCALE);
+
   FState := 0;
   FFade := 0;
   FSpeed := 0;
@@ -309,6 +316,7 @@ end;
 
 destructor TCircleExplosion.Destroy;
 begin
+
   inherited;
 end;
 
@@ -318,6 +326,7 @@ begin
   FColor[1] := aColor;
   Entity.SetPosAbs(aX, aY);
 end;
+
 procedure TCircleExplosion.Setup(aCircle: TCircle);
 var
   LPos: TVector;
@@ -370,28 +379,33 @@ end;
 procedure TCircleExplosion.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TCircleExplosion.OnCollide(aActor: TActor; aHitPos: TVector);
 begin
 end;
 
+
 { TChainActionDemo }
 constructor TChainActionDemo.Create;
 begin
   inherited;
+
   Game := Self;
 end;
 
 destructor TChainActionDemo.Destroy;
 begin
   Game := nil;
+
   inherited;
 end;
 
 procedure TChainActionDemo.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'ChainAction Demo';
   aConfig.DisplayClearColor := BLACK;
 end;
@@ -399,24 +413,26 @@ end;
 procedure TChainActionDemo.OnLoad;
 begin
   inherited;
+
 end;
 
 procedure TChainActionDemo.OnExit;
 begin
   inherited;
+
 end;
 
 procedure TChainActionDemo.OnStartup;
 var
-  Page: Integer;
-  Group: Integer;
+  LPage: Integer;
+  LGroup: Integer;
 begin
   inherited;
 
   // init circle sprite
-  Page := Sprite.LoadPage('arc/bitmaps/sprites/light.png', @COLORKEY);
-  Group := Sprite.AddGroup;
-  Sprite.AddImageFromGrid(Page, Group, 0, 0, 256, 256);
+  LPage := Sprite.LoadPage('arc/bitmaps/sprites/light.png', @COLORKEY);
+  LGroup := Sprite.AddGroup;
+  Sprite.AddImageFromGrid(LPage, LGroup, 0, 0, 256, 256);
 
   // init music
   FMusic := gEngine.Audio.LoadMusic('arc/audio/music/song06.ogg');
@@ -470,27 +486,27 @@ end;
 
 procedure TChainActionDemo.OnRenderHUD;
 var
-  VP: TRectangle;
-  x: Single;
-  C: TColor;
+  LVP: TRectangle;
+  LX: Single;
+  LC: TColor;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Circles:    %d', [Scene[SCN_CIRCLE].Count]);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Circles:      %d', [Scene[SCN_CIRCLE].Count]);
 
-  gEngine.Display.GetViewportSize(vp);
-  x := vp.Width / 2;
+  gEngine.Display.GetViewportSize(LVP);
+  LX := LVP.Width / 2;
 
   if ChainEnded and (not LevelClear) then
-    C := WHITE
+    LC := WHITE
   else
-    C := DIMWHITE;
+    LC := DIMWHITE;
 
-  Font.Print(x, 120, C, haCenter, 'Click mouse to start chain reaction', []);
+  Font.Print(LX, 120, LC, haCenter, 'Click mouse to start chain reaction', []);
 
   if LevelClear then
   begin
-    Font.Print(x, 120+21, ORANGE, haCenter, 'Press SPACE to start new level', []);
+    Font.Print(LX, 120+21, ORANGE, haCenter, 'Press SPACE to start new level', []);
   end;
 end;
 
@@ -570,6 +586,7 @@ end;
 function  TChainActionDemo.ChainEnded: Boolean;
 begin
   Result := True;
+
   if FChainActive then
   begin
     Result := Boolean(Scene[SCN_EXPLO].Count = 0);
@@ -582,7 +599,5 @@ function  TChainActionDemo.LevelClear: Boolean;
 begin
   Result := Boolean(Scene[SCN_CIRCLE].Count = 0);
 end;
-
-
 
 end.

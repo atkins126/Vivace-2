@@ -66,7 +66,6 @@ uses
   Vivace.TLB.SpeechLib;
 
 type
-
   { TSpeechVoiceAttribute }
   TSpeechVoiceAttribute = (vaDescription, vaName, vaVendor, vaAge, vaGender, vaLanguage, vaId);
 
@@ -114,6 +113,7 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
 {  TSpeech }
 procedure TSpeech.OnWord(aSender: TObject; aStreamNumber: Integer; aStreamPosition: OleVariant; aCharacterPosition, aLength: Integer);
 begin
@@ -137,16 +137,16 @@ end;
 
 procedure TSpeech.EnumVoices;
 var
-  I: Integer;
+  LI: Integer;
   LSOToken: ISpeechObjectToken;
   LSOTokens: ISpeechObjectTokens;
 begin
   FVoiceList := TInterfaceList.Create;
   FVoiceDescList := TStringList.Create;
   LSOTokens := FSpVoice.GetVoices('', '');
-  for I := 0 to LSOTokens.Count - 1 do
+  for LI := 0 to LSOTokens.Count - 1 do
   begin
-    LSOToken := LSOTokens.Item(I);
+    LSOToken := LSOTokens.Item(LI);
     FVoiceDescList.Add(LSOToken.GetDescription(0));
     FVoiceList.Add(LSOToken);
   end;
@@ -161,6 +161,7 @@ end;
 constructor TSpeech.Create;
 begin
   inherited;
+
   FPaused := False;
   FText := '';
   FWord := '';
@@ -176,6 +177,7 @@ begin
   FreeVoices;
   FSpVoice.OnWord := nil;
   FSpVoice.Free;
+
   inherited;
 end;
 
@@ -223,8 +225,7 @@ procedure TSpeech.ChangeVoice(aIndex: Integer);
 var
   LSOToken: ISpeechObjectToken;
 begin
-  if (aIndex < 0) or (aIndex > FVoiceList.Count - 1) then
-    Exit;
+  if (aIndex < 0) or (aIndex > FVoiceList.Count - 1) then Exit;
   LSOToken := ISpeechObjectToken(FVoiceList.Items[aIndex]);
   FSpVoice.Voice := LSOToken;
 end;
@@ -248,8 +249,7 @@ end;
 function TSpeech.GetVolume: Single;
 begin
   Result := 0;
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   Result := FSpVoice.Volume / 100.0;
 end;
 
@@ -277,8 +277,7 @@ end;
 function TSpeech.GetRate: Single;
 begin
   Result := 0;
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   Result := (FSpVoice.Rate + 10.0) / 20.0;
 end;
 
@@ -308,8 +307,7 @@ end;
 
 procedure TSpeech.Clear;
 begin
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   if Active then
   begin
     FSpVoice.Skip('Sentence', MaxInt);
@@ -321,23 +319,20 @@ end;
 function TSpeech.Active: Boolean;
 begin
   Result := False;
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   Result := Boolean(FSpVoice.Status.RunningState <> SRSEDone);
 end;
 
 procedure TSpeech.Pause;
 begin
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   FSpVoice.Pause;
   FPaused := True;
 end;
 
 procedure TSpeech.Resume;
 begin
-  if FSpVoice = nil then
-    Exit;
+  if FSpVoice = nil then Exit;
   FSpVoice.Resume;
   FPaused := False;
 end;

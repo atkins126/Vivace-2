@@ -106,10 +106,12 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
 { TScreenshake }
 constructor TScreenshake.Create(aDuration: Single; aMagnitude: Single);
 begin
   inherited Create;
+
   FActive := True;
   FDuration := aDuration;
   FMagnitude := aMagnitude;
@@ -120,6 +122,7 @@ end;
 
 destructor TScreenshake.Destroy;
 begin
+
   inherited;
 end;
 
@@ -130,8 +133,7 @@ end;
 
 procedure TScreenshake.Process(aSpeed: Single; aDeltaTime: Double);
 begin
-  if not FActive then
-    Exit;
+  if not FActive then Exit;
 
   FDuration := FDuration - (aSpeed * aDeltaTime);
   if FDuration <= 0 then
@@ -143,7 +145,6 @@ begin
 
   if Round(FDuration) <> Round(FTimer) then
   begin
-
     gEngine.Display.SetTransformPosition(-FPos.x, -FPos.y);
 
     FPos.x := Round(TMath.RandomRange(-FMagnitude, FMagnitude));
@@ -155,10 +156,12 @@ begin
   end;
 end;
 
+
 { TScreenshakes }
 constructor TScreenshakes.Create;
 begin
   inherited;
+
   FList := TObjectList<TScreenshake>.Create(True);
   al_identity_transform(@FTrans);
 end;
@@ -166,15 +169,16 @@ end;
 destructor TScreenshakes.Destroy;
 begin
   FreeAndNil(FList);
+
   inherited;
 end;
 
 procedure TScreenshakes.Start(aDuration: Single; aMagnitude: Single);
 var
-  Shake: TScreenshake;
+  LShake: TScreenshake;
 begin
-  Shake := TScreenshake.Create(aDuration, aMagnitude);
-  FList.Add(Shake);
+  LShake := TScreenshake.Create(aDuration, aMagnitude);
+  FList.Add(LShake);
 end;
 
 procedure TScreenshakes.Clear;
@@ -189,24 +193,24 @@ end;
 
 procedure TScreenshakes.Process(aSpeed: Single; aDeltaTime: Double);
 var
-  Shake: TScreenshake;
-  Flag: Boolean;
+  LShake: TScreenshake;
+  LFlag: Boolean;
 begin
   // process shakes
-  Flag := Active;
-  for Shake in FList do
+  LFlag := Active;
+  for LShake in FList do
   begin
-    if Shake.Active then
+    if LShake.Active then
     begin
-      Shake.Process(aSpeed, aDeltaTime);
+      LShake.Process(aSpeed, aDeltaTime);
     end
     else
     begin
-      FList.Remove(Shake);
+      FList.Remove(LShake);
     end;
   end;
 
-  if Flag then
+  if LFlag then
   begin
     if not Active then
     begin

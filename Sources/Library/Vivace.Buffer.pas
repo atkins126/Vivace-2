@@ -64,7 +64,6 @@ uses
   WinAPI.Windows;
 
 type
-
   { EBufferException }
   EBufferException = class(Exception);
 
@@ -93,13 +92,14 @@ uses
   System.IOUtils,
   Vivace.External.Allegro;
 
-{ TBuffer }
 
+{ TBuffer }
 constructor TBuffer.Create(aSize: Integer);
 var
   LPtr: Pointer;
 begin
   inherited Create;
+
   FName := TPath.GetGUIDFileName;
   FHandle := CreateFileMapping(INVALID_HANDLE_VALUE, nil, PAGE_READWRITE, 0, aSize, PChar(FName));
   if FHandle = 0 then

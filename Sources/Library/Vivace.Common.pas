@@ -63,6 +63,7 @@ uses
   Vivace.Base;
 
 const
+  { library info }
   VIVACE_MAJOR_VERSION  = '0';
   VIVACE_MINOR_VERSION  = '1';
   VIVACE_PATCH_VERSION  = '0';
@@ -73,17 +74,19 @@ const
   VIVACE_WEBISTE        = 'https://tinybiggames.com';
   VIVACE_EMAIL          = 'support@tinybiggames.com';
 
+  { math }
   EPSILON               = 0.00001;
 
   { TreeMenu }
   TREEMENU_NONE         = -1;
   TREEMENU_QUIT         = -2;
 
+  { extentions }
   ARC_EXT               = 'arc';
   CFG_EXT               = 'cfg';
+  LOG_EXT               = 'log';
 
 type
-
   { TStringArray }
   TStringArray = array of string;
 
@@ -123,14 +126,17 @@ type
 
 implementation
 
+
 { TCommonObject }
 constructor TCommonObject.Create;
 begin
   inherited;
+
 end;
 
 destructor TCommonObject.Destroy;
 begin
+
   inherited;
 end;
 

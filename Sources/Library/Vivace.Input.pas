@@ -322,6 +322,7 @@ uses
   Vivace.Engine,
   Vivace.Display;
 
+
 { TJoystick }
 procedure TJoystick.Setup(aNum: Integer);
 var
@@ -370,7 +371,6 @@ begin
     ButtonName[LI] := string(al_get_joystick_button_name(LJoy, LI));
     Button[LI] := Boolean(LJoyState.Button[LI] >= 16384);
   end
-
 end;
 
 function TJoystick.GetPos(aStick: Integer; aAxes: Integer): Single;
@@ -383,14 +383,17 @@ begin
   Result := Button[aButton];
 end;
 
+
 { TInput }
 constructor TInput.Create;
 begin
   inherited;
+
 end;
 
 destructor TInput.Destroy;
 begin
+
   inherited;
 end;
 
@@ -549,9 +552,7 @@ procedure TInput.MouseSetPos(aX: Integer; aY: Integer);
 var
   LMX, LMY: Integer;
   LVX, LVY: Integer;
-
 begin
-
   LMX := aX;
   LMY := aY;
 

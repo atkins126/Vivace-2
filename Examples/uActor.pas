@@ -65,7 +65,6 @@ uses
   uCommon;
 
 type
-
   { TMyActor }
   TMyActor = class(TActor)
   protected
@@ -108,25 +107,32 @@ var
 { TMyActor }
 constructor TMyActor.Create;
 var
-  R,G,B: Byte;
+  LR,LG,LB: Byte;
 begin
   inherited;
+
   FPos.Assign( TMath.RandomRange(0, Game.Config.DisplayWidth-1), TMath.RandomRange(0, Game.Config.DisplayHeight-1));
+
   FRange.MinX := 0;
   FRange.MinY := 0;
+
   FSize := TMath.RandomRange(25, 100);
+
   FRange.MaxX := (Game.Config.DisplayWidth-1) - FSize;
   FRange.MaxY := (Game.Config.DisplayHeight-1) - FSize;
+
   FSpeed.x := TMath.RandomRange(120, 120*3);
   FSpeed.y := TMath.RandomRange(120, 120*3);
-  R := TMath.RandomRange(1, 255);
-  G := TMath.RandomRange(1, 255);
-  B := TMath.RandomRange(1, 255);
-  FColor.Make(R,G,B,255);
+
+  LR := TMath.RandomRange(1, 255);
+  LG := TMath.RandomRange(1, 255);
+  LB := TMath.RandomRange(1, 255);
+  FColor.Make(LR,LG,LB,255);
 end;
 
 destructor TMyActor.Destroy;
 begin
+
   inherited;
 end;
 
@@ -169,18 +175,21 @@ end;
 constructor TActorBasic.Create;
 begin
   inherited;
+
   Game := Self;
 end;
 
 destructor TActorBasic.Destroy;
 begin
   Game := nil;
+
   inherited;
 end;
 
 procedure TActorBasic.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Basic Actor';
 end;
 
@@ -196,9 +205,7 @@ procedure TActorBasic.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
 
-  if gEngine.Input.KeyboardPressed(KEY_S) then
-    Spawn;
-
+  if gEngine.Input.KeyboardPressed(KEY_S) then Spawn;
   Scene.Update([], aDeltaTime);
 end;
 
@@ -213,18 +220,17 @@ procedure TActorBasic.OnRenderHUD;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'S       - Spawn actors', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Count     %d', [Scene.Lists[0].Count]);
-
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'S         - Spawn actors', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Count       %d', [Scene.Lists[0].Count]);
 end;
 
 procedure TActorBasic.Spawn;
 var
-  I,C: Integer;
+  LI, LCount: Integer;
 begin
   Scene.ClearAll;
-  C := TMath.RandomRange(3, 25);
-  for I := 1 to C do
+  LCount := TMath.RandomRange(3, 25);
+  for LI := 1 to LCount do
     Scene.Lists[0].Add(TMyActor.Create);
 end;
 

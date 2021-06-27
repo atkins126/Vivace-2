@@ -60,20 +60,22 @@ uses
   Vivace.Game,
   Vivace.Color,
   uCommon,
+  // examples
   uDisplay,
   uEntity,
   uActor,
+  uBitmap,
+  uFont,
+  uAudio,
+  // demos
   uAstroBlasterDemo,
   uScrollDemo,
   uElasticDemo,
   uChainActionDemo,
   uViewportsDemo,
-  uGUIDemo,
-  uBitmap,
-  uFont;
+  uGUIDemo;
 
 type
-
   { TExamples }
   TExamples = class(TCustomGameApp)
   public
@@ -90,6 +92,7 @@ uses
   Vivace.Common,
   Vivace.Engine,
   Vivace.TreeMenu;
+
 
 { TExamples }
 procedure TExamples.OnSetConfig(var aConfig: TGameConfig);
@@ -112,6 +115,7 @@ end;
 
 function  TExamples.OnStartupDialogRun: Boolean;
 type
+  { TMenuIds }
   TMenuIds = (
     // Display
     miDisplayPrimitives,
@@ -136,6 +140,11 @@ type
     //Actor
     miActorBasic,
 
+    // Audio
+    miAudioMusic,
+    miAudioSound,
+    miAudioPositional,
+
     // Demo
     miDemoAstroBlaster,
     miDemoChainAction,
@@ -153,6 +162,7 @@ var
   LEntity: Integer;
   LDemo: Integer;
   LActor: Integer;
+  LAudio: Integer;
   LSelItem: Integer;
 begin
   LTreeMenu := TTreeMenu.Create;
@@ -191,8 +201,15 @@ begin
     LActor := LTreeMenu.AddItem(0, 'Actor', TREEMENU_NONE, True);
     LTreeMenu.AddItem(LActor, 'Basic', Ord(miActorBasic), True);
     LTreeMenu.Sort(LActor);
-
     LTreeMenu.Sort(0);
+
+    // Audio
+    LAudio  := LTreeMenu.AddItem(0, 'Audio', TREEMENU_NONE, True);
+    LTreeMenu.AddItem(LAudio, 'Music', Ord(miAudioMusic), True);
+    LTreeMenu.AddItem(LAudio, 'Sound', Ord(miAudioSound), True);
+    LTreeMenu.AddItem(LAudio, 'Positional', Ord(miAudioPositional), True);
+    LTreeMenu.Sort(LAudio);
+
 
     // Demo
     LDemo := LTreeMenu.AddItem(0, 'Demo', TREEMENU_NONE, True);
@@ -203,7 +220,6 @@ begin
     LTreeMenu.AddItem(LDemo, 'Viewports', Ord(miDemoViewports), True);
     LTreeMenu.AddItem(LDemo, 'GUI', Ord(miDemoGUI), True);
     LTreeMenu.Sort(LDemo);
-
 
     LSelItem := ConfigFile.GetValue('Examples.Menu', 'SelItem', TREEMENU_NONE);
     repeat
@@ -232,6 +248,11 @@ begin
         // actor
         miActorBasic                   : RunGame(TActorBasic);
 
+        // audio
+        miAudioMusic                   : RunGame(TAudioMusic);
+        miAudioSound                   : RunGame(TAudioSound);
+        miAudioPositional              : RunGame(TAudioPositional);
+
         // demo
         miDemoAstroBlaster             : RunGame(TAstroBlasterDemo);
         miDemoScroll                   : RunGame(TScrollDemo);
@@ -254,6 +275,7 @@ end;
 procedure TExamples.OnLoad;
 begin
   inherited;
+
 end;
 
 

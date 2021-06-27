@@ -170,6 +170,7 @@ var
   mCosTable: array [0 .. 360] of Single;
   mSinTable: array [0 .. 360] of Single;
 
+
 { TMath }
 class procedure TMath.Randomize;
 begin
@@ -183,10 +184,10 @@ end;
 
 class function TMath.RandomRange(aMin, aMax: Single): Single;
 var
-  N: Single;
+  LN: Single;
 begin
-  N := System.Math.RandomRange(0, MaxInt) / MaxInt;
-  Result := aMin + (N * (aMax - aMin));
+  LN := System.Math.RandomRange(0, MaxInt) / MaxInt;
+  Result := aMin + (LN * (aMax - aMin));
 end;
 
 class function TMath.RandomBool: Boolean;
@@ -207,73 +208,71 @@ end;
 class function TMath.AngleCos(aAngle: Integer): Single;
 begin
   Result := 0;
-  if (aAngle < 0) or (aAngle > 360) then
-    Exit;
+  if (aAngle < 0) or (aAngle > 360) then Exit;
   Result := mCosTable[aAngle];
 end;
 
 class function TMath.AngleSin(aAngle: Integer): Single;
 begin
   Result := 0;
-  if (aAngle < 0) or (aAngle > 360) then
-    Exit;
+  if (aAngle < 0) or (aAngle > 360) then Exit;
   Result := mSinTable[aAngle];
 end;
 
 class function TMath.AngleDifference(aSrcAngle: Single; aDestAngle: Single): Single;
 var
-  C: Single;
+  LC: Single;
 begin
-  C := aDestAngle - aSrcAngle -
+  LC := aDestAngle - aSrcAngle -
     (Floor((aDestAngle - aSrcAngle) / 360.0) * 360.0);
 
-  if C >= (360.0 / 2) then
+  if LC >= (360.0 / 2) then
   begin
-    C := C - 360.0;
+    LC := LC - 360.0;
   end;
-  Result := C;
+  Result := LC;
 end;
 
 class procedure TMath.AngleRotatePos(aAngle: Single; var aX: Single; var aY: Single);
 var
-  nx, ny: Single;
-  ia: Integer;
+  LNX, LNY: Single;
+  LIA: Integer;
 begin
   ClipValue(aAngle, 0, 359, True);
 
-  ia := Round(aAngle);
+  LIA := Round(aAngle);
 
-  nx := aX * mCosTable[ia] - aY * mSinTable[ia];
-  ny := aY * mCosTable[ia] + aX * mSinTable[ia];
+  LNX := aX * mCosTable[LIA] - aY * mSinTable[LIA];
+  LNY := aY * mCosTable[LIA] + aX * mSinTable[LIA];
 
-  aX := nx;
-  aY := ny;
+  aX := LNX;
+  aY := LNY;
 end;
 
 class function TMath.ClipValue(var aValue: Single; aMin: Single; aMax: Single; aWrap: Boolean): Single;
 begin
   if aWrap then
-  begin
-    if (aValue > aMax) then
     begin
-      aValue := aMin + Abs(aValue - aMax);
-      if aValue > aMax then
-        aValue := aMax;
+      if (aValue > aMax) then
+      begin
+        aValue := aMin + Abs(aValue - aMax);
+        if aValue > aMax then
+          aValue := aMax;
+      end
+      else if (aValue < aMin) then
+      begin
+        aValue := aMax - Abs(aValue - aMin);
+        if aValue < aMin then
+          aValue := aMin;
+      end
     end
-    else if (aValue < aMin) then
-    begin
-      aValue := aMax - Abs(aValue - aMin);
-      if aValue < aMin then
-        aValue := aMin;
-    end
-  end
   else
-  begin
-    if aValue < aMin then
-      aValue := aMin
-    else if aValue > aMax then
-      aValue := aMax;
-  end;
+    begin
+      if aValue < aMin then
+        aValue := aMin
+      else if aValue > aMax then
+        aValue := aMax;
+    end;
 
   Result := aValue;
 
@@ -282,27 +281,27 @@ end;
 class function TMath.ClipValue(var aValue: Integer; aMin: Integer; aMax: Integer; aWrap: Boolean): Integer;
 begin
   if aWrap then
-  begin
-    if (aValue > aMax) then
     begin
-      aValue := aMin + Abs(aValue - aMax);
-      if aValue > aMax then
-        aValue := aMax;
+      if (aValue > aMax) then
+      begin
+        aValue := aMin + Abs(aValue - aMax);
+        if aValue > aMax then
+          aValue := aMax;
+      end
+      else if (aValue < aMin) then
+      begin
+        aValue := aMax - Abs(aValue - aMin);
+        if aValue < aMin then
+          aValue := aMin;
+      end
     end
-    else if (aValue < aMin) then
-    begin
-      aValue := aMax - Abs(aValue - aMin);
-      if aValue < aMin then
-        aValue := aMin;
-    end
-  end
   else
-  begin
-    if aValue < aMin then
-      aValue := aMin
-    else if aValue > aMax then
-      aValue := aMax;
-  end;
+    begin
+      if aValue < aMin then
+        aValue := aMin
+      else if aValue > aMax then
+        aValue := aMax;
+    end;
 
   Result := aValue;
 end;
@@ -362,18 +361,18 @@ end;
 
 class procedure TMath.SmoothMove(var aValue: Single; aAmount: Single; aMax: Single; aDrag: Single);
 var
-  Amt: Single;
+  LAmt: Single;
 begin
-  Amt := aAmount;
+  LAmt := aAmount;
 
-  if Amt > 0 then
+  if LAmt > 0 then
   begin
-    aValue := aValue + Amt;
+    aValue := aValue + LAmt;
     if aValue > aMax then
       aValue := aMax;
-  end else if Amt < 0 then
+  end else if LAmt < 0 then
   begin
-    aValue := aValue + Amt;
+    aValue := aValue + LAmt;
     if aValue < -aMax then
       aValue := -aMax;
   end else
@@ -391,7 +390,6 @@ begin
     end;
   end;
 end;
-
 
 
 { TVector }
@@ -459,74 +457,74 @@ end;
 
 function TVector.MagnitudeTruncate(aMaxMagitude: Single): TVector;
 var
-  MaxMagSqrd: Single;
-  VecMagSqrd: Single;
-  Truc: Single;
+  LMaxMagSqrd: Single;
+  LVecMagSqrd: Single;
+  LTruc: Single;
 begin
   Result.Assign(X, Y);
-  MaxMagSqrd := aMaxMagitude * aMaxMagitude;
-  VecMagSqrd := Result.Magnitude;
-  if VecMagSqrd > MaxMagSqrd then
+  LMaxMagSqrd := aMaxMagitude * aMaxMagitude;
+  LVecMagSqrd := Result.Magnitude;
+  if LVecMagSqrd > LMaxMagSqrd then
   begin
-    Truc := (aMaxMagitude / Sqrt(VecMagSqrd));
-    Result.X := Result.X * Truc;
-    Result.Y := Result.Y * Truc;
+    LTruc := (aMaxMagitude / Sqrt(LVecMagSqrd));
+    Result.X := Result.X * LTruc;
+    Result.Y := Result.Y * LTruc;
   end;
 end;
 
 function TVector.Distance(aVector: TVector): Single;
 var
-  DirVec: TVector;
+  LDirVec: TVector;
 begin
-  DirVec.X := X - aVector.X;
-  DirVec.Y := Y - aVector.Y;
-  Result := DirVec.Magnitude;
+  LDirVec.X := X - aVector.X;
+  LDirVec.Y := Y - aVector.Y;
+  Result := LDirVec.Magnitude;
 end;
 
 procedure TVector.Normalize;
 var
-  Len, OOL: Single;
+  LLen, LOOL: Single;
 begin
-  Len := self.Magnitude;
-  if Len <> 0 then
+  LLen := self.Magnitude;
+  if LLen <> 0 then
   begin
-    OOL := 1.0 / Len;
-    X := X * OOL;
-    Y := Y * OOL;
+    LOOL := 1.0 / LLen;
+    X := X * LOOL;
+    Y := Y * LOOL;
   end;
 end;
 
 function TVector.Angle(aVector: TVector): Single;
 var
-  xoy: Single;
-  R: TVector;
+  LXOY: Single;
+  LR: TVector;
 begin
-  R.Assign(self);
-  R.Subtract(aVector);
-  R.Normalize;
+  LR.Assign(self);
+  LR.Subtract(aVector);
+  LR.Normalize;
 
-  if R.Y = 0 then
+  if LR.Y = 0 then
   begin
-    R.Y := 0.001;
+    LR.Y := 0.001;
   end;
 
-  xoy := R.X / R.Y;
+  LXOY := LR.X / LR.Y;
 
-  Result := ArcTan(xoy) * RAD2DEG;
-  if R.Y < 0 then
+  Result := ArcTan(LXOY) * RAD2DEG;
+  if LR.Y < 0 then
     Result := Result + 180.0;
 
 end;
 
 procedure TVector.Thrust(aAngle: Single; aSpeed: Single);
 var
-  A: Single;
+  LA: Single;
 begin
-  A := aAngle + 90.0;
-  TMath.ClipValue(A, 0, 360, True);
+  LA := aAngle + 90.0;
+  TMath.ClipValue(LA, 0, 360, True);
 
-  X := X + TMath.AngleCos(Round(A)) * -(aSpeed);
-  Y := Y + TMath.AngleSin(Round(A)) * -(aSpeed);
+  X := X + TMath.AngleCos(Round(LA)) * -(aSpeed);
+  Y := Y + TMath.AngleSin(Round(LA)) * -(aSpeed);
 end;
 
 function TVector.MagnitudeSquared: Single;
@@ -553,13 +551,11 @@ end;
 
 function TVector.Project(aVector: TVector): TVector;
 var
-  dp: Single;
+  LDP: Single;
 begin
-  dp := self.DotProduct(aVector);
-  Result.X := (dp / (aVector.X * aVector.X + aVector.Y * aVector.Y)) *
-    aVector.X;
-  Result.Y := (dp / (aVector.X * aVector.X + aVector.Y * aVector.Y)) *
-    aVector.Y;
+  LDP := self.DotProduct(aVector);
+  Result.X := (LDP / (aVector.X * aVector.X + aVector.Y * aVector.Y)) * aVector.X;
+  Result.Y := (LDP / (aVector.X * aVector.X + aVector.Y * aVector.Y)) * aVector.Y;
 end;
 
 procedure TVector.Negate;
@@ -568,15 +564,14 @@ begin
   Y := -Y;
 end;
 
+
 { TRectangle }
-constructor TRectangle.Create(aX: Single; aY: Single; aWidth: Single;
-  aHeight: Single);
+constructor TRectangle.Create(aX: Single; aY: Single; aWidth: Single; aHeight: Single);
 begin
   Assign(aX, aY, aWidth, aHeight);
 end;
 
-procedure TRectangle.Assign(aX: Single; aY: Single; aWidth: Single;
-  aHeight: Single);
+procedure TRectangle.Assign(aX: Single; aY: Single; aWidth: Single; aHeight: Single);
 begin
   X := aX;
   Y := aY;
@@ -586,19 +581,19 @@ end;
 
 function TRectangle.Intersect(aRect: TRectangle): Boolean;
 var
-  r1r, r1b: Single;
-  r2r, r2b: Single;
+  LR1R, LR1B: Single;
+  LR2R, LR2B: Single;
 begin
-  r1r := X - (Width - 1);
-  r1b := Y - (Height - 1);
-  r2r := aRect.X - (aRect.Width - 1);
-  r2b := aRect.Y - (aRect.Height - 1);
+  LR1R := X - (Width - 1);
+  LR1B := Y - (Height - 1);
+  LR2R := aRect.X - (aRect.Width - 1);
+  LR2B := aRect.Y - (aRect.Height - 1);
 
-  Result := (X < r2r) and (r1r > aRect.X) and (Y < r2b) and (r1b > aRect.Y);
+  Result := (X < LR2R) and (LR1R > aRect.X) and (Y < LR2B) and (LR1B > aRect.Y);
 end;
 
-{ unit initialize/finalize }
 
+{ unit initialize/finalize }
 procedure InitSinCosTable;
 var
   I: Integer;
@@ -620,6 +615,5 @@ end;
 finalization
 begin
 end;
-
 
 end.

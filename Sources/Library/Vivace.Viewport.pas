@@ -105,6 +105,7 @@ uses
   Vivace.Engine,
   Vivace.Color;
 
+
 { TViewport }
 procedure TViewport.Clean;
 begin
@@ -132,6 +133,7 @@ end;
 constructor TViewport.Create;
 begin
   inherited;
+
   FBitmap := nil;
   FActive := False;
   FPos.X := 0;
@@ -146,6 +148,7 @@ end;
 destructor TViewport.Destroy;
 begin
   Clean;
+
   inherited;
 end;
 

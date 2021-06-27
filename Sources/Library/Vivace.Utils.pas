@@ -129,6 +129,7 @@ uses
   WinApi.ShellAPI,
   WinApi.ActiveX;
 
+
 { TEnumConverter }
 class function TEnumConverter.EnumToInt<T>(const aEnumValue: T): Integer;
 begin
@@ -140,6 +141,7 @@ class function TEnumConverter.EnumToString<T>(aEnumValue: T): string;
 begin
   Result := GetEnumName(TypeInfo(T), EnumToInt(aEnumValue));
 end;
+
 
 { TDirectoryStack }
 constructor TDirectoryStack.Create;
@@ -175,7 +177,6 @@ begin
 end;
 
 
-
 (* GetParameterValue
 
   GetParameterValue will return the value associated with a parameter name in the form of
@@ -208,10 +209,9 @@ end;
 *)
 function GetParamValue(const aParamName: string; aSwitchChars: TSysCharSet; aSeperator: Char; var aValue: string): Boolean;
 var
-  i, Sep: Longint;
-  s: string;
+  LI, LSep: Longint;
+  LS: string;
 begin
-
   Result := False;
   aValue := '';
 
@@ -219,14 +219,14 @@ begin
   // other params are found
   if (aParamName = '') then
   begin
-    for i := 1 to ParamCount do
+    for LI := 1 to ParamCount do
     begin
-      s := ParamStr(i);
-      if Length(s) > 0 then
+      LS := ParamStr(LI);
+      if Length(LS) > 0 then
         // if S[1] in aSwitchChars then
-        if not CharInSet(s[1], aSwitchChars) then
+        if not CharInSet(LS[1], aSwitchChars) then
         begin
-          aValue := s;
+          aValue := LS;
           Result := True;
           Exit;
         end;
@@ -235,20 +235,20 @@ begin
   end;
 
   // check for switch params
-  for i := 1 to ParamCount do
+  for LI := 1 to ParamCount do
   begin
-    s := ParamStr(i);
-    if Length(s) > 0 then
+    LS := ParamStr(LI);
+    if Length(LS) > 0 then
       // if S[1] in aSwitchChars then
-      if CharInSet(s[1], aSwitchChars) then
+      if CharInSet(LS[1], aSwitchChars) then
 
       begin
-        Sep := Pos(aSeperator, s);
+        LSep := Pos(aSeperator, LS);
 
-        case Sep of
+        case LSep of
           0:
             begin
-              if CompareText(Copy(s, 2, Length(s) - 1), aParamName) = 0 then
+              if CompareText(Copy(LS, 2, Length(LS) - 1), aParamName) = 0 then
               begin
                 Result := True;
                 Break;
@@ -256,10 +256,10 @@ begin
             end;
           1 .. MaxInt:
             begin
-              if CompareText(Copy(s, 2, Sep - 2), aParamName) = 0 then
+              if CompareText(Copy(LS, 2, LSep - 2), aParamName) = 0 then
               // if CompareText(Copy(S, 1, Sep -1), aParamName) = 0 then
               begin
-                aValue := Copy(s, Sep + 1, Length(s));
+                aValue := Copy(LS, LSep + 1, Length(LS));
                 Result := True;
                 Break;
               end;
@@ -278,128 +278,129 @@ end;
 
 function GetParam(const aParamName: string): Boolean;
 var
-  value: string;
+  LValue: string;
 begin
-  Result := GetParamValue(aParamName, ['/', '-'], ':', value);
+  Result := GetParamValue(aParamName, ['/', '-'], ':', LValue);
 end;
 
 function GetAppName : string;
 begin
   Result := TPath.GetFileNameWithoutExtension(ParamStr(0));
 end;
+
 function GetAppVersionStr: string;
 var
-  Rec: LongRec;
-  ver : Cardinal;
+  LRec: LongRec;
+  LVer : Cardinal;
 begin
-  ver := GetFileVersion(ParamStr(0));
-  if ver <> Cardinal(-1) then
+  LVer := GetFileVersion(ParamStr(0));
+  if LVer <> Cardinal(-1) then
   begin
-    Rec := LongRec(ver);
-    Result := Format('%d.%d', [Rec.Hi, Rec.Lo]);
+    LRec := LongRec(LVer);
+    Result := Format('%d.%d', [LRec.Hi, LRec.Lo]);
   end
   else Result := '';
 end;
+
 function GetAppVersionFullStr: string;
 var
-  Exe: string;
-  Size, Handle: DWORD;
-  Buffer: TBytes;
-  FixedPtr: PVSFixedFileInfo;
+  LExe: string;
+  LSize, LHandle: DWORD;
+  LBuffer: TBytes;
+  LFixedPtr: PVSFixedFileInfo;
 begin
   Result := '';
-  Exe := ParamStr(0);
-  Size := GetFileVersionInfoSize(PChar(Exe), Handle);
-  if Size = 0 then
+  LExe := ParamStr(0);
+  LSize := GetFileVersionInfoSize(PChar(LExe), LHandle);
+  if LSize = 0 then
   begin
     //RaiseLastOSError;
     //no version info in file
     Exit;
   end;
-  SetLength(Buffer, Size);
-  if not GetFileVersionInfo(PChar(Exe), Handle, Size, Buffer) then
+  SetLength(LBuffer, LSize);
+  if not GetFileVersionInfo(PChar(LExe), LHandle, LSize, LBuffer) then
     RaiseLastOSError;
-  if not VerQueryValue(Buffer, '\', Pointer(FixedPtr), Size) then
+  if not VerQueryValue(LBuffer, '\', Pointer(LFixedPtr), LSize) then
     RaiseLastOSError;
-  if (LongRec(FixedPtr.dwFileVersionLS).Hi = 0) and (LongRec(FixedPtr.dwFileVersionLS).Lo = 0) then
+  if (LongRec(LFixedPtr.dwFileVersionLS).Hi = 0) and (LongRec(LFixedPtr.dwFileVersionLS).Lo = 0) then
   begin
     Result := Format('%d.%d',
-    [LongRec(FixedPtr.dwFileVersionMS).Hi,   //major
-     LongRec(FixedPtr.dwFileVersionMS).Lo]); //minor
+    [LongRec(LFixedPtr.dwFileVersionMS).Hi,   //major
+     LongRec(LFixedPtr.dwFileVersionMS).Lo]); //minor
   end
-  else if (LongRec(FixedPtr.dwFileVersionLS).Lo = 0) then
+  else if (LongRec(LFixedPtr.dwFileVersionLS).Lo = 0) then
   begin
     Result := Format('%d.%d.%d',
-    [LongRec(FixedPtr.dwFileVersionMS).Hi,   //major
-     LongRec(FixedPtr.dwFileVersionMS).Lo,   //minor
-     LongRec(FixedPtr.dwFileVersionLS).Hi]); //release
+    [LongRec(LFixedPtr.dwFileVersionMS).Hi,   //major
+     LongRec(LFixedPtr.dwFileVersionMS).Lo,   //minor
+     LongRec(LFixedPtr.dwFileVersionLS).Hi]); //release
   end
   else
   begin
     Result := Format('%d.%d.%d.%d',
-    [LongRec(FixedPtr.dwFileVersionMS).Hi,   //major
-     LongRec(FixedPtr.dwFileVersionMS).Lo,   //minor
-     LongRec(FixedPtr.dwFileVersionLS).Hi,   //release
-     LongRec(FixedPtr.dwFileVersionLS).Lo]); //build
+    [LongRec(LFixedPtr.dwFileVersionMS).Hi,   //major
+     LongRec(LFixedPtr.dwFileVersionMS).Lo,   //minor
+     LongRec(LFixedPtr.dwFileVersionLS).Hi,   //release
+     LongRec(LFixedPtr.dwFileVersionLS).Lo]); //build
   end;
 end;
+
 function GetVersionInfo(aIdent: string): string;
 
 type
   TLang = packed record
     Lng, Page: WORD;
   end;
-
   TLangs = array [0 .. 10000] of TLang;
-
   PLangs = ^TLangs;
 
 var
-  BLngs: PLangs;
-  BLngsCnt: Cardinal;
-  BLangId: String;
-  RM: TMemoryStream;
-  RS: TResourceStream;
-  BP: PChar;
-  BL: Cardinal;
-  BId: String;
-
+  LBLngs: PLangs;
+  LBLngsCnt: Cardinal;
+  LBLangId: String;
+  LRM: TMemoryStream;
+  LRS: TResourceStream;
+  LBP: PChar;
+  LBL: Cardinal;
+  LBId: String;
 begin
   // Assume error
   Result := '';
 
-  RM := TMemoryStream.Create;
+  LRM := TMemoryStream.Create;
   try
     // Load the version resource into memory
-    RS := TResourceStream.CreateFromID(HInstance, 1, RT_VERSION);
+    LRS := TResourceStream.CreateFromID(HInstance, 1, RT_VERSION);
     try
-      RM.CopyFrom(RS, RS.Size);
+      LRM.CopyFrom(LRS, LRS.Size);
     finally
-      FreeAndNil(RS);
+      FreeAndNil(LRS);
     end;
 
     // Extract the translations list
-    if not VerQueryValue(RM.Memory, '\\VarFileInfo\\Translation', Pointer(BLngs), BL) then
+    if not VerQueryValue(LRM.Memory, '\\VarFileInfo\\Translation', Pointer(LBLngs), LBL) then
       Exit; // Failed to parse the translations table
-    BLngsCnt := BL div sizeof(TLang);
-    if BLngsCnt <= 0 then
+    LBLngsCnt := LBL div sizeof(TLang);
+    if LBLngsCnt <= 0 then
       Exit; // No translations available
 
     // Use the first translation from the table (in most cases will be OK)
-    with BLngs[0] do
-      BLangId := IntToHex(Lng, 4) + IntToHex(Page, 4);
+    with LBLngs[0] do
+      LBLangId := IntToHex(Lng, 4) + IntToHex(Page, 4);
 
     // Extract field by parameter
-    BId := '\\StringFileInfo\\' + BLangId + '\\' + aIdent;
-    if not VerQueryValue(RM.Memory, PChar(BId), Pointer(BP), BL) then
+    LBId := '\\StringFileInfo\\' + LBLangId + '\\' + aIdent;
+    if not VerQueryValue(LRM.Memory, PChar(LBId), Pointer(LBP), LBL) then
       Exit; // No such field
 
     // Prepare result
-    Result := BP;
+    Result := LBP;
   finally
-    FreeAndNil(RM);
+    FreeAndNil(LRM);
   end;
 end;
+
 function GetFileDescription: string;
 begin
   Result := GetVersionInfo('FileDescription');
@@ -431,9 +432,7 @@ var
 begin
   Result := -1;
 
-  if NOT GetFileAttributesEx(PWideChar(aFileName), GetFileExInfoStandard, @LInfo) then
-    Exit;
-
+  if NOT GetFileAttributesEx(PWideChar(aFileName), GetFileExInfoStandard, @LInfo) then Exit;
   Result := Int64(LInfo.nFileSizeLow) or Int64(LInfo.nFileSizeHigh shl 32);
 end;
 
@@ -531,17 +530,17 @@ end;
 
 function FileCount(const aPath: string; const aSearchMask: string): Int64;
 var
-  SearchRec: TSearchRec;
+  LSearchRec: TSearchRec;
   LPath: string;
 begin
   Result := 0;
   LPath := aPath;
   LPath := System.IOUtils.TPath.Combine(aPath, aSearchMask);
-  if FindFirst(LPath, faAnyFile, SearchRec) = 0 then
+  if FindFirst(LPath, faAnyFile, LSearchRec) = 0 then
     repeat
-      if SearchRec.Attr <> faDirectory then
+      if LSearchRec.Attr <> faDirectory then
         Inc(Result);
-    until FindNext(SearchRec) <> 0;
+    until FindNext(LSearchRec) <> 0;
 end;
 
 function ResourceExists(aResName: string): Boolean;
@@ -571,25 +570,25 @@ const
   WbemComputer = 'localhost';
   wbemFlagForwardOnly = $00000020;
 var
-  FSWbemLocator: OLEVariant;
-  FWMIService: OLEVariant;
-  FWbemObjectSet: OLEVariant;
-  FWbemObject: OLEVariant;
-  oEnum: IEnumvariant;
-  iValue: LongWord;
+  LFSWbemLocator: OLEVariant;
+  LFWMIService: OLEVariant;
+  LFWbemObjectSet: OLEVariant;
+  LFWbemObject: OLEVariant;
+  LEnum: IEnumvariant;
+  LValue: LongWord;
 begin;
   try
-    FSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
-    FWMIService := FSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2',
+    LFSWbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+    LFWMIService := LFSWbemLocator.ConnectServer(WbemComputer, 'root\CIMV2',
       WbemUser, WbemPassword);
-    FWbemObjectSet := FWMIService.ExecQuery
+    LFWbemObjectSet := LFWMIService.ExecQuery
       ('SELECT Name,PNPDeviceID  FROM Win32_VideoController', 'WQL',
       wbemFlagForwardOnly);
-    oEnum := IUnknown(FWbemObjectSet._NewEnum) as IEnumvariant;
-    while oEnum.Next(1, FWbemObject, iValue) = 0 do
+    LEnum := IUnknown(LFWbemObjectSet._NewEnum) as IEnumvariant;
+    while LEnum.Next(1, LFWbemObject, LValue) = 0 do
     begin
-      result := String(FWbemObject.Name);
-      FWbemObject := Unassigned;
+      result := String(LFWbemObject.Name);
+      LFWbemObject := Unassigned;
     end;
   except
   end;
@@ -597,35 +596,35 @@ end;
 
 function GetVideoCardMemory: UInt64;
 var
-  DeviceMode: TDeviceMode;
-  i, m, max: UInt64;
+  LDeviceMode: TDeviceMode;
+  LI, LM, LMax: UInt64;
 begin
-  max := 0;
-  i := 0;
-  while EnumDisplaySettings(nil, i, DeviceMode) do
+  LMax := 0;
+  LI := 0;
+  while EnumDisplaySettings(nil, LI, LDeviceMode) do
   begin
-    m := Round(DeviceMode.dmPelsWidth * DeviceMode.dmPelsHeight * (DeviceMode.dmBitsPerPel/8));
-    if m > max then
-      max := m;
-    inc(i);
+    LM := Round(LDeviceMode.dmPelsWidth * LDeviceMode.dmPelsHeight * (LDeviceMode.dmBitsPerPel/8));
+    if LM > LMax then
+      LMax := LM;
+    inc(LI);
   end;
-  Result := max;
+  Result := LMax;
 end;
 
 { =========================================================================== }
 var
-  CodePage: Cardinal;
+  mCodePage: Cardinal;
 
 initialization
 begin
   ReportMemoryLeaksOnShutdown := True;
-  CodePage := GetConsoleOutputCP;
+  mCodePage := GetConsoleOutputCP;
   SetConsoleOutputCP(WinApi.Windows.CP_UTF8);
 end;
 
 finalization
 begin
-  SetConsoleOutputCP(CodePage);
+  SetConsoleOutputCP(mCodePage);
 end;
 
 end.

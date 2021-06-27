@@ -66,7 +66,6 @@ uses
   Vivace.Color;
 
 type
-
   { TBitmapData }
   PBitmapData = ^TBitmapData;
   TBitmapData = record
@@ -117,10 +116,12 @@ uses
   Vivace.Engine,
   Vivace.Logger;
 
-{ TGVBitmap }
+
+{ TBitmap }
 constructor TBitmap.Create;
 begin
   inherited;
+
   FHandle.Bitmap := nil;
   Unload;
 end;
@@ -128,14 +129,14 @@ end;
 destructor TBitmap.Destroy;
 begin
   Unload;
+
   inherited;
 end;
 
 procedure TBitmap.Allocate(aWidth: Integer; aHeight: Integer);
 begin
   Unload;
-  al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR or ALLEGRO_MAG_LINEAR or
-    ALLEGRO_MIPMAP or ALLEGRO_VIDEO_BITMAP);
+  al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR or ALLEGRO_MAG_LINEAR or ALLEGRO_MIPMAP or ALLEGRO_VIDEO_BITMAP);
   FHandle.Bitmap := al_create_bitmap(aWidth, aHeight);
   if FHandle.Bitmap <> nil then
     begin
@@ -155,8 +156,7 @@ var
   LColorKey: PALLEGRO_COLOR absolute aColorKey;
   LOk: Boolean;
 begin
-  if aFilename.IsEmpty then
-    Exit;
+  if aFilename.IsEmpty then Exit;
 
   // check if in archive
   LOk := gEngine.ArchiveFileExist(aFilename);
@@ -168,13 +168,11 @@ begin
   begin
     Unload;
 
-    al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR or ALLEGRO_MAG_LINEAR or
-      ALLEGRO_VIDEO_BITMAP);
+    al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR or ALLEGRO_MAG_LINEAR or ALLEGRO_VIDEO_BITMAP);
 
     FHandle.Bitmap := al_load_bitmap(PAnsiChar(AnsiString(aFilename)));
     if FHandle.Bitmap <> nil then
       begin
-
         FWidth := al_get_bitmap_width(FHandle.Bitmap);
         FHeight := al_get_bitmap_height(FHandle.Bitmap);
 
@@ -223,41 +221,40 @@ end;
 
 procedure TBitmap.GetSize(aWidth: PSingle; aHeight: PSingle);
 begin
-  if aWidth <> nil then
-    aWidth^ := FWidth;
-  if aHeight <> nil then
-    aHeight^ := FHeight;
+  if aWidth <> nil then aWidth^ := FWidth;
+  if aHeight <> nil then aHeight^ := FHeight;
 end;
 
 procedure TBitmap.Lock(aRegion: PRectangle; var aData: TBitmapData);
 var
   LLock: PALLEGRO_LOCKED_REGION;
 begin
-  if FHandle.Bitmap = nil then
-    Exit;
+  if FHandle.Bitmap = nil then Exit;
 
   LLock := nil;
 
   if not FLocked then
   begin
     if aRegion <> nil then
-    begin
-      LLock := al_lock_bitmap_region(FHandle.Bitmap, Round(aRegion.X), Round(aRegion.Y),
-        Round(aRegion.Width), Round(aRegion.Height), ALLEGRO_PIXEL_FORMAT_ANY,
-        ALLEGRO_LOCK_READWRITE);
-      FLockedRegion.X := aRegion.X;
-      FLockedRegion.Y := aRegion.Y;
-      FLockedRegion.Width := aRegion.Width;
-      FLockedRegion.Height := aRegion.Height;
-    end
+      begin
+        LLock := al_lock_bitmap_region(FHandle.Bitmap, Round(aRegion.X),
+          Round(aRegion.Y), Round(aRegion.Width), Round(aRegion.Height),
+          ALLEGRO_PIXEL_FORMAT_ANY,
+          ALLEGRO_LOCK_READWRITE);
+        FLockedRegion.X := aRegion.X;
+        FLockedRegion.Y := aRegion.Y;
+        FLockedRegion.Width := aRegion.Width;
+        FLockedRegion.Height := aRegion.Height;
+      end
     else
-    begin
-      LLock := al_lock_bitmap(FHandle.Bitmap, ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_READWRITE);
-      FLockedRegion.X := 0;
-      FLockedRegion.Y := 0;
-      FLockedRegion.Width := FWidth;
-      FLockedRegion.Height := FHeight;
-    end;
+      begin
+        LLock := al_lock_bitmap(FHandle.Bitmap, ALLEGRO_PIXEL_FORMAT_ANY,
+          ALLEGRO_LOCK_READWRITE);
+        FLockedRegion.X := 0;
+        FLockedRegion.Y := 0;
+        FLockedRegion.Width := FWidth;
+        FLockedRegion.Height := FHeight;
+      end;
     FLocked := True;
   end;
 
@@ -268,13 +265,11 @@ begin
     aData.Pitch := LLock.pitch;
     aData.PixelSize := LLock.pixel_size;
   end;
-
 end;
 
 procedure TBitmap.Unlock;
 begin
-  if FHandle.Bitmap = nil then
-    Exit;
+  if FHandle.Bitmap = nil then Exit;
   if FLocked then
   begin
     al_unlock_bitmap(FHandle.Bitmap);
@@ -307,8 +302,7 @@ var
   LC: ALLEGRO_COLOR absolute aColor;
   LFlags: Integer;
 begin
-  if FHandle.Bitmap = nil then
-    Exit;
+  if FHandle.Bitmap = nil then Exit;
 
   // angle
   LA := aAngle * DEG2RAD;
@@ -351,27 +345,27 @@ begin
 
   // center
   if Assigned(aCenter) then
-  begin
-    LCP.X := (LRG.Width * aCenter.X);
-    LCP.Y := (LRG.Height * aCenter.Y);
-  end
+    begin
+      LCP.X := (LRG.Width * aCenter.X);
+      LCP.Y := (LRG.Height * aCenter.Y);
+    end
   else
-  begin
-    LCP.X := 0;
-    LCP.Y := 0;
-  end;
+    begin
+      LCP.X := 0;
+      LCP.Y := 0;
+    end;
 
   // scale
   if Assigned(aScale) then
-  begin
-    LSC.X := aScale.X;
-    LSC.Y := aScale.Y;
-  end
+    begin
+      LSC.X := aScale.X;
+      LSC.Y := aScale.Y;
+    end
   else
-  begin
-    LSC.X := 1;
-    LSC.Y := 1;
-  end;
+    begin
+      LSC.X := 1;
+      LSC.Y := 1;
+    end;
 
   // flags
   LFlags := 0;
@@ -404,55 +398,55 @@ begin
     vaCenter: LCenter.Y := 0.5;
     vaBottom: LCenter.Y := 1;
   end;
+
   Draw(aX, aY, nil, @LCenter, @LScale, aAngle, aColor, aHFlip, aVFlip);
 end;
 
 
 procedure TBitmap.DrawTiled(aDeltaX: Single; aDeltaY: Single);
 var
-  w,h    : Integer;
-  ox,oy  : Integer;
-  px,py  : Single;
-  fx,fy  : Single;
-  tx,ty  : Integer;
-  vpw,vph: Integer;
-  vr,vb  : Integer;
-  ix,iy  : Integer;
+  LW,LH    : Integer;
+  LOX,LOY  : Integer;
+  LPX,LPY  : Single;
+  LFX,LFY  : Single;
+  LTX,LTY  : Integer;
+  LVPW,LVPH: Integer;
+  LVR,LVB  : Integer;
+  LIX,LIY  : Integer;
 begin
+  gEngine.Display.GetViewportSize(nil, nil, @LVPW, @LVPH);
 
-  gEngine.Display.GetViewportSize(nil, nil, @vpw, @vph);
+  LW := Round(FWidth);
+  LH := Round(FHeight);
 
-  w := Round(FWidth);
-  h := Round(FHeight);
+  LOX := -LW+1;
+  LOY := -LH+1;
 
-  ox := -w+1;
-  oy := -h+1;
+  LPX := aDeltaX;
+  LPY := aDeltaY;
 
-  px := aDeltaX;
-  py := aDeltaY;
+  LFX := LPX-floor(LPX);
+  LFY := LPY-floor(LPY);
 
-  fx := px-floor(px);
-  fy := py-floor(py);
+  LTX := floor(LPX)-LOX;
+  LTY := floor(LPY)-LOY;
 
-  tx := floor(px)-ox;
-  ty := floor(py)-oy;
+  if (LTX>=0) then LTX := LTX mod LW + LOX else LTX := LW - -LTX mod LW + LOX;
+  if (LTY>=0) then LTY := LTY mod LH + LOY else LTY := LH - -LTY mod LH + LOY;
 
-  if (tx>=0) then tx := tx mod w + ox else tx := w - -tx mod w + ox;
-  if (ty>=0) then ty := ty mod h + oy else ty := h - -ty mod h + oy;
+  LVR := LVPW;
+  LVB := LVPH;
+  LIY := LTY;
 
-  vr := vpw;
-  vb := vph;
-  iy := ty;
-
-  while iy<vb do
+  while LIY<LVB do
   begin
-    ix := tx;
-    while ix<vr do
+    LIX := LTX;
+    while LIX<LVR do
     begin
-      al_draw_bitmap(FHandle.Bitmap, ix+fx, iy+fy, 0);
-      ix := ix+w;
+      al_draw_bitmap(FHandle.Bitmap, LIX+LFX, LIY+LFY, 0);
+      LIX := LIX+LW;
     end;
-   iy := iy+h;
+   LIY := LIY+LH;
   end;
 end;
 

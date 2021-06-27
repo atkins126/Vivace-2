@@ -80,7 +80,7 @@ type
 
 implementation
 
-  { xxx }
+{ xxx }
 procedure TExampleTemplate.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;

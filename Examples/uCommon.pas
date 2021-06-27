@@ -71,7 +71,6 @@ const
   cVivaceURL         = 'https://vivace.dev';
 
 type
-
   { TBaseExample }
   TBaseExample = class(TCustomGameApp)
   protected
@@ -106,6 +105,8 @@ uses
   Vivace.Engine,
   Vivace.Input;
 
+
+{ TBaseExample }
 procedure TBaseExample.OnSetConfig(var aConfig: TGameConfig);
 begin
   // archive is already mounted
@@ -115,21 +116,26 @@ end;
 procedure TBaseExample.OnLoad;
 begin
   inherited;
+
 end;
 
 procedure TBaseExample.OnExit;
 begin
   inherited;
+
 end;
 
 procedure TBaseExample.OnStartup;
 begin
   inherited;
+
   FMonoFont := TFont.Create;
   FPropFont := TFont.Create;
   FSmallFont := TFont.Create;
   FSmallFont.Load(12);
+
   FSprite := TSprite.Create;
+
   FScene := TActorScene.Create;
   FScene.Alloc(1);
 end;
@@ -141,6 +147,7 @@ begin
   FreeAndNil(FSmallFont);
   FreeAndNil(FPropFont);
   FreeAndNil(FMonoFont);
+
   inherited;
 end;
 
@@ -152,6 +159,7 @@ end;
 procedure TBaseExample.OnStartupDialogMore;
 begin
   inherited;
+
 end;
 
 function  TBaseExample.OnStartupDialogRun: Boolean;
@@ -162,6 +170,7 @@ end;
 procedure TBaseExample.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TBaseExample.OnRenderHUD;
@@ -170,8 +179,8 @@ var
   LColor: TColor;
 begin
   inherited;
-  //Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, '`       - Command Console', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'ESC     - Quit', []);
+
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'ESC       - Quit', []);
 
   gEngine.Display.GetViewportSize(nil, nil, @LWidth, @LHeight);
   LColor.Make(64, 64, 64, 64);
@@ -192,7 +201,6 @@ begin
 
   if gEngine.Input.KeyboardPressed(KEY_F12) then
     gEngine.Screenshot.Take;
-
 end;
 
 

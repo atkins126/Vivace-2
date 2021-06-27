@@ -67,7 +67,6 @@ uses
   Vivace.Color;
 
 type
-
  { TEntity }
   TEntity = class(TBaseObject)
   protected
@@ -176,14 +175,17 @@ uses
   Vivace.Collision,
   Vivace.Engine;
 
+
 { TEntity }
 constructor TEntity.Create;
 begin
   inherited;
+
 end;
 
 destructor TEntity.Destroy;
 begin
+
   inherited;
 end;
 
@@ -323,70 +325,70 @@ end;
 
 function  TEntity.RotateToPos(aX: Single; aY: Single; aSpeed: Single): Boolean;
 var
-  Angle: Single;
-  Step : Single;
-  Len  : Single;
-  S    : Single;
-  tmpPos  : TVector;
+  LAngle: Single;
+  LStep: Single;
+  LLen: Single;
+  LS: Single;
+  LTmpPos: TVector;
 begin
   Result := False;
-  tmpPos.X  := aX;
-  tmpPos.Y  := aY;
+  LTmpPos.X  := aX;
+  LTmpPos.Y  := aY;
 
-  Angle := -FPos.Angle(tmpPos);
-  Step := TMath.AngleDifference(FAngle, Angle);
-  Len  := Sqrt(Step*Step);
-  if Len = 0 then
+  LAngle := -FPos.Angle(LTmpPos);
+  LStep := TMath.AngleDifference(FAngle, LAngle);
+  LLen  := Sqrt(LStep*LStep);
+  if LLen = 0 then
     Exit;
-  S := (Step / Len) * aSpeed;
+  LS := (LStep / LLen) * aSpeed;
 
-  if not TMath.SameValue(Step, S, aSpeed) then
-    RotateRel(S)
+  if not TMath.SameValue(LStep, LS, aSpeed) then
+    RotateRel(LS)
   else begin
-    RotateRel(Step);
+    RotateRel(LStep);
     Result := True;
   end;
 end;
 
 function  TEntity.RotateToPosAt(aSrcX: Single; aSrcY: Single; aDestX: Single; aDestY: Single; aSpeed: Single): Boolean;
 var
-  Angle: Single;
-  Step : Single;
-  Len  : Single;
-  S    : Single;
-  SPos,DPos : TVector;
+  LAngle: Single;
+  LStep : Single;
+  LLen  : Single;
+  LS    : Single;
+  LSPos,LDPos : TVector;
 begin
   Result := False;
-  SPos.X := aSrcX;
-  SPos.Y := aSrcY;
-  DPos.X  := aDestX;
-  DPos.Y  := aDestY;
+  LSPos.X := aSrcX;
+  LSPos.Y := aSrcY;
+  LDPos.X  := aDestX;
+  LDPos.Y  := aDestY;
 
-  Angle := SPos.Angle(DPos);
-  Step := TMath.AngleDifference(FAngle, Angle);
-  Len  := Sqrt(Step*Step);
-  if Len = 0 then
+  LAngle := LSPos.Angle(LDPos);
+  LStep := TMath.AngleDifference(FAngle, LAngle);
+  LLen  := Sqrt(LStep*LStep);
+  if LLen = 0 then
     Exit;
-  S := (Step / Len) * aSpeed;
-  if not TMath.SameValue(Step, S, aSpeed) then
-    RotateRel(S)
+  LS := (LStep / LLen) * aSpeed;
+  if not TMath.SameValue(LStep, LS, aSpeed) then
+    RotateRel(LS)
   else begin
-    RotateRel(Step);
+    RotateRel(LStep);
     Result := True;
   end;
 end;
 
 procedure TEntity.Thrust(aSpeed: Single);
 var
-  A, S: Single;
+  LA, LS: Single;
 begin
-  A := FAngle + 90.0;
-  TMath.ClipValue(A, 0, 360, True);
+  LA := FAngle + 90.0;
+  TMath.ClipValue(LA, 0, 360, True);
 
-  S := -aSpeed;
+  LS := -aSpeed;
 
-  FDir.x := TMath.AngleCos(Round(A)) * S;
-  FDir.y := TMath.AngleSin(Round(A)) * S;
+  FDir.x := TMath.AngleCos(Round(LA)) * LS;
+  FDir.y := TMath.AngleSin(Round(LA)) * LS;
 
   FPos.x := FPos.x + FDir.x;
   FPos.y := FPos.y + FDir.y;
@@ -394,16 +396,16 @@ end;
 
 procedure TEntity.ThrustAngle(aAngle: Single; aSpeed: Single);
 var
-  A, S: Single;
+  LA, LS: Single;
 begin
-  A := aAngle;
+  LA := aAngle;
 
-  TMath.ClipValue(A, 0, 360, True);
+  TMath.ClipValue(LA, 0, 360, True);
 
-  S := -aSpeed;
+  LS := -aSpeed;
 
-  FDir.x := TMath.AngleCos(Round(A)) * S;
-  FDir.y := TMath.AngleSin(Round(A)) * S;
+  FDir.x := TMath.AngleCos(Round(LA)) * LS;
+  FDir.y := TMath.AngleSin(Round(LA)) * LS;
 
   FPos.x := FPos.x + FDir.x;
   FPos.y := FPos.y + FDir.y;
@@ -411,115 +413,113 @@ end;
 
 function  TEntity.ThrustToPos(aThrustSpeed: Single; aRotSpeed: Single; aDestX: Single; aDestY: Single; aSlowdownDist: Single; aStopDist: Single; aStopSpeed: Single; aStopSpeedEpsilon: Single; aDeltaTime: Single): Boolean;
 var
-  Dist : Single;
-  Step : Single;
-  Speed: Single;
-  DestPos: TVector;
+  LDist : Single;
+  LStep : Single;
+  LSpeed: Single;
+  LDestPos: TVector;
 begin
   Result := False;
 
   if aSlowdownDist <= 0 then Exit;
   if aStopDist < 0 then aStopDist := 0;
 
-  DestPos.X := aDestX;
-  DestPos.Y := aDestY;
-  Dist := FPos.Distance(DestPos);
+  LDestPos.X := aDestX;
+  LDestPos.Y := aDestY;
+  LDist := FPos.Distance(LDestPos);
 
-  Dist := Dist - aStopDist;
+  LDist := LDist - aStopDist;
 
-  if  Dist > aSlowdownDist then
+  if LDist > aSlowdownDist then
     begin
-      Speed := aThrustSpeed;
+      LSpeed := aThrustSpeed;
     end
   else
     begin
-      Step := (Dist/aSlowdownDist);
-      Speed := (aThrustSpeed * Step);
-      if Speed <= aStopSpeed then
+      LStep := (LDist/aSlowdownDist);
+      LSpeed := (aThrustSpeed * LStep);
+      if LSpeed <= aStopSpeed then
       begin
-        Speed := 0;
+        LSpeed := 0;
         Result := True;
       end;
     end;
 
   if RotateToPos(aDestX, aDestY, aRotSpeed*aDeltaTime) then
   begin
-    Thrust(Speed*aDeltaTime);
+    Thrust(LSpeed*aDeltaTime);
   end;
-
 end;
 
 function  TEntity.IsVisible(aVirtualX: Single; aVirtualY: Single): Boolean;
 var
-  HW,HH: Single;
-  vpx,vpy,vpw,vph: Integer;
-  X,Y: Single;
+  LHW,LHH: Single;
+  LVPX,LVPY,LVPW,LVPH: Integer;
+  LX,LY: Single;
 begin
   Result := False;
 
-  HW := FWidth / 2;
-  HH := FHeight / 2;
+  LHW := FWidth / 2;
+  LHH := FHeight / 2;
 
-  gEngine.Display.GetViewportSize(@vpx, @vpy, @vpw, @vph);
+  gEngine.Display.GetViewportSize(@LVPX, @LVPY, @LVPW, @LVPH);
 
-  Dec(vpW); Dec(vpH);
+  Dec(LVPW); Dec(LVPH);
 
-  X := FPos.X - aVirtualX;
-  Y := FPos.Y - aVirtualY;
+  LX := FPos.X - aVirtualX;
+  LY := FPos.Y - aVirtualY;
 
-  if X > (vpW + HW) then Exit;
-  if X < -HW    then Exit;
-  if Y > (vpH + HH) then Exit;
-  if Y < -HH    then Exit;
+  if LX > (LVPW + LHW) then Exit;
+  if LX < -LHW    then Exit;
+  if LY > (LVPH + LHH) then Exit;
+  if LY < -LHH    then Exit;
 
   Result := True;
 end;
 
 function  TEntity.IsFullyVisible(aVirtualX: Single; aVirtualY: Single): Boolean;
 var
-  HW,HH: Single;
-  vpx,vpy,vpw,vph: Integer;
-  X,Y: Single;
+  LHW,LHH: Single;
+  LVPX,LVPY,LVPW,LVPH: Integer;
+  LX,LY: Single;
 begin
   Result := False;
 
-  HW := FWidth / 2;
-  HH := FHeight / 2;
+  LHW := FWidth / 2;
+  LHH := FHeight / 2;
 
-  gEngine.Display.GetViewportSize(@vpx, @vpy, @vpw, @vph);
+  gEngine.Display.GetViewportSize(@LVPX, @LVPY, @LVPW, @LVPH);
 
-  Dec(vpW); Dec(vpH);
+  Dec(LVPW); Dec(LVPH);
 
-  X := FPos.X - aVirtualX;
-  Y := FPos.Y - aVirtualY;
+  LX := FPos.X - aVirtualX;
+  LY := FPos.Y - aVirtualY;
 
-  if X > (vpW - HW) then Exit;
-  if X <  HW       then Exit;
-  if Y > (vpH - HH) then Exit;
-  if Y <  HH       then Exit;
+  if LX > (LVPW - LHW) then Exit;
+  if LX <  LHW       then Exit;
+  if LY > (LVPH - LHH) then Exit;
+  if LY <  LHH       then Exit;
 
   Result := True;
 end;
 
 function  TEntity.Overlap(aX: Single; aY: Single; aRadius: Single; aShrinkFactor: Single): Boolean;
 var
-  Dist: Single;
-  R1  : Single;
-  R2  : Single;
-  V0,V1: TVector;
+  LDist: Single;
+  LR1,LR2: Single;
+  LV0,LV1: TVector;
 begin
-  R1  := FRadius * aShrinkFactor;
-  R2  := aRadius * aShrinkFactor;
+  LR1  := FRadius * aShrinkFactor;
+  LR2  := aRadius * aShrinkFactor;
 
-  V0.X := FPos.X;
-  V0.Y := FPos.Y;
+  LV0.X := FPos.X;
+  LV0.Y := FPos.Y;
 
-  V1.x := aX;
-  V1.y := aY;
+  LV1.x := aX;
+  LV1.y := aY;
 
-  Dist := V0.Distance(V1);
+  LDist := LV0.Distance(LV1);
 
-  if (Dist < R1) or (Dist < R2) then
+  if (LDist < LR1) or (LDist < LR2) then
     Result := True
   else
    Result := False;
@@ -532,21 +532,21 @@ end;
 
 procedure TEntity.Render(aVirtualX: Single; aVirtualY: Single);
 var
-  X,Y: Single;
-  SV: TVector;
+  LX,LY: Single;
+  LSV: TVector;
 begin
-  X := FPos.X - aVirtualX;
-  Y := FPos.Y - aVirtualY;
-  SV.Assign(FScale, FScale);
-  FSprite.DrawImage(FFrame, FGroup, X, Y, @FOrigin, @SV, FAngle, FColor, FHFlip, FVFlip, FRenderPolyPoint);
+  LX := FPos.X - aVirtualX;
+  LY := FPos.Y - aVirtualY;
+  LSV.Assign(FScale, FScale);
+  FSprite.DrawImage(FFrame, FGroup, LX, LY, @FOrigin, @LSV, FAngle, FColor, FHFlip, FVFlip, FRenderPolyPoint);
 end;
 
 procedure TEntity.RenderAt(aX: Single; aY: Single);
 var
-  SV: TVector;
+  LSV: TVector;
 begin
-  SV.Assign(FScale, FScale);
-  FSprite.DrawImage(FFrame, FGroup, aX, aY, @FOrigin, @SV, FAngle, FColor, FHFlip, FVFlip, FRenderPolyPoint);
+  LSV.Assign(FScale, FScale);
+  FSprite.DrawImage(FFrame, FGroup, aX, aY, @FOrigin, @LSV, FAngle, FColor, FHFlip, FVFlip, FRenderPolyPoint);
 end;
 
 function  TEntity.GetSprite: TSprite;
@@ -566,22 +566,21 @@ end;
 
 procedure TEntity.SetFrame(aFrame: Integer);
 var
-  W,H: Single;
-  R  : Single;
+  LW, LH, LR: Single;
 begin
   if aFrame > FSprite.GetImageCount(FGroup)-1  then
     FFrame := FSprite.GetImageCount(FGroup)-1
   else
     FFrame := aFrame;
 
-  W := FSprite.GetImageWidth(FFrame, FGroup);
-  H := FSprite.GetImageHeight(FFrame, FGroup);
+  LW := FSprite.GetImageWidth(FFrame, FGroup);
+  LH := FSprite.GetImageHeight(FFrame, FGroup);
 
-  R := (W + H) / 2;
+  LR := (LW + LH) / 2;
 
-  FWidth  := W * FScale;
-  FHeight := H * FScale;
-  FRadius := R * FScale;
+  FWidth  := LW * FScale;
+  FHeight := LH * FScale;
+  FRadius := LR * FScale;
 end;
 
 function  TEntity.GetFrameFPS: Single;
@@ -709,29 +708,29 @@ end;
 
 function  TEntity.CollidePolyPoint(aEntity: TEntity; var aHitPos: TVector): Boolean;
 var
-  ShrinkFactor: Single;
-  HFlip,VFlip: Boolean;
+  LShrinkFactor: Single;
+  LHFlip,LVFlip: Boolean;
 begin
-  ShrinkFactor := (FShrinkFactor + aEntity.GetShrinkFactor) / 2.0;
+  LShrinkFactor := (FShrinkFactor + aEntity.GetShrinkFactor) / 2.0;
 
-  aEntity.GetFlipMode(@HFlip, @VFlip);
+  aEntity.GetFlipMode(@LHFlip, @LVFlip);
 
   Result := FSprite.GroupPolyPointCollide(
     FFrame, FGroup, Round(FPos.X), Round(FPos.Y), FScale, FAngle, @FOrigin,
     FHFlip, FVFlip, aEntity.FSprite, aEntity.FFrame, aEntity.FGroup,
     Round(aEntity.FPos.X), Round(aEntity.FPos.Y), aEntity.FScale,
-    aEntity.FAngle, @aEntity.FOrigin, HFlip, VFlip,
-    ShrinkFactor, aHitPos);
+    aEntity.FAngle, @aEntity.FOrigin, LHFlip, LVFlip,
+    LShrinkFactor, aHitPos);
 end;
 
 function  TEntity.CollidePolyPointPoint(var aPoint: TVector): Boolean;
 var
-  ShrinkFactor: Single;
+  LShrinkFactor: Single;
 begin
-  ShrinkFactor := FShrinkFactor;
+  LShrinkFactor := FShrinkFactor;
 
   Result := FSprite.GroupPolyPointCollidePoint(FFrame, FGroup, FPos.X, FPos.Y,
-    FScale, FAngle, @FOrigin, FHFlip, FVFlip, ShrinkFactor, aPoint);
+    FScale, FAngle, @FOrigin, FHFlip, FVFlip, LShrinkFactor, aPoint);
 end;
 
 end.

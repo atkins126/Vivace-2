@@ -240,6 +240,8 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
+
+{ TColor }
 function TColor.Make(aRed: Byte; aGreen: Byte; aBlue: Byte; aAlpha: Byte): TColor;
 var
   LColor: ALLEGRO_COLOR absolute Result;
@@ -458,7 +460,6 @@ end;
 
 finalization
 begin
-
 end;
 
 end.

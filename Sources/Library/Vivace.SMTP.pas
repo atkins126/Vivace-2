@@ -139,6 +139,7 @@ end;
 destructor TMailMessage.Destroy;
 begin
   if Assigned(FAttachments) then FAttachments.Free;
+
   inherited;
 end;
 
@@ -154,10 +155,12 @@ begin
   FBody := aValue;
 end;
 
+
 { TSMTP }
 constructor TSMTP.Create;
 begin
   inherited Create;
+
   FMail := TMailMessage.Create;
   Port := 25;
   UseTLS := TIdUseTLS.utNoTLSSupport;
@@ -177,6 +180,7 @@ end;
 destructor TSMTP.Destroy;
 begin
   if Assigned(FMail) then FMail.Free;
+
   inherited;
 end;
 
@@ -189,12 +193,9 @@ function TSMTP.SendEmail(const aFromEmail, aFromName, aSubject, aTo, aCC, aBC, a
 var
   LMail : TMailMessage;
 begin
-  if aFromEmail.IsEmpty then
-    raise Exception.Create('Sender Email not specified!');
-  if aFromName.IsEmpty then
-    raise Exception.Create('Email sender not specified!');
-  if aTo.IsEmpty then
-    raise Exception.Create('Email destination not specified!');
+  if aFromEmail.IsEmpty then raise Exception.Create('Sender Email not specified!');
+  if aFromName.IsEmpty then  raise Exception.Create('Email sender not specified!');
+  if aTo.IsEmpty then raise Exception.Create('Email destination not specified!');
   FMail.From := aFromEmail;
   FMail.SenderName := aFromName;
   LMail := TMailMessage.Create;

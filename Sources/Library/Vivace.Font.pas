@@ -106,6 +106,7 @@ uses
   Vivace.Engine,
   Vivace.Logger;
 
+
 { TFont }
 procedure TFont.Unload;
 begin
@@ -123,6 +124,7 @@ end;
 constructor TFont.Create;
 begin
   inherited;
+
   FHandle := nil;
   FFilename := '';
   Unload;
@@ -132,13 +134,13 @@ end;
 destructor TFont.Destroy;
 begin
   Unload;
+
   inherited;
 end;
 
 procedure TFont.Default;
 begin
   Unload;
-  //Load(16);
   LoadBuiltIn;
 end;
 
@@ -172,8 +174,7 @@ var
   LSize: Integer;
   LOk: Boolean;
 begin
-  if aFilename.IsEmpty then
-    Exit;
+  if aFilename.IsEmpty then Exit;
 
   LSize := -aSize;
 

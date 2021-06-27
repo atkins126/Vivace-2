@@ -62,7 +62,6 @@ uses
   Vivace.Common;
 
 type
-
   { TConsoleColor }
   TConsoleColor = (
   ccBlack        = 0,
@@ -82,7 +81,6 @@ type
   ccYellow       = 14,
   ccWhite        = 15,
   ccDefault);
-
 
   { TConsole }
   TConsole = class
@@ -121,6 +119,7 @@ var
   hStdErr: THandle;
   ConsoleRect: TSmallRect;
   ConsoleInit: Boolean = False;
+
 
 procedure InitConsole;
 var
@@ -285,36 +284,36 @@ end;
 
 class function TConsole.KeyPressed: Boolean;
 var
-  lpNumberOfEvents     : DWORD;
-  lpBuffer             : TInputRecord;
-  lpNumberOfEventsRead : DWORD;
-  nStdHandle           : THandle;
+  LNumberOfEvents     : DWORD;
+  LBuffer             : TInputRecord;
+  LNumberOfEventsRead : DWORD;
+  LStdHandle           : THandle;
 begin
   Result:=false;
   //get the console handle
-  nStdHandle := GetStdHandle(STD_INPUT_HANDLE);
+  LStdHandle := GetStdHandle(STD_INPUT_HANDLE);
 
-  lpNumberOfEvents:=0;
+  LNumberOfEvents:=0;
   //get the number of events
-  GetNumberOfConsoleInputEvents(nStdHandle,lpNumberOfEvents);
-  if lpNumberOfEvents<> 0 then
+  GetNumberOfConsoleInputEvents(LStdHandle,LNumberOfEvents);
+  if LNumberOfEvents<> 0 then
   begin
     //retrieve the event
-    PeekConsoleInput(nStdHandle,lpBuffer,1,lpNumberOfEventsRead);
-    if lpNumberOfEventsRead <> 0 then
+    PeekConsoleInput(LStdHandle,LBuffer,1,LNumberOfEventsRead);
+    if LNumberOfEventsRead <> 0 then
     begin
-      if lpBuffer.EventType = KEY_EVENT then //is a Keyboard event?
+      if LBuffer.EventType = KEY_EVENT then //is a Keyboard event?
       begin
-        if lpBuffer.Event.KeyEvent.bKeyDown then //the key was pressed?
+        if LBuffer.Event.KeyEvent.bKeyDown then //the key was pressed?
           Result:=true
         else
-          FlushConsoleInputBuffer(nStdHandle); //flush the buffer
+          FlushConsoleInputBuffer(LStdHandle); //flush the buffer
       end
       else
-      FlushConsoleInputBuffer(nStdHandle);//flush the buffer
+      FlushConsoleInputBuffer(LStdHandle);//flush the buffer
     end;
   end;
-  FlushConsoleInputBuffer(nStdHandle);//flush the buffer
+  FlushConsoleInputBuffer(LStdHandle);//flush the buffer
 end;
 
 class procedure TConsole.WaitForAnyKey;

@@ -63,7 +63,6 @@ uses
   uCommon;
 
 type
-
   { TDisplayBasic }
   TDisplayBasic = class(TBaseExample)
   public
@@ -114,6 +113,7 @@ uses
   Vivace.Common,
   Vivace.Math;
 
+
 { TDisplayBasic }
 procedure TDisplayBasic.OnSetConfig(var aConfig: TGameConfig);
 begin
@@ -125,7 +125,9 @@ end;
 procedure TDisplayBasic.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
 end;
+
 
 { TDisplayToggleFullscreen }
 procedure TDisplayToggleFullscreen.OnSetConfig(var aConfig: TGameConfig);
@@ -153,7 +155,7 @@ procedure TDisplayToggleFullscreen.OnRenderHUD;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F       - Toggle fullscreen', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F         - Toggle fullscreen', []);
 end;
 
 
@@ -189,12 +191,12 @@ begin
 
   gEngine.Display.DrawTriangle(465, 100, 465+25, 100+50, 465-25, 100+50, 5, ORANGERED);
   gEngine.Display.DrawFilledTriangle(465+95, 100-3, 465+25+95, 100+50+3, (465-25)+95, 100+50+3, DARKORANGE);
-
 end;
 
 procedure TDisplayPrimitives.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 
@@ -202,6 +204,7 @@ end;
 procedure TDisplayRotateViewport.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Rotate Viewport';
 end;
 
@@ -210,7 +213,6 @@ begin
   inherited;
 
   FViewport := TViewport.CreateViewport((Config.DisplayWidth - 380) div 2, (Config.DisplayHeight-280) div 2, 380, 280);
-
   FBackground := TBitmap.LoadBitmap('arc/bitmaps/backgrounds/bluestone.png', nil);
 end;
 
@@ -218,6 +220,7 @@ procedure TDisplayRotateViewport.OnShutdown;
 begin
   FreeAndNil(FBackground);
   FreeAndNil(FViewport);
+
   inherited;
 end;
 
@@ -251,6 +254,7 @@ end;
 procedure TDisplayRotateViewport.OnRenderHUD;
 begin
   inherited;
+
 end;
 
 end.

@@ -113,22 +113,18 @@ const
   cRocksMin            = 7;
   cRocksMax            = 21;
 
-
   DEBUG_RENDERPOLYPOINT = False;
 
 type
-
   { TSpriteID }
+  PSpriteID = ^TSpriteID;
   TSpriteID = record
     Page : Integer;
     Group: Integer;
   end;
-  PSpriteID = ^TSpriteID;
 
   { TRockSize }
-  TRockSize = (
-    rsLarge, rsMedium, rsSmall
-  );
+  TRockSize = (rsLarge, rsMedium, rsSmall);
 
   { TEntity }
   TBaseEntity = class(TEntityActor)
@@ -248,7 +244,6 @@ type
     procedure SpawnPlayer;
     procedure SpawnLevel;
     function  LevelCleared: Boolean;
-
   end;
 
 implementation
@@ -272,6 +267,7 @@ var
   Player: TPlayer;
   Game: TAstroBlasterDemo;
 
+
 function RandomRangedslNP(aMin, aMax: Single): Single;
 begin
   Result := TMath.RandomRange(aMin, aMax);
@@ -284,40 +280,45 @@ begin
   if TMath.RandomBool then Result := -Result;
 end;
 
+
 { TBaseEntity }
 constructor TBaseEntity.Create;
 begin
   inherited;
+
   CanCollide := True;
 end;
 
 destructor TBaseEntity.Destroy;
 begin
+
   inherited;
 end;
 
 procedure  TBaseEntity.WrapPosAtEdge(var aPos: TVector);
 var
-  hh,hw: Single;
+  LHH,LHW: Single;
 begin
-  hw := Entity.GetWidth  / 2;
-  hh := Entity.GetHeight /2 ;
+  LHW := Entity.GetWidth  / 2;
+  LHH := Entity.GetHeight /2 ;
 
-  if (aPos.X > (Game.Config.DisplayWidth-1)+hw) then
-    aPos.X := -hw
-  else if (aPos.X < -hw) then
-    aPos.X := (Game.Config.DisplayWidth-1)+hw;
+  if (aPos.X > (Game.Config.DisplayWidth-1)+LHW) then
+    aPos.X := -LHW
+  else if (aPos.X < -LHW) then
+    aPos.X := (Game.Config.DisplayWidth-1)+LHW;
 
-  if (aPos.Y > (Game.Config.DisplayHeight-1)+hh) then
-    aPos.Y := -hh
-  else if (aPos.Y < -hw) then
-    aPos.Y := (Game.Config.DisplayHeight-1)+hh;
+  if (aPos.Y > (Game.Config.DisplayHeight-1)+LHH) then
+    aPos.Y := -LHH
+  else if (aPos.Y < -LHW) then
+    aPos.Y := (Game.Config.DisplayHeight-1)+LHH;
 end;
+
 
 { TWeapon }
 constructor TWeapon.Create;
 begin
   inherited;
+
   Init(Game.Sprite, Game.WeaponSprId.Group);
   Entity.TracePolyPoint(6, 12, 70);
   Entity.SetRenderPolyPoint(DEBUG_RENDERPOLYPOINT);
@@ -325,6 +326,7 @@ end;
 
 destructor TWeapon.Destroy;
 begin
+
   inherited;
 end;
 
@@ -336,6 +338,7 @@ end;
 procedure TWeapon.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
   if Entity.IsVisible(0,0) then
     begin
       Entity.Thrust(FSpeed*aDeltaTime);
@@ -359,10 +362,12 @@ begin
   Entity.RotateAbs(aAngle);
 end;
 
+
 { TExplosion }
 constructor TExplosion.Create;
 begin
   inherited;
+
   FSpeed := 0;
   FCurDir.X := 0;
   FCurDir.Y := 0;
@@ -370,65 +375,74 @@ end;
 
 destructor TExplosion.Destroy;
 begin
+
   inherited;
 end;
 
 procedure TExplosion.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TExplosion.OnUpdate(aElapsedTime: Double);
 var
-  P,V: TVector;
+  LP, LV: TVector;
 begin
   if Entity.NextFrame then
   begin
     Terminated := True;
   end;
 
-  V.X := (FCurDir.X + FSpeed) * aElapsedTime;
-  V.Y := (FCurDir.Y + FSpeed) * aElapsedTime;
+  LV.X := (FCurDir.X + FSpeed) * aElapsedTime;
+  LV.Y := (FCurDir.Y + FSpeed) * aElapsedTime;
 
-  P := Entity.GetPos;
+  LP := Entity.GetPos;
 
-  P.X := P.X + V.X;
-  P.Y := P.Y + V.Y;
+  LP.X := LP.X + LV.X;
+  LP.Y := LP.Y + LV.Y;
 
-  Entity.SetPosAbs(P.X, P.Y);
+  Entity.SetPosAbs(LP.X, LP.Y);
 end;
 
 procedure TExplosion.Spawn(aPos: TVector; aDir: TVector; aSpeed, aScale: Single);
 begin
   FSpeed := aSpeed;
   FCurDir := aDir;
+
   Init(Game.Sprite, Game.ExplosionSprID.Group);
+
   Entity.SetFrameFPS(14);
   Entity.SetScaleAbs(aScale);
   Entity.SetPosAbs(aPos.X, aPos.Y);
+
   Game.Scene[cSceneRockExp].Add(Self);
 end;
+
 
 { TParticle }
 constructor TParticle.Create;
 begin
   inherited;
+
 end;
 
 destructor TParticle.Destroy;
 begin
+
   inherited;
 end;
 
 procedure TParticle.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TParticle.OnUpdate(aDeltaTime: Double);
 var
-  C,C2: TColor;
-  A: Single;
+  LC,LC2: TColor;
+  LA: Single;
 begin
   Entity.Thrust(FSpeed*aDeltaTime);
 
@@ -440,10 +454,10 @@ begin
         FAlpha := 0;
         Terminated := True;
       end;
-      A := FAlpha / 255.0;
-      c2.Red := 1*a; c2.Green := 1*a; c2.Blue := 1*a; c2.Alpha := a;
-      C.Make(c2.Red, c2.Green, c2.Blue, c2.Alpha);
-      Entity.SetColor(C);
+      LA := FAlpha / 255.0;
+      LC2.Red := 1*LA; LC2.Green := 1*LA; LC2.Blue := 1*LA; LC2.Alpha := LA;
+      LC.Make(LC2.Red, LC2.Green, LC2.Blue, LC2.Alpha);
+      Entity.SetColor(LC);
     end
   else
     Terminated := True;
@@ -454,13 +468,17 @@ begin
   FSpeed := aSpeed;
   FFadeSpeed := aFadeSpeed;
   FAlpha := 255;
+
   Init(Game.Sprite, Game.ParticlesSprID.Group);
+
   Entity.SetFrame(aId);
   Entity.SetScaleAbs(aScale);
   Entity.SetPosAbs(aPos.X, aPos.Y);
   Entity.RotateAbs(aAngle);
+
   Game.Scene[aScene].Add(Self);
 end;
+
 
 { TRock }
 function TRock.CalcScale(aSize: TRockSize): Single;
@@ -480,35 +498,39 @@ begin
   FSpeed := 0;
   FRotSpeed := 0;
   FSize := rsLarge;
+
   Init(Game.Sprite, Game.RocksSprId.Group);
+
   Entity.TracePolyPoint(6, 12, 70);
   Entity.SetRenderPolyPoint(DEBUG_RENDERPOLYPOINT);
 end;
 
 destructor TRock.Destroy;
 begin
+
   inherited;
 end;
 
 procedure TRock.OnRender;
 begin
   inherited;
+
 end;
 
 procedure TRock.OnUpdate(aDeltaTime: Double);
 var
-  P: TVector;
-  V: TVector;
+  LP: TVector;
+  LV: TVector;
 begin
   inherited;
   Entity.RotateRel(FRotSpeed*aDeltaTime);
-  V.X := (FCurDir.X + FSpeed);
-  V.Y := (FCurDir.Y + FSpeed);
-  P := Entity.GetPos;
-  P.X := P.X + V.X*aDeltaTime;
-  P.Y := P.Y + V.Y*aDeltaTime;
-  WrapPosAtEdge(P);
-  Entity.SetPosAbs(P.X, P.Y);
+  LV.X := (FCurDir.X + FSpeed);
+  LV.Y := (FCurDir.Y + FSpeed);
+  LP := Entity.GetPos;
+  LP.X := LP.X + LV.X*aDeltaTime;
+  LP.Y := LP.Y + LV.Y*aDeltaTime;
+  WrapPosAtEdge(LP);
+  Entity.SetPosAbs(LP.X, LP.Y);
 end;
 
 procedure TRock.OnCollide(aActor: TActor; aHitPos: TVector);
@@ -516,7 +538,6 @@ begin
   CanCollide := False;
   Split(aHitPos);
 end;
-
 
 procedure TRock.Spawn(aId: Integer; aSize: TRockSize; aPos: TVector; aAngle: Single);
 begin
@@ -538,56 +559,56 @@ procedure TRock.Split(aHitPos: TVector);
 
   procedure DoSplit(aId: Integer; aSize: TRockSize; aPos: TVector);
   var
-    r: TRock;
+    LR: TRock;
   begin
-    r := TRock.Create;
-    r.Spawn(aId, aSize, aPos, 0);
-    Game.Scene[cSceneRocks].Add(r);
+    LR := TRock.Create;
+    LR.Spawn(aId, aSize, aPos, 0);
+    Game.Scene[cSceneRocks].Add(LR);
   end;
 
   procedure DoExplosion(aScale: Single);
   var
-    p: TVector;
-    e: TExplosion;
+    LP: TVector;
+    LE: TExplosion;
   begin
-    p := Entity.GetPos;
-    e := TExplosion.Create;
-    e.Spawn(p, FCurDir, FSpeed, aScale);
+    LP := Entity.GetPos;
+    LE := TExplosion.Create;
+    LE.Spawn(LP, FCurDir, FSpeed, aScale);
   end;
 
   procedure DoParticles;
   var
-    c,i: Integer;
-    p: TParticle;
-    angle,speed,fade: Single;
+    LC, LI: Integer;
+    LP: TParticle;
+    LAngle, LSpeed, LFade: Single;
   begin
-    c := 0;
+    LC := 0;
     case FSize of
       rsLarge :
         begin
-          c := 50;
+          LC := 50;
           gEngine.Screenshake.Start(30, 3);
         end;
       rsMedium:
         begin
-          c := 25;
+          LC := 25;
           gEngine.Screenshake.Start(30, 2);
         end;
       rsSmall :
         begin
-          c := 15;
+          LC := 15;
           gEngine.Screenshake.Start(30, 1);
         end;
     end;
 
-    for i := 1 to c do
+    for LI := 1 to LC do
     begin
-      p := TParticle.Create;
-      angle := TMath.RandomRange(0, 255);
-      speed := TMath.RandomRange(1*cMultiplier, 7*cMultiplier);
-      fade := TMath.RandomRange(3*cMultiplier, 7*cMultiplier);
+      LP := TParticle.Create;
+      LAngle := TMath.RandomRange(0, 255);
+      LSpeed := TMath.RandomRange(1*cMultiplier, 7*cMultiplier);
+      LFade := TMath.RandomRange(3*cMultiplier, 7*cMultiplier);
 
-      p.Spawn(0, aHitPos, angle, speed, 0.10, fade, cSceneRockExp);
+      LP.Spawn(0, aHitPos, LAngle, LSpeed, 0.10, LFade, cSceneRockExp);
     end;
   end;
 
@@ -619,13 +640,16 @@ begin
         gEngine.Audio.PlaySound(AUDIO_DYNAMIC_CHANNEL, Game.Sfx[cSfxRockExp], cVolRockExp, False);
       end;
   end;
+
   Terminated := True;
 end;
+
 
 { TPlayer }
 constructor TPlayer.Create;
 begin
   Player := Self;
+
   inherited;
 
   FTimer    := 0;
@@ -644,6 +668,7 @@ end;
 destructor TPlayer.Destroy;
 begin
   inherited;
+
   Player := nil;
 end;
 
@@ -654,46 +679,45 @@ end;
 
 procedure TPlayer.OnUpdate(aDelta: Double);
 var
-  P: TVector;
-  Fire: Boolean;
-  Turn: Integer;
-  Accel: Boolean;
+  LP: TVector;
+  LFire: Boolean;
+  LTurn: Integer;
+  LAccel: Boolean;
 begin
   if gEngine.Input.KeyboardPressed(KEY_LCTRL) or
      gEngine.Input.KeyboardPressed(KEY_RCTRL) or
      gEngine.INput.JoystickPressed(JOY_BTN_RB) then
-    Fire := True
+    LFire := True
   else
-    Fire := False;
+    LFire := False;
 
   if gEngine.Input.KeyboardDown(KEY_RIGHT) or
      gEngine.Input.JoystickDown(JOY_BTN_RDPAD) then
-    Turn := 1
+    LTurn := 1
   else
   if gEngine.Input.KeyboardDown(KEY_LEFT) or
      gEngine.Input.JoystickDown(JOY_BTN_LDPAD) then
-    Turn := -1
+    LTurn := -1
   else
-    Turn := 0;
+    LTurn := 0;
 
   if (gEngine.Input.KeyboardDown(KEY_UP)) or
      gEngine.Input.JoystickDown(JOY_BTN_UDPAD) then
-    Accel := true
+    LAccel := true
   else
-    Accel := False;
-
+    LAccel := False;
 
   // update keys
-  if Fire then
+  if LFire then
   begin
     FireWeapon(10*cMultiplier);
   end;
 
-  if Turn = 1 then
+  if LTurn = 1 then
   begin
     TMath.SmoothMove(FTurnSpeed, cPlayerTurnAccel*aDelta, cPlayerMaxTurn, cPlayerTurnDrag*aDelta);
   end
-  else if Turn = -1 then
+  else if LTurn = -1 then
     begin
       TMath.SmoothMove(FTurnSpeed, -cPlayerTurnAccel*aDelta, cPlayerMaxTurn, cPlayerTurnDrag*aDelta);
     end
@@ -709,7 +733,7 @@ begin
     FCurAngle := FCurAngle + 360;
 
   FThrusting := False;
-  if (Accel) then
+  if (LAccel) then
   begin
     FThrusting := True;
 
@@ -728,12 +752,11 @@ begin
   TMath.SmoothMove(DirVec.X, 0, cPlayerMagnitude, cPlayerFriction*aDelta);
   TMath.SmoothMove(DirVec.Y, 0, cPlayerMagnitude, cPlayerFriction*aDelta);
 
-  P := Entity.GetPos;
+  LP := Entity.GetPos;
+  LP.X := LP.X + DirVec.X*aDelta;
+  LP.Y := LP.Y + DirVec.Y*aDelta;
 
-  P.X := P.X + DirVec.X*aDelta;
-  P.Y := P.Y + DirVec.Y*aDelta;
-
-  WrapPosAtEdge(P);
+  WrapPosAtEdge(LP);
 
   if (FThrusting) then
     begin
@@ -759,7 +782,7 @@ begin
 
   Entity.RotateAbs(FCurAngle);
   Entity.SetFrame(FCurFrame);
-  Entity.SetPosAbs(P.X, P.Y);
+  Entity.SetPosAbs(LP.X, LP.Y);
 end;
 
 procedure TPlayer.Spawn(aX, aY: Single);
@@ -768,14 +791,14 @@ end;
 
 procedure TPlayer.FireWeapon(aSpeed: Single);
 var
-  P: TVector;
-  W: TWeapon;
+  LP: TVector;
+  LW: TWeapon;
 begin
-  P := Entity.GetPos;
-  P.Thrust(Entity.GetAngle, 16);
-  W := TWeapon.Create;
-  W.Spawn(0, P, Entity.GetAngle, aSpeed);
-  Game.Scene[cScenePlayerWeapon].Add(W);
+  LP := Entity.GetPos;
+  LP.Thrust(Entity.GetAngle, 16);
+  LW := TWeapon.Create;
+  LW.Spawn(0, LP, Entity.GetAngle, aSpeed);
+  Game.Scene[cScenePlayerWeapon].Add(LW);
   gEngine.Audio.PlaySound(cChanPlayerWeapon, Game.Sfx[cSfxPlayerWeapon], cVolPlayerWeapon, False);
 end;
 
@@ -784,12 +807,14 @@ end;
 constructor TAstroBlasterDemo.Create;
 begin
   inherited;
+
   Game := Self;
 end;
 
 destructor TAstroBlasterDemo.Destroy;
 begin
   Game := nil;
+
   inherited;
 end;
 
@@ -928,15 +953,15 @@ end;
 
 procedure TAstroBlasterDemo.OnUpdate(aDeltaTime: Double);
 var
-  P: TVector;
+  LP: TVector;
 begin
   inherited;
 
   if Assigned(Player) then
   begin
-    P := Player.DirVec;
-    FBkPos.X := FBkPos.X + (P.X * aDeltaTime);
-    FBkPos.Y := FBkPos.Y + (P.Y * aDeltaTime);
+    LP := Player.DirVec;
+    FBkPos.X := FBkPos.X + (LP.X * aDeltaTime);
+    FBkPos.Y := FBkPos.Y + (LP.Y * aDeltaTime);
   end;
 
   if LevelCleared then
@@ -948,18 +973,18 @@ begin
 end;
 
 const
-  bm = 3;
+  mBM = 3;
 
 procedure TAstroBlasterDemo.OnRender;
 begin
   // render background
-  Background[0].DrawTiled(-(FBkPos.X/1.9*bm), -(FBkPos.Y/1.9*bm));
+  Background[0].DrawTiled(-(FBkPos.X/1.9*mBM), -(FBkPos.Y/1.9*mBM));
 
   gEngine.Display.SetBlendMode(bmAdditiveAlpha);
-  Background[1].DrawTiled(-(FBkPos.X/1.9*bm), -(FBkPos.Y/1.9*bm));
+  Background[1].DrawTiled(-(FBkPos.X/1.9*mBM), -(FBkPos.Y/1.9*mBM));
   gEngine.Display.RestoreDefaultBlendMode;
-  Background[2].DrawTiled(-(FBkPos.X/1.6*bm), -(FBkPos.Y/1.6*bm));
-  Background[3].DrawTiled(-(FBkPos.X/1.3*bm), -(FBkPos.Y/1.3*bm));
+  Background[2].DrawTiled(-(FBkPos.X/1.6*mBM), -(FBkPos.Y/1.6*mBM));
+  Background[3].DrawTiled(-(FBkPos.X/1.3*mBM), -(FBkPos.Y/1.3*mBM));
 
   Scene.Render([], OnBeforeRenderScene, OnAfterRenderScene);
 
@@ -970,13 +995,13 @@ procedure TAstroBlasterDemo.OnRenderHUD;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F11     - Fullscreen toggle', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F12     - Screenshot', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Left    - Rotate left', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Right   - Rotate right', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Up      - Thrust', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Ctrl    - Fire', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Count:    %d', [Scene[cSceneRocks].Count]);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F11       - Fullscreen toggle', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'F12       - Screenshot', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Left      - Rotate left', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Right     - Rotate right', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Up        - Thrust', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN, haLeft, 'Ctrl      - Fire', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Count:      %d', [Scene[cSceneRocks].Count]);
 end;
 
 procedure TAstroBlasterDemo.OnBeforeRenderScene(aSceneNum: Integer);
@@ -1001,29 +1026,32 @@ end;
 
 procedure TAstroBlasterDemo.SpawnRocks;
 var
-  i,c: Integer;
-  id: Integer;
-  size: TRockSize;
-  angle: Single;
-  rock: TRock;
-  radius : Single;
-  pos: TVector;
+  LI, LC: Integer;
+  LId: Integer;
+  LSize: TRockSize;
+  LAngle: Single;
+  LRock: TRock;
+  LRadius : Single;
+  LPos: TVector;
 begin
 
-  c := TMath.RandomRange(cRocksMin, cRocksMax);
+  LC := TMath.RandomRange(cRocksMin, cRocksMax);
 
-  for i := 1 to c do
+  for LI := 1 to LC do
   begin
-    id := TMath.RandomRange(0, 2);
-    size := TRockSize(TMath.RandomRange(0, 2));
-    pos.x := Config.DisplayWidth / 2;
-    pos.y := Config.DisplayHeight /2;
-    radius := (pos.x + pos.y) / 2;
-    angle := TMath.RandomRange(0, 359);
-    pos.Thrust(angle, radius);
-    rock := TRock.Create;
-    rock.Spawn(id, size, pos, angle);
-    Game.Scene[cSceneRocks].Add(rock);
+    LId := TMath.RandomRange(0, 2);
+    LSize := TRockSize(TMath.RandomRange(0, 2));
+
+    LPos.x := Config.DisplayWidth / 2;
+    LPos.y := Config.DisplayHeight /2;
+
+    LRadius := (LPos.x + LPos.y) / 2;
+    LAngle := TMath.RandomRange(0, 359);
+    LPos.Thrust(LAngle, LRadius);
+
+    LRock := TRock.Create;
+    LRock.Spawn(LId, LSize, LPos, LAngle);
+    Game.Scene[cSceneRocks].Add(LRock);
   end;
 end;
 

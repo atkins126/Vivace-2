@@ -73,7 +73,6 @@ const
   AUDIO_INVALID_INDEX = -2;
 
 type
-
   { TAudioStatus }
   TAudioStatus = (asStopped, asPaused, asPlaying);
 
@@ -182,6 +181,7 @@ uses
   Vivace.Common,
   Vivace.Logger;
 
+
 { TAudio }
 function TAudio.TimeAsSeconds(aValue: Single): TsfTime;
 begin
@@ -199,8 +199,7 @@ begin
   Result := False;
 
   // check for valid music id
-  if (aMusic < 0) or (aMusic > FMusicList.Count-1) then
-    Exit;
+  if (aMusic < 0) or (aMusic > FMusicList.Count-1) then Exit;
 
   // get item
   aMusicItem := FMusicList.Items[aMusic];
@@ -238,19 +237,19 @@ end;
 
 function TAudio.FindFreeBuffer(aFilename: string): Integer;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := AUDIO_INVALID_INDEX;
-  for I := 0 to AUDIO_BUFFER_COUNT - 1 do
+  for LI := 0 to AUDIO_BUFFER_COUNT - 1 do
   begin
-    if FBuffer[I].Filename = aFilename then
+    if FBuffer[LI].Filename = aFilename then
     begin
       Exit;
     end;
 
-    if FBuffer[I].Buffer = nil then
+    if FBuffer[LI].Buffer = nil then
     begin
-      Result := I;
+      Result := LI;
       Break;
     end;
   end;
@@ -258,16 +257,16 @@ end;
 
 function TAudio.FindFreeChannel: Integer;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := AUDIO_INVALID_INDEX;
-  for I := 0 to AUDIO_CHANNEL_COUNT - 1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT - 1 do
   begin
-    if sfSound_getStatus(FChannel[I].Sound) = sfStopped then
+    if sfSound_getStatus(FChannel[LI].Sound) = sfStopped then
     begin
-      if not FChannel[I].Reserved then
+      if not FChannel[LI].Reserved then
       begin
-        Result := I;
+        Result := LI;
         Break;
       end;
     end;
@@ -276,7 +275,7 @@ end;
 
 procedure TAudio.Setup;
 var
-  I: Integer;
+  LI: Integer;
 begin
   if FOpened then Exit;
 
@@ -284,17 +283,17 @@ begin
   FMusicList := TList<TMusicItem>.Create;
 
   // init channels
-  for I := 0 to AUDIO_CHANNEL_COUNT - 1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT - 1 do
   begin
-    FChannel[I].Sound := sfSound_create;
-    FChannel[I].Reserved := False;
-    FChannel[I].Priority := 0;
+    FChannel[LI].Sound := sfSound_create;
+    FChannel[LI].Reserved := False;
+    FChannel[LI].Priority := 0;
   end;
 
   // init buffers
-  for I := 0 to AUDIO_BUFFER_COUNT - 1 do
+  for LI := 0 to AUDIO_BUFFER_COUNT - 1 do
   begin
-    FBuffer[I].Buffer := nil;
+    FBuffer[LI].Buffer := nil;
   end;
 
   FOpened := True;
@@ -302,7 +301,7 @@ end;
 
 procedure TAudio.Shutdown;
 var
-  I: Integer;
+  LI: Integer;
 begin
   if not FOpened then Exit;
 
@@ -311,24 +310,24 @@ begin
   FreeAndNil(FMusicList);
 
   // shutdown channels
-  for I := 0 to AUDIO_CHANNEL_COUNT - 1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT - 1 do
   begin
-    if FChannel[I].Sound <> nil then
+    if FChannel[LI].Sound <> nil then
     begin
-      sfSound_destroy(FChannel[I].Sound);
-      FChannel[I].Reserved := False;
-      FChannel[I].Priority := 0;
-      FChannel[I].Sound := nil;
+      sfSound_destroy(FChannel[LI].Sound);
+      FChannel[LI].Reserved := False;
+      FChannel[LI].Priority := 0;
+      FChannel[LI].Sound := nil;
     end;
   end;
 
   // shutdown buffers
-  for I := 0 to AUDIO_BUFFER_COUNT - 1 do
+  for LI := 0 to AUDIO_BUFFER_COUNT - 1 do
   begin
-    if FBuffer[I].Buffer <> nil then
+    if FBuffer[LI].Buffer <> nil then
     begin
-      sfSoundBuffer_destroy(FBuffer[I].Buffer);
-      FBuffer[I].Buffer := nil;
+      sfSoundBuffer_destroy(FBuffer[LI].Buffer);
+      FBuffer[LI].Buffer := nil;
     end;
   end;
 
@@ -340,6 +339,7 @@ end;
 constructor TAudio.Create;
 begin
   inherited;
+
   FillChar(FBuffer, SizeOf(FBuffer), 0);
   FillChar(FChannel, SizeOf(FChannel), 0);
   FOpened := False;
@@ -349,6 +349,7 @@ end;
 destructor TAudio.Destroy;
 begin
   Shutdown;
+
   inherited;
 end;
 
@@ -364,15 +365,15 @@ end;
 
 procedure TAudio.Pause(aPause: Boolean);
 var
-  I: Integer;
+  LI: Integer;
 begin
   //TMusic.PauseAll(aPause);
   PauseAllMusic(aPause);
 
   // pause channel
-  for I := 0 to AUDIO_CHANNEL_COUNT - 1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT - 1 do
   begin
-    PauseChannel(I, aPause);
+    PauseChannel(LI, aPause);
   end;
 end;
 
@@ -424,10 +425,8 @@ procedure TAudio.UnloadMusic(var aMusic: Integer);
 var
   LItem: TMusicItem;
 begin
-
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // stop music
   StopMusic(aMusic);
@@ -458,7 +457,6 @@ begin
 
   // return handle as invalid
   aMusic := -1;
-
 end;
 
 procedure TAudio.UnloadAllMusic;
@@ -478,10 +476,8 @@ procedure TAudio.PlayMusic(aMusic: Integer);
 var
   LItem: TMusicItem;
 begin
-
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // play music
   sfMusic_play(LItem.MusicHandle);
@@ -499,8 +495,7 @@ var
   LItem: TMusicItem;
 begin
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // stop music playing
   sfMusic_stop(LItem.MusicHandle);
@@ -511,8 +506,7 @@ var
   LItem: TMusicItem;
 begin
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // pause audio
   sfMusic_pause(LItem.MusicHandle);
@@ -540,8 +534,7 @@ var
   LItem: TMusicItem;
 begin
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // set music loop status
   sfMusic_setLoop(LItem.MusicHandle, Ord(aLoop));
@@ -554,8 +547,7 @@ begin
   Result := False;
 
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // get music loop status
   Result := Boolean(sfMusic_getLoop(LItem.MusicHandle));
@@ -567,8 +559,7 @@ var
   LItem: TMusicItem;
 begin
   // check for valid music id
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
 
   // check volume range
   if aVolume < 0 then
@@ -588,8 +579,7 @@ var
   LItem: TMusicItem;
 begin
   Result := 0;
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
   Result := sfMusic_getVolume(LItem.MusicHandle);
   Result := Result / 100;
 end;
@@ -599,8 +589,7 @@ var
   LItem: TMusicItem;
 begin
   Result := asStopped;
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
   Result := TAudioStatus(sfMusic_getStatus(LItem.MusicHandle));
 end;
 
@@ -608,29 +597,26 @@ procedure TAudio.SetMusicOffset(aMusic: Integer; aSeconds: Single);
 var
   LItem: TMusicItem;
 begin
-  if not GetMusicItem(LItem, aMusic) then
-    Exit;
+  if not GetMusicItem(LItem, aMusic) then Exit;
   sfMusic_setPlayingOffset(LItem.MusicHandle, TimeAsSeconds(aSeconds));
 end;
 
 procedure TAudio.SetChannelReserved(aChannel: Integer; aReserve: Boolean);
 begin
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   FChannel[aChannel].Reserved := aReserve;
 end;
 
 function TAudio.GetChannelReserved(aChannel: Integer): Boolean;
 begin
   Result := False;
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then  Exit;
   Result := FChannel[aChannel].Reserved;
 end;
 
 function TAudio.LoadSound(aFilename: string): Integer;
 var
-  I: Integer;
+  LI: Integer;
   LFileHandle: Pointer;
   LMarshaller: TMarshaller;
   LSize: Int64;
@@ -640,8 +626,8 @@ begin
 
   if aFilename.IsEmpty then Exit;
 
-  I := FindFreeBuffer(aFilename);
-  if I = AUDIO_INVALID_INDEX then Exit;
+  LI := FindFreeBuffer(aFilename);
+  if LI = AUDIO_INVALID_INDEX then Exit;
 
   LFileHandle := nil;
 
@@ -656,7 +642,7 @@ begin
         LBuffer := TBuffer.Create(LSize);
         try
           PHYSFS_readBytes(LFileHandle, LBuffer.Memory, LSize);
-          FBuffer[I].Buffer := sfSoundBuffer_createFromMemory(LBuffer.Memory, LSize);
+          FBuffer[LI].Buffer := sfSoundBuffer_createFromMemory(LBuffer.Memory, LSize);
         finally
           FreeAndNil(LBuffer);
         end;
@@ -670,41 +656,39 @@ begin
   if LFileHandle = nil then
   begin
     if not TFile.Exists(aFilename) then Exit;
-    FBuffer[I].Buffer := sfSoundBuffer_createFromFile(LMarshaller.AsAnsi(aFilename).ToPointer);
-    if FBuffer[I].Buffer = nil then Exit;
+    FBuffer[LI].Buffer := sfSoundBuffer_createFromFile(LMarshaller.AsAnsi(aFilename).ToPointer);
+    if FBuffer[LI].Buffer = nil then Exit;
   end;
 
-  FBuffer[I].Filename := aFilename;
+  FBuffer[LI].Filename := aFilename;
   TLogger.Log(etSuccess, 'Sucessfully loaded sound "%s"', [aFilename]);
 
-  Result := I;
+  Result := LI;
 end;
 
 procedure TAudio.UnloadSound(aSound: Integer);
 var
   LBuff: PsfSoundBuffer;
   LSnd: PsfSound;
-  I: Integer;
+  LI: Integer;
 begin
-  if (aSound < 0) or (aSound > AUDIO_BUFFER_COUNT - 1) then
-    Exit;
+  if (aSound < 0) or (aSound > AUDIO_BUFFER_COUNT - 1) then  Exit;
   LBuff := FBuffer[aSound].Buffer;
-  if LBuff = nil then
-    Exit;
+  if LBuff = nil then Exit;
 
   // stop all channels playing this buffer
-  for I := 0 to AUDIO_CHANNEL_COUNT - 1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT - 1 do
   begin
-    LSnd := FChannel[I].Sound;
+    LSnd := FChannel[LI].Sound;
     if LSnd <> nil then
     begin
       if sfSound_getBuffer(LSnd) = LBuff then
       begin
         sfSound_stop(LSnd);
         sfSound_destroy(LSnd);
-        FChannel[I].Sound := nil;
-        FChannel[I].Reserved := False;
-        FChannel[I].Priority := 0;
+        FChannel[LI].Sound := nil;
+        FChannel[LI].Reserved := False;
+        FChannel[LI].Priority := 0;
       end;
     end;
   end;
@@ -718,27 +702,24 @@ end;
 
 function TAudio.PlaySound(aChannel: Integer; aSound: Integer): Integer;
 var
-  I: Integer;
+  LI: Integer;
 begin
   Result := AUDIO_INVALID_INDEX;
 
   // check if sound is in range
-  if (aSound < 0) or (aSound > AUDIO_BUFFER_COUNT - 1) then
-    Exit;
+  if (aSound < 0) or (aSound > AUDIO_BUFFER_COUNT - 1) then Exit;
 
   // check if channel is in range
-  I := aChannel;
-  if I = AUDIO_DYNAMIC_CHANNEL then
-    I := FindFreeChannel
-  else if (I < 0) or (I > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  LI := aChannel;
+  if LI = AUDIO_DYNAMIC_CHANNEL then LI := FindFreeChannel
+  else if (LI < 0) or (LI > AUDIO_CHANNEL_COUNT - 1) then Exit;
 
   // play sound
-  sfSound_setBuffer(FChannel[I].Sound, FBuffer[aSound].Buffer);
-  sfSound_play(FChannel[I].Sound);
-  sfSound_setAttenuation(FChannel[I].Sound, 0);
+  sfSound_setBuffer(FChannel[LI].Sound, FBuffer[aSound].Buffer);
+  sfSound_play(FChannel[LI].Sound);
+  sfSound_setAttenuation(FChannel[LI].Sound, 0);
 
-  Result := I;
+  Result := LI;
 end;
 
 function TAudio.PlaySound(aChannel: Integer; aSound: Integer; aVolume: Single; aLoop: Boolean): Integer;
@@ -750,80 +731,72 @@ end;
 
 procedure TAudio.PauseChannel(aChannel: Integer; aPause: Boolean);
 var
-  status: TsfSoundStatus;
+  LStatus: TsfSoundStatus;
 begin
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
 
-  status := sfSound_getStatus(FChannel[aChannel].Sound);
+  LStatus := sfSound_getStatus(FChannel[aChannel].Sound);
 
   case aPause of
     False:
       begin
-        if status = sfPaused then
+        if LStatus = sfPaused then
           sfSound_play(FChannel[aChannel].Sound);
       end;
     True:
       begin
-        if status = sfPlaying then
+        if LStatus = sfPlaying then
           sfSound_pause(FChannel[aChannel].Sound);
       end;
   end;
-
 end;
 
 function TAudio.GetChannelStatus(aChannel: Integer): TAudioStatus;
 begin
   Result := asStopped;
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   Result := TAudioStatus(sfSound_getStatus(FChannel[aChannel].Sound));
 end;
 
 procedure TAudio.SetChannelVolume(aChannel: Integer; aVolume: Single);
 var
-  V: Single;
+  LV: Single;
 begin
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
 
   if aVolume < 0 then
     aVolume := 0
   else if aVolume > 1 then
     aVolume := 1;
 
-  V := aVolume * 100;
-  sfSound_setVolume(FChannel[aChannel].Sound, V);
+  LV := aVolume * 100;
+  sfSound_setVolume(FChannel[aChannel].Sound, LV);
 end;
 
 function TAudio.GetChannelVolume(aChannel: Integer): Single;
 begin
   Result := 0;
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   Result := sfSound_getVolume(FChannel[aChannel].Sound);
   Result := Result / 100;
 end;
 
 procedure TAudio.SetChannelLoop(aChannel: Integer; aLoop: Boolean);
 begin
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   sfSound_setLoop(FChannel[aChannel].Sound, Ord(aLoop));
 end;
 
 function TAudio.GetChannelLoop(aChannel: Integer): Boolean;
 begin
   Result := False;
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   Result := Boolean(sfSound_getLoop(FChannel[aChannel].Sound));
 end;
 
 procedure TAudio.SetChannelPitch(aChannel: Integer; aPitch: Single);
 begin
-  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then
-    Exit;
+  if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   sfSound_setPitch(FChannel[aChannel].Sound, aPitch);
 end;
 
@@ -836,31 +809,29 @@ end;
 
 procedure TAudio.SetChannelPosition(aChannel: Integer; aX: Single; aY: Single);
 var
-  V: TsfVector3f;
+  LV: TsfVector3f;
 begin
   if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
-  V.X := aX;
-  V.Y := 0;
-  V.Z := aY;
-  sfSound_setPosition(FChannel[aChannel].Sound, V);
+  LV.X := aX;
+  LV.Y := 0;
+  LV.Z := aY;
+  sfSound_setPosition(FChannel[aChannel].Sound, LV);
 end;
 
-procedure TAudio.GetChannelPosition(aChannel: Integer; var aX: Single;
-  var aY: Single);
+procedure TAudio.GetChannelPosition(aChannel: Integer; var aX: Single; var aY: Single);
 var
-  V: TsfVector3f;
+  LV: TsfVector3f;
 begin
   if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
-  V := sfSound_getPosition(FChannel[aChannel].Sound);
-  aX := V.X;
-  aY := V.Z;
+  LV := sfSound_getPosition(FChannel[aChannel].Sound);
+  aX := LV.X;
+  aY := LV.Z;
 end;
 
 procedure TAudio.SetChannelMinDistance(aChannel: Integer; aDistance: Single);
 begin
   if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
-  if aDistance < 1 then
-    aDistance := 1;
+  if aDistance < 1 then  aDistance := 1;
   sfSound_setMinDistance(FChannel[aChannel].Sound, aDistance);
 end;
 
@@ -871,8 +842,7 @@ begin
   Result := sfSound_getMinDistance(FChannel[aChannel].Sound);
 end;
 
-procedure TAudio.SetChannelRelativeToListener(aChannel: Integer;
-  aRelative: Boolean);
+procedure TAudio.SetChannelRelativeToListener(aChannel: Integer; aRelative: Boolean);
 begin
   if (aChannel < 0) or (aChannel > AUDIO_CHANNEL_COUNT - 1) then Exit;
   sfSound_setRelativeToListener(FChannel[aChannel].Sound, Ord(aRelative));
@@ -906,26 +876,26 @@ end;
 
 procedure TAudio.StopAllChannels;
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to AUDIO_CHANNEL_COUNT-1 do
+  for LI := 0 to AUDIO_CHANNEL_COUNT-1 do
   begin
-    sfSound_stop(FChannel[I].Sound);
+    sfSound_stop(FChannel[LI].Sound);
   end;
 end;
 
 procedure TAudio.SetListenerGlobalVolume(aVolume: Single);
 var
-  V: Single;
+  LV: Single;
 begin
-  V := aVolume;
-  if (V < 0) then
-    V := 0
-  else if (V > 1) then
-    V := 1;
+  LV := aVolume;
+  if (LV < 0) then
+    LV := 0
+  else if (LV > 1) then
+    LV := 1;
 
-  V := V * 100;
-  sfListener_setGlobalVolume(V);
+  LV := LV * 100;
+  sfListener_setGlobalVolume(LV);
 end;
 
 function TAudio.GetListenerGlobalVolume: Single;
@@ -936,21 +906,21 @@ end;
 
 procedure TAudio.SetListenerPosition(aX: Single; aY: Single);
 var
-  V: TsfVector3f;
+  LV: TsfVector3f;
 begin
-  V.X := aX;
-  V.Y := 0;
-  V.Z := aY;
-  sfListener_setPosition(V);
+  LV.X := aX;
+  LV.Y := 0;
+  LV.Z := aY;
+  sfListener_setPosition(LV);
 end;
 
 procedure TAudio.GetListenerPosition(var aX: Single; var aY: Single);
 var
-  V: TsfVector3f;
+  LV: TsfVector3f;
 begin
-  V := sfListener_getPosition;
-  aX := V.X;
-  aY := V.Z;
+  LV := sfListener_getPosition;
+  aX := LV.X;
+  aY := LV.Z;
 end;
 
 end.

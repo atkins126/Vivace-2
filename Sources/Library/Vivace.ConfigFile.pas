@@ -66,7 +66,6 @@ uses
   Vivace.Common;
 
 type
-
   { TConfigFile }
   TConfigFile = class(TBaseObject)
   protected
@@ -112,10 +111,12 @@ uses
   Vivace.Utils,
   Vivace.Engine;
 
-{ TGVConfigFile }
+
+{ TConfigFile }
 constructor TConfigFile.Create;
 begin
   inherited;
+
   FHandle := nil;
   FSection := TStringList.Create;
 end;
@@ -124,6 +125,7 @@ destructor TConfigFile.Destroy;
 begin
   Close;
   FreeAndNil(FSection);
+
   inherited;
 end;
 

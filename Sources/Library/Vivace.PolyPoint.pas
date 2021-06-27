@@ -69,7 +69,6 @@ uses
   Vivace.Sprite;
 
 type
-
   { TPolyPoint }
   TPolyPoint = class(TBaseObject)
   protected
@@ -106,18 +105,20 @@ uses
   Vivace.Utils,
   Vivace.Engine,
   Vivace.Collision,
-  Vivace.PolyPointTrace;
+  Vivace.PolyPointTrace,
+  Vivace.Display;
+
 
 { TPolyPoint }
 procedure TPolyPoint.Clear;
 var
-  I: Integer;
+  LI: Integer;
 begin
-  for I := 0 to Count - 1 do
+  for LI := 0 to Count - 1 do
   begin
-    if Assigned(FPolygon[I]) then
+    if Assigned(FPolygon[LI]) then
     begin
-      FreeAndNil(FPolygon[I]);
+      FreeAndNil(FPolygon[LI]);
     end;
   end;
   FPolygon := nil;
@@ -127,6 +128,7 @@ end;
 constructor TPolyPoint.Create;
 begin
   inherited;
+
   FPolygon := nil;
   FCount := 0;
 end;
@@ -134,6 +136,7 @@ end;
 destructor TPolyPoint.Destroy;
 begin
   Clear;
+
   inherited;
 end;
 
@@ -149,73 +152,69 @@ procedure TPolyPoint.CopyFrom(aPolyPoint: TPolyPoint);
 begin
 end;
 
-procedure TPolyPoint.AddPoint(aNum: Integer; aX: Single; aY: Single;
-  aOrigin: PVector);
+procedure TPolyPoint.AddPoint(aNum: Integer; aX: Single; aY: Single; aOrigin: PVector);
 var
-  X, Y: Single;
+  LX, LY: Single;
 begin
-  X := aX;
-  Y := aY;
+  LX := aX;
+  LY := aY;
 
   if aOrigin <> nil then
   begin
-    X := X - aOrigin.X;
-    Y := Y - aOrigin.Y;
+    LX := LX - aOrigin.X;
+    LY := LY - aOrigin.Y;
   end;
 
-  FPolygon[aNum].AddLocalPoint(X, Y, True);
+  FPolygon[aNum].AddLocalPoint(LX, LY, True);
 end;
 
-function TPolyPoint.TraceFromBitmap(aBitmap: TBitmap; aMju: Single;
-  aMaxStepBack: Integer; aAlphaThreshold: Integer; aOrigin: PVector): Integer;
+function TPolyPoint.TraceFromBitmap(aBitmap: TBitmap; aMju: Single; aMaxStepBack: Integer; aAlphaThreshold: Integer; aOrigin: PVector): Integer;
 var
-  I: Integer;
-  W, H: Single;
+  LI: Integer;
+  LW, LH: Single;
   LData: TBitmapData;
 begin
   Inc(FCount);
   SetLength(FPolygon, FCount);
-  I := FCount - 1;
-  FPolygon[I] := TPolygon.Create;
-  aBitmap.GetSize(@W, @H);
+  LI := FCount - 1;
+  FPolygon[LI] := TPolygon.Create;
+  aBitmap.GetSize(@LW, @LH);
   aBitmap.Lock(nil, LData);
   TPolyPointTrace.Init(aMju, aMaxStepBack, aAlphaThreshold);
-  TPolyPointTrace.PrimaryTrace(aBitmap, W, H);
+  TPolyPointTrace.PrimaryTrace(aBitmap, LW, LH);
   TPolyPointTrace.SimplifyPoly;
-  TPolyPointTrace.ApplyPolyPoint(Self, I, aOrigin);
+  TPolyPointTrace.ApplyPolyPoint(Self, LI, aOrigin);
   TPolyPointTrace.Done;
   aBitmap.Unlock;
 
-  Result := I;
+  Result := LI;
 end;
 
-procedure TPolyPoint.TraceFromSprite(aSprite: TSprite; aGroup: Integer;
-  aMju: Single; aMaxStepBack: Integer; aAlphaThreshold: Integer;
-  aOrigin: PVector);
+procedure TPolyPoint.TraceFromSprite(aSprite: TSprite; aGroup: Integer; aMju: Single; aMaxStepBack: Integer; aAlphaThreshold: Integer; aOrigin: PVector);
 var
-  I: Integer;
-  Rect: TRectangle;
-  Tex: TBitmap;
-  W, H: Integer;
+  LI: Integer;
+  LRect: TRectangle;
+  LTex: TBitmap;
+  LW, LH: Integer;
   LData: TBitmapData;
 begin
   Clear;
   FCount := aSprite.GetImageCount(aGroup);
   SetLength(FPolygon, Count);
-  for I := 0 to Count - 1 do
+  for LI := 0 to Count - 1 do
   begin
-    FPolygon[I] := TPolygon.Create;
-    Tex := aSprite.GetImageTexture(I, aGroup);
-    Rect := aSprite.GetImageRect(I, aGroup);
-    W := Round(Rect.width);
-    H := Round(Rect.height);
-    Tex.Lock(@Rect, LData);
+    FPolygon[LI] := TPolygon.Create;
+    LTex := aSprite.GetImageTexture(LI, aGroup);
+    LRect := aSprite.GetImageRect(LI, aGroup);
+    LW := Round(LRect.width);
+    LH := Round(LRect.height);
+    LTex.Lock(@LRect, LData);
     TPolyPointTrace.Init(aMju, aMaxStepBack, aAlphaThreshold);
-    TPolyPointTrace.PrimaryTrace(Tex, W, H);
+    TPolyPointTrace.PrimaryTrace(LTex, LW, LH);
     TPolyPointTrace.SimplifyPoly;
-    TPolyPointTrace.ApplyPolyPoint(Self, I, aOrigin);
+    TPolyPointTrace.ApplyPolyPoint(Self, LI, aOrigin);
     TPolyPointTrace.Done;
-    Tex.Unlock;
+    LTex.Unlock;
   end;
 end;
 
@@ -228,8 +227,7 @@ procedure TPolyPoint.Render(aNum: Integer; aX: Single; aY: Single;
   aScale: Single; aAngle: Single; aColor: TColor; aOrigin: PVector;
   aHFlip: Boolean; aVFlip: Boolean);
 begin
-  if aNum >= FCount then
-    Exit;
+  if aNum >= FCount then Exit;
   FPolygon[aNum].Render(aX, aY, aScale, aAngle, 1, aColor, aOrigin,
     aHFlip, aVFlip);
 end;
@@ -241,93 +239,89 @@ function TPolyPoint.Collide(aNum1: Integer; aGroup1: Integer; aX1: Single;
   aOrigin2: PVector; aHFlip2: Boolean; aVFlip2: Boolean;
   var aHitPos: TVector): Boolean;
 var
-  L1, L2, IX, IY: Integer;
-  Cnt1, Cnt2: Integer;
-  Pos: array [0 .. 3] of PVector;
-  Poly1, Poly2: TPolygon;
+  LL1, LL2, LIX, LIY: Integer;
+  LCnt1, LCnt2: Integer;
+  LPos: array [0 .. 3] of PVector;
+  LPoly1, LPoly2: TPolygon;
 begin
   Result := False;
 
-  if (aPolyPoint2 = nil) then
-    Exit;
+  if (aPolyPoint2 = nil) then Exit;
 
-  Poly1 := FPolygon[aNum1];
-  Poly2 := aPolyPoint2.Polygon(aNum2);
+  LPoly1 := FPolygon[aNum1];
+  LPoly2 := aPolyPoint2.Polygon(aNum2);
 
   // transform to world points
-  Poly1.Transform(aX1, aY1, aScale1, aAngle1, aOrigin1, aHFlip1, aVFlip1);
-  Poly2.Transform(aX2, aY2, aScale2, aAngle2, aOrigin2, aHFlip2, aVFlip2);
+  LPoly1.Transform(aX1, aY1, aScale1, aAngle1, aOrigin1, aHFlip1, aVFlip1);
+  LPoly2.Transform(aX2, aY2, aScale2, aAngle2, aOrigin2, aHFlip2, aVFlip2);
 
-  Cnt1 := Poly1.GetPointCount;
-  Cnt2 := Poly2.GetPointCount;
+  LCnt1 := LPoly1.GetPointCount;
+  LCnt2 := LPoly2.GetPointCount;
 
-  if Cnt1 < 2 then
-    Exit;
-  if Cnt2 < 2 then
-    Exit;
+  if LCnt1 < 2 then Exit;
+  if LCnt2 < 2 then Exit;
 
-  for L1 := 0 to Cnt1 - 2 do
+  for LL1 := 0 to LCnt1 - 2 do
   begin
-    Pos[0] := Poly1.GetWorldPoint(L1);
-    Pos[1] := Poly1.GetWorldPoint(L1 + 1);
+    LPos[0] := LPoly1.GetWorldPoint(LL1);
+    LPos[1] := LPoly1.GetWorldPoint(LL1 + 1);
 
-    for L2 := 0 to Cnt2 - 2 do
+    for LL2 := 0 to LCnt2 - 2 do
     begin
 
-      Pos[2] := Poly2.GetWorldPoint(L2);
-      Pos[3] := Poly2.GetWorldPoint(L2 + 1);
-      if TCollision.LineIntersection(Round(Pos[0].X), Round(Pos[0].Y), Round(Pos[1].X),
-        Round(Pos[1].Y), Round(Pos[2].X), Round(Pos[2].Y), Round(Pos[3].X),
-        Round(Pos[3].Y), IX, IY) = liTRUE then
+      LPos[2] := LPoly2.GetWorldPoint(LL2);
+      LPos[3] := LPoly2.GetWorldPoint(LL2 + 1);
+      if TCollision.LineIntersection(Round(LPos[0].X), Round(LPos[0].Y), Round(LPos[1].X),
+        Round(LPos[1].Y), Round(LPos[2].X), Round(LPos[2].Y), Round(LPos[3].X),
+        Round(LPos[3].Y), LIX, LIY) = liTRUE then
       begin
-        aHitPos.X := IX;
-        aHitPos.Y := IY;
+        aHitPos.X := LIX;
+        aHitPos.Y := LIY;
         Result := True;
         Exit;
       end;
     end;
   end;
-
 end;
 
 function TPolyPoint.CollidePoint(aNum: Integer; aGroup: Integer; aX: Single;
   aY: Single; aScale: Single; aAngle: Single; aOrigin: PVector; aHFlip: Boolean;
   aVFlip: Boolean; var aPoint: TVector): Boolean;
 var
-  L1, IX, IY: Integer;
-  Cnt1: Integer;
-  Pos: array [0 .. 3] of PVector;
-  Point2: TVector;
-  Poly1: TPolygon;
+  LL1, LIX, LIY: Integer;
+  LCnt1: Integer;
+  LPos: array [0 .. 3] of PVector;
+  LPoint2: TVector;
+  LPoly1: TPolygon;
 begin
   Result := False;
 
-  Poly1 := FPolygon[aNum];
+  LPoly1 := FPolygon[aNum];
 
   // transform to world points
-  Poly1.Transform(aX, aY, aScale, aAngle, aOrigin, aHFlip, aVFlip);
+  LPoly1.Transform(aX, aY, aScale, aAngle, aOrigin, aHFlip, aVFlip);
 
-  Cnt1 := Poly1.GetPointCount;
+  LCnt1 := LPoly1.GetPointCount;
 
-  if Cnt1 < 2 then
+  if LCnt1 < 2 then
     Exit;
 
-  Point2.X := aPoint.X + 1;
-  Point2.Y := aPoint.Y + 1;
-  Pos[2] := @aPoint;
-  Pos[3] := @Point2;
+  LPoint2.X := aPoint.X + 1;
+  LPoint2.Y := aPoint.Y + 1;
+  LPos[2] := @aPoint;
+  LPos[3] := @LPoint2;
 
-  for L1 := 0 to Cnt1 - 2 do
+  for LL1 := 0 to LCnt1 - 2 do
   begin
-    Pos[0] := Poly1.GetWorldPoint(L1);
-    Pos[1] := Poly1.GetWorldPoint(L1 + 1);
+    LPos[0] := LPoly1.GetWorldPoint(LL1);
+    LPos[1] := LPoly1.GetWorldPoint(LL1 + 1);
 
-    if TCollision.LineIntersection(Round(Pos[0].X), Round(Pos[0].Y), Round(Pos[1].X),
-      Round(Pos[1].Y), Round(Pos[2].X), Round(Pos[2].Y), Round(Pos[3].X),
-      Round(Pos[3].Y), IX, IY) = liTrue then
+    if TCollision.LineIntersection(Round(LPos[0].X), Round(LPos[0].Y), Round(LPos[1].X),
+      Round(LPos[1].Y), Round(LPos[2].X), Round(LPos[2].Y), Round(LPos[3].X),
+      Round(LPos[3].Y), LIX, LIY) = liTrue then
     begin
-      aPoint.X := IX;
-      aPoint.Y := IY;
+      aPoint.X := LIX;
+      aPoint.Y := LIY;
       Result := True;
       Exit;
     end;
@@ -343,8 +337,7 @@ end;
 function TPolyPoint.Valid(aNum: Integer): Boolean;
 begin
   Result := False;
-  if aNum >= FCount then
-    Exit;
+  if aNum >= FCount then Exit;
   Result := Boolean(FPolygon[aNum].GetPointCount >= 2);
 end;
 

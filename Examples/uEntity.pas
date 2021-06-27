@@ -93,7 +93,6 @@ type
     procedure OnRenderHUD; override;
   end;
 
-
   { TEntityPolyPointCollision }
   TEntityPolyPointCollision = class(TBaseExample)
   protected
@@ -127,8 +126,6 @@ type
     procedure OnRenderHUD; override;
   end;
 
-
-
 implementation
 
 uses
@@ -138,6 +135,7 @@ uses
   Vivace.Input,
   Vivace.Common,
   Vivace.Utils;
+
 
 { TEntityBasic }
 procedure TEntityBasic.OnSetConfig(var aConfig: TGameConfig);
@@ -171,12 +169,14 @@ end;
 procedure TEntityBasic.OnShutdown;
 begin
   FreeAndNil(FShip);
+
   inherited;
 end;
 
 procedure TEntityBasic.OnUpdate(aDeltaTime: Double);
 begin
   inherited;
+
   FShip.NextFrame;
 end;
 
@@ -192,6 +192,7 @@ begin
   inherited;
 
 end;
+
 
 { TEntityPolyPointCollision }
 procedure TEntityPolyPointCollision.OnSetConfig(var aConfig: TGameConfig);
@@ -240,6 +241,7 @@ procedure TEntityPolyPointCollision.OnShutdown;
 begin
   FreeAndNil(FFigure);
   FreeAndNil(FBoss);
+
   inherited;
 end;
 
@@ -248,9 +250,7 @@ begin
   inherited;
 
   FBoss.NextFrame;
-
   FBoss.ThrustToPos(30*50, 14*50, MousePos.X, MousePos.Y, 128, 32, 5*50, 0.001, aDeltaTime);
-
   if FBoss.CollidePolyPoint(FFigure, FHitPos) then
     FCollide := True
   else
@@ -267,14 +267,15 @@ begin
 
   FFigure.Render(0, 0);
   FBoss.Render(0, 0);
-  if FCollide then
-    gEngine.Display.DrawFilledRectangle(FHitPos.X, FHitPos.Y, 10, 10, RED);
+  if FCollide then gEngine.Display.DrawFilledRectangle(FHitPos.X, FHitPos.Y, 10, 10, RED);
 end;
 
 procedure TEntityPolyPointCollision.OnRenderHUD;
 begin
   inherited;
+
 end;
+
 
 { TEntityPolyPointCollisionPoint }
 procedure TEntityPolyPointCollisionPoint.OnSetConfig(var aConfig: TGameConfig);
@@ -306,6 +307,7 @@ end;
 procedure TEntityPolyPointCollisionPoint.OnShutdown;
 begin
   FreeAndNil(FFigure);
+
   inherited;
 end;
 
@@ -343,6 +345,7 @@ end;
 procedure TEntityPolyPointCollisionPoint.OnRenderHUD;
 begin
   inherited;
+
   Font.Print(Config.DisplayWidth/2, (Config.DisplayHeight/2) - 100, YELLOW, haCenter, 'Move mouse pointer over figure outline', []);
 end;
 
@@ -351,6 +354,7 @@ end;
 procedure TEntityBlendMode.OnSetConfig(var aConfig: TGameConfig);
 begin
   inherited;
+
   aConfig.DisplayTitle := cExampleTitle + 'Entity Blend Mode';
 end;
 
@@ -394,6 +398,7 @@ end;
 procedure TEntityBlendMode.OnShutdown;
 begin
   FreeAndNil(FExplo);
+
   inherited;
 end;
 
@@ -422,8 +427,8 @@ procedure TEntityBlendMode.OnRenderHUD;
 begin
   inherited;
 
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'B       - Toggle blending', []);
-  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Blend:    %s', [cTrueFalseStr[FBlendMode]]);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, GREEN,  haLeft, 'B         - Toggle blending', []);
+  Font.Print(HudPos.X, HudPos.Y, HudPos.Z, YELLOW, haLeft, 'Blend:      %s', [cTrueFalseStr[FBlendMode]]);
 end;
 
 
