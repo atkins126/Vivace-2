@@ -108,7 +108,7 @@ begin
         mDllNames := nil;
         for I := 0 to LZipFile.FileCount-1 do
         begin
-          LSizeNeeded := LSizeNeeded + LZipFile.FileInfo[0].UncompressedSize
+          LSizeNeeded := LSizeNeeded + LZipFile.FileInfo[I].UncompressedSize
         end;
         TLogger.Log(etInfo, 'Total space needed by CLibs: %d', [LSizeNeeded]);
         GetDiskFreeSpaceEx(PChar(LWorkPath), LFreeSize, LTotalSize, nil);

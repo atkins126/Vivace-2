@@ -62,6 +62,7 @@ uses
   Vivace.Entity,
   Vivace.Math,
   Vivace.Display,
+  Vivace.Bitmap,
   uCommon;
 
 type
@@ -130,6 +131,7 @@ implementation
 
 uses
   System.SysUtils,
+  Vivace.External.Allegro,
   Vivace.Engine,
   Vivace.Color,
   Vivace.Input,
@@ -143,6 +145,7 @@ begin
   inherited;
 
   aConfig.DisplayTitle := cExampleTitle + 'Basic Entity';
+  aConfig.DisplayClearColor := BLACK;
 end;
 
 procedure TEntityBasic.OnStartup;
