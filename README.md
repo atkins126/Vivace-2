@@ -169,10 +169,11 @@ To run your game, call
 See the examples for more information on usage.
 
 ## Support
-Website: https://tinybiggames.com  
-E-mail : mailto:support@tinybiggames.com  
-Discord: https://discord.gg/tPWjMwK  
-Twitter: https://twitter.com/tinyBigGAMES
+Website:     https://tinybiggames.com  
+E-mail :     mailto:support@tinybiggames.com  
+Discord:     https://discord.gg/tPWjMwK  
+Twitter:     https://twitter.com/tinyBigGAMES
+Dailymotion: https://dailymotion.com/tinyBigGAMES
 
 <p align="center">
  <a href="https://www.embarcadero.com/products/delphi" target="_blank"><img src="Images/delphi.png"></a>
