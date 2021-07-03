@@ -169,7 +169,7 @@ To run your game, call
 See the examples for more information on usage.
 
 ## Support
-<table width="100%" cellspacing="0" cellpadding="0">
+<table>
 <tbody>
 	<tr>
 		<td>Website</td>
@@ -193,8 +193,6 @@ See the examples for more information on usage.
 	</tr>
 </tbody>
 </table>
-
-
 
 <p align="center">
  <a href="https://www.embarcadero.com/products/delphi" target="_blank"><img src="Images/delphi.png"></a>
