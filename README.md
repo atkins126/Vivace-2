@@ -169,7 +169,7 @@ To run your game, call
 See the examples for more information on usage.
 
 ## Support
-<table>
+<table width="100%" cellspacing="0" cellpadding="0">
 <tbody>
 	<tr>
 		<td>Website</td>
