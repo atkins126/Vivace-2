@@ -170,9 +170,9 @@ See the examples for more information on usage.
 
 ## Media
 
-https://user-images.githubusercontent.com/69952438/125202383-60d11980-e241-11eb-9ad1-d2f978075721.mp4
+https://user-images.githubusercontent.com/69952438/125202861-a262c400-e243-11eb-9f37-6a3f6637f35f.mp4
 
-https://user-images.githubusercontent.com/69952438/125202473-c0c7c000-e241-11eb-935f-3b87b47213a0.mp4
+https://user-images.githubusercontent.com/69952438/125202876-b0184980-e243-11eb-8aee-bcca80fdf252.mp4
 
 ## Support
 <table>
